@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login - RCR Engenharia</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root{
+  --c1:#00E0FF;
+  --c2:#FF2FB9;
+  --bg:#0B1622;
+  --panel:#0F1E2C;
+  --text:#E7EEF6;
+  --muted:#9fb1c3;
+  --border:rgba(255,255,255,.12);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
+html,body{
+  height:100%;width:100%;
+  background:radial-gradient(1200px 800px at 10% 10%,rgba(0,224,255,.08),transparent 60%),
+             radial-gradient(1200px 800px at 90% 90%,rgba(255,47,185,.08),transparent 60%),
+             var(--bg);
+  display:flex;align-items:center;justify-content:center;color:var(--text);
+}
+
+/* Container */
+.login-container{
+  background:var(--panel);
+  padding:36px 26px;
+  border-radius:18px;
+  width:100%;
+  max-width:420px;
+  border:1px solid var(--border);
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
+  text-align:center;
+}
+
+.logo-image{
+  display:block;
+  margin:0 auto 12px;
+  width:120px;height:120px;
+  object-fit:contain;
+}
+.logo-text{
+  font-size:24px;font-weight:900;margin-bottom:4px;letter-spacing:.3px;
+  background:linear-gradient(90deg,var(--c1),var(--c2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.version{font-size:12px;color:var(--muted);margin-bottom:18px}
+
+h2{font-size:20px;margin-bottom:18px;font-weight:800}
+
+/* ======== SELETOR MODERNO CPF/USUÁRIO ======== */
+.option-group{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:16px;
+  margin-bottom:20px;
+  width:100%;
+}
+
+.option-group input[type="radio"]{
+  display:none;
+}
+
+.option-group label{
+  flex:1;
+  max-width:45%;
+  text-align:center;
+  padding:12px 0;
+  border-radius:10px;
+  background:#0a1520;
+  color:var(--muted);
+  font-weight:700;
+  border:1px solid var(--border);
+  cursor:pointer;
+  transition:all .25s ease;
+  font-size:15px;
+  user-select:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.option-group input[type="radio"]:checked + label{
+  color:#00121E;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  border-color:rgba(255,255,255,.25);
+  box-shadow:0 4px 20px rgba(0,0,0,.4);
+  transform:scale(1.05);
+}
+
+.option-group label:hover{
+  border-color:rgba(255,255,255,.4);
+}
+
+/* Inputs */
+label{display:block;text-align:left;font-size:13px;margin-bottom:6px;color:var(--text);font-weight:700}
+input{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  background:#0a1520;
+  color:var(--text);
+  border:1px solid rgba(0,224,255,.25);
+  outline:none;
+  transition:border-color .2s, box-shadow .2s;
+  margin-bottom:14px;
+  font-size:15px;
+}
+input:focus{border-color:var(--c1);box-shadow:0 0 0 3px rgba(0,224,255,.15)}
+.password-wrapper{position:relative}
+.toggle-password{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;
+  background:linear-gradient(90deg,var(--c1),var(--c2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  font-size:16px;user-select:none;
+}
+
+/* Botão principal */
+button{
+  width:100%;padding:14px;border:none;border-radius:12px;cursor:pointer;
+  font-size:16px;font-weight:800;margin-bottom:14px;
+  color:#00121E;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  border:1px solid rgba(255,255,255,.25);
+  transition:transform .15s ease,filter .15s ease,box-shadow .15s ease;
+}
+button:hover{filter:brightness(1.06);box-shadow:0 14px 30px rgba(0,0,0,.35)}
+button:active{transform:scale(.98)}
+
+/* Links */
+.link-cadastro,.link-forgot{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:#0a1520;color:#eaf6ff;padding:12px 20px;border-radius:12px;
+  font-size:15px;font-weight:700;cursor:pointer;
+  border:1px dashed rgba(255,255,255,.3);
+  transition:transform .15s ease,background .15s ease,border-color .15s ease,color .15s ease;
+  margin-bottom:10px;
+}
+.link-cadastro i,.link-forgot i{font-size:18px}
+.link-cadastro:hover,.link-forgot:hover{
+  background:linear-gradient(135deg,rgba(0,224,255,.18),rgba(255,47,185,.18));
+  border-color:rgba(255,255,255,.5);
+}
+
+/* Responsivo */
+@media(max-width:480px){
+  .login-container{padding:28px 18px;width:90%}
+  h2{font-size:18px}
+  input,button,.link-cadastro,.link-forgot{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="login-container">
+  <img src="Assets/img/logo_new.png" alt="Logo" class="logo-image" onerror="this.onerror=null;this.src='Assets/img/logo.png'">
+  <span class="logo-text">RCR Engenharia</span>
+  <p class="version">Acesso ao sistema</p>
+
+  <h2>Acessar</h2>
+
+  <!-- Seletor moderno de login -->
+  <div class="option-group">
+    <input type="radio" name="loginType" id="loginUsuario" value="usuario" checked>
+    <label for="loginUsuario"><i class="fa-solid fa-user"></i> Usuário</label>
+
+    <input type="radio" name="loginType" id="loginCpf" value="cpf">
+    <label for="loginCpf"><i class="fa-solid fa-id-card"></i> CPF</label>
+  </div>
+
+  <form id="loginForm">
+    <label for="user" id="loginLabel">Usuário</label>
+    <input type="text" id="user" placeholder="Digite seu usuário" autocomplete="username">
+
+    <label for="password">Senha</label>
+    <div class="password-wrapper">
+      <input type="password" id="password" placeholder="Digite sua senha" autocomplete="current-password">
+      <span class="toggle-password" id="togglePwd" title="Mostrar/ocultar">
+        <i class="fa-regular fa-eye"></i>
+      </span>
+    </div>
+
+    <button type="submit">Entrar</button>
+
+    <div class="link-forgot" onclick="abrirEsqueciSenha()">
+      <i class="fas fa-unlock-alt"></i>
+      <span>Esqueci minha senha</span>
+    </div>
+
+    <div class="link-cadastro" onclick="abrirCadastro()">
+      <i class="fas fa-user-plus"></i>
+      <span>Cadastre-se Agora</span>
+    </div>
+  </form>
+</div>
+
+<script>
+/* Mostrar/ocultar senha */
+document.getElementById('togglePwd').addEventListener('click', ()=>{
+  const input = document.getElementById('password');
+  input.type = input.type === 'password' ? 'text' : 'password';
+  const ic = document.querySelector('#togglePwd i');
+  ic.classList.toggle('fa-eye');
+  ic.classList.toggle('fa-eye-slash');
+});
+
+/* Atualiza label conforme opção */
+const radios = document.querySelectorAll('input[name="loginType"]');
+const labelLogin = document.getElementById('loginLabel');
+const inputLogin = document.getElementById('user');
+
+radios.forEach(r=>{
+  r.addEventListener('change', ()=>{
+    if(r.checked && r.value==='cpf'){
+      labelLogin.textContent='CPF';
+      inputLogin.placeholder='Digite seu CPF (somente números)';
+      inputLogin.type='text';
+    } else {
+      labelLogin.textContent='Usuário';
+      inputLogin.placeholder='Digite seu usuário';
+      inputLogin.type='text';
+    }
+    inputLogin.value='';
+  });
+});
+
+/* Navegação */
+function abrirCadastro(){ window.location.href='register.html'; }
+function abrirEsqueciSenha(){ window.location.href='forgot-password.html'; }
+
+/* Login com condição CPF ou Usuário */
+document.getElementById('loginForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const loginType = document.querySelector('input[name="loginType"]:checked').value;
+  const login = document.getElementById('user').value.trim();
+  const senha = document.getElementById('password').value.trim();
+
+  if(!login || !senha){
+    alert("Preencha todos os campos!");
+    return;
+  }
+
+  // login fixo
+  if(loginType==='usuario' && login.toLowerCase()==='gustavo' && senha==='123'){
+    const usuarioFake={id:1,nome:'Gustavo',login:'gustavo',role:'Colaborador'};
+    localStorage.setItem("usuario",JSON.stringify(usuarioFake));
+    window.location.href="home.html";
+    return;
+  }
+
+  try{
+    const body = loginType==='cpf'
+      ? { cpf: login, senha: senha }
+      : { login: login, senha: senha };
+
+    const response = await fetch("http://localhost:5127/api/usuario/login", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(body)
+    });
+
+    if(response.ok){
+      const data = await response.json();
+      localStorage.setItem("usuario",JSON.stringify(data));
+      window.location.href="home.html";
+    }
+    else if(response.status===401){
+      alert("Credenciais inválidas. Verifique CPF/Usuário e senha.");
+    }
+    else{
+      alert("Erro no servidor. Tente novamente.");
+    }
+  }catch(err){
+    alert("Falha de conexão com o servidor: "+err.message);
+  }
+});
+</script>
+</body>
+</html>

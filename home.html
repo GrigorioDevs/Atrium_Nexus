@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<title>RCR Engenharia — RH (Ponto, Documentos & Assinaturas)</title>
+
+<!-- Ícones -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<!-- Leaflet (mapa) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- jsPDF (PDF) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- Signature Pad -->
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+
+<style>
+:root{
+  --nav-width: 240px;
+  --c1: #00E0FF;
+  --c2: #FF2FB9;
+  --pink: #F774D1;
+  --pink-2:#ECB8DD;
+  --bg:#0B1622;
+  --panel:#0F1E2C;
+  --white:#fff;
+  --text:#E7EEF6;
+  --muted:#9fb1c3;
+  --ok:#10b981;
+  --warn:#f59e0b;
+  --err:#ef4444;
+  --ui:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--ui)}
+a{color:inherit;text-decoration:none}
+.container{display:flex;min-height:100vh}
+
+/* Sidebar */
+aside{
+  position:fixed;top:0;left:0;height:100%;width:var(--nav-width);
+  background: linear-gradient(160deg, rgba(0,224,255,.14), rgba(255,47,185,.12)), #0A111A;
+  border-right: 1px solid rgba(255,255,255,.06);
+  color:#fff;z-index:1000;padding:18px 14px 18px;
+  display:flex;flex-direction:column;gap:14px;transition:left .25s ease;
+}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.brand-logo{
+  width:38px;height:38px;border-radius:9px;object-fit:cover;flex:0 0 auto;
+  background: radial-gradient(80% 80% at 20% 20%, var(--c1), transparent),
+              radial-gradient(80% 80% at 80% 80%, var(--c2), transparent);
+  border:1px solid rgba(255,255,255,.18);
+}
+.brand strong{font-weight:800;letter-spacing:.4px}
+.user-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px}
+.user-card .name{font-weight:700}
+.user-card .role{font-size:12px;opacity:.85}
+.menu{list-style:none}
+.menu li{
+  display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:10px;cursor:pointer;
+  font-weight:600;color:#e8f0f7;transition: background .15s ease, transform .12s ease;
+}
+.menu li:hover{background:rgba(255,255,255,.08)}
+.menu li.active{background:linear-gradient(90deg, rgba(0,224,255,.25), rgba(255,47,185,.25));color:#fff}
+.menu li i{width:20px;text-align:center}
+
+/* Rodapé da sidebar (mobile) */
+.sidebar-mobile-footer{display:none}
+@media (max-width:960px){
+  .sidebar-mobile-footer{
+    margin-top:auto;
+    position:sticky;bottom:0;left:0;right:0;
+    background:linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.25)) , rgba(255,255,255,.04);
+    border-top:1px solid rgba(255,255,255,.08);
+    padding:12px 6px 6px;
+    display:block;
+  }
+  .sidebar-mobile-footer .btn{width:100%}
+}
+
+/* Hamburguer */
+.menu-toggle{
+  display:none;position:fixed;top:12px;left:12px;
+  background:linear-gradient(135deg, var(--c1), var(--c2));
+  color:#00121E;padding:8px 10px;border-radius:10px;z-index:1100;cursor:pointer;
+  box-shadow:0 10px 26px rgba(0,0,0,.24);
+  border:1px solid rgba(255,255,255,.25);
+  font-weight:800; transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+.menu-toggle:active{transform:scale(.98)}
+.menu-toggle:hover{box-shadow:0 8px 22px rgba(0,0,0,.26)}
+@media (max-width:960px){ .sidebar-open .menu-toggle{display:none} }
+
+/* Main */
+main{flex:1;margin-left:var(--nav-width);padding:18px 18px 30px;transition:margin-left .25s ease}
+
+/* Topbar */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.hello{font-weight:800;letter-spacing:.2px}
+.right{display:flex;align-items:center;gap:10px}
+.badge{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:6px 10px;font-size:13px}
+
+/* Tabs & Cards */
+.tab{display:none}
+.tab.active{display:block}
+.card{background:var(--panel);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.08)}
+.card-header{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-weight:800}
+.card-body{padding:14px 16px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.col{flex:1;min-width:280px}
+
+/* Form */
+label{font-weight:700;font-size:13px;margin:6px 0 6px;display:block}
+input[type="text"],input[type="date"],input[type="time"],input[type="number"],select,textarea{
+  width:100%;padding:10px 12px;border:1px solid rgba(0,224,255,.20);
+  border-radius:10px;background:#0a1520;color:var(--text);font-size:14px
+}
+textarea{min-height:110px;resize:vertical}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 14px;border:none;border-radius:10px;cursor:pointer;font-weight:800;
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:linear-gradient(135deg, var(--c1), var(--c2)); color:#00121E;border:1px solid rgba(255,255,255,.25)}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-light{background:#0a1520;color:#d6e6f3;border:1px solid rgba(255,255,255,.18)}
+.btn-ok{background:#0bbf7a;color:#00121E}
+.btn-warn{background:#f59e0b;color:#1a0b00}
+.btn-ghost{background:transparent;border:1px dashed rgba(255,255,255,.35);color:#cfe0ef}
+
+/* === Inputs de arquivo (estilizados) === */
+#docUpload, #fotoUpload, #cadDocumento, #sigImport, #tplImport, #cadFoto{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid rgba(0,224,255,.20);
+  border-radius:10px;
+  background:#0a1520;
+  color:var(--text);
+  font-size:14px;
+  outline:none;
+  transition:0.3s;
+}
+#docUpload:focus, #fotoUpload:focus, #cadDocumento:focus, #sigImport:focus, #tplImport:focus, #cadFoto:focus{ border-color: rgba(0,224,255,.45); }
+#docUpload::file-selector-button, #fotoUpload::file-selector-button, #cadDocumento::file-selector-button, #sigImport::file-selector-button, #tplImport::file-selector-button, #cadFoto::file-selector-button{
+  margin-right:10px; padding:8px 12px; border:1px solid rgba(255,255,255,.25);
+  border-radius:8px; background:linear-gradient(135deg, var(--c1), var(--c2));
+  color:#00121E; font-weight:800; cursor:pointer; transition:filter .15s ease, transform .15s ease;
+}
+#docUpload::file-selector-button:hover, #fotoUpload::file-selector-button:hover, #cadDocumento::file-selector-button:hover, #sigImport::file-selector-button:hover, #tplImport::file-selector-button:hover, #cadFoto::file-selector-button:hover{ filter:brightness(1.08); }
+/* Safari/WebKit legacy */
+#docUpload::-webkit-file-upload-button, #fotoUpload::-webkit-file-upload-button, #cadDocumento::-webkit-file-upload-button, #sigImport::-webkit-file-upload-button, #tplImport::-webkit-file-upload-button, #cadFoto::-webkit-file-upload-button{
+  margin-right:10px; padding:8px 12px; border:1px solid rgba(255,255,255,.25);
+  border-radius:8px; background:linear-gradient(135deg, var(--c1), var(--c2));
+  color:#00121E; font-weight:800; cursor:pointer; transition:filter .15s ease, transform .15s ease;
+}
+#docUpload::-webkit-file-upload-button:hover, #fotoUpload::-webkit-file-upload-button:hover, #cadDocumento::-webkit-file-upload-button:hover, #sigImport::-webkit-file-upload-button:hover, #tplImport::-webkit-file-upload-button:hover, #cadFoto::-webkit-file-upload-button:hover{ filter:brightness(1.08); }
+
+/* Tabela */
+.table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
+.table th,.table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);text-align:center}
+.table th{background:linear-gradient(90deg, rgba(0,224,255,.22), rgba(255,47,185,.22));color:#eaf6ff}
+
+/* Filtros & KPIs */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.filters .chip{padding:8px 12px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:#0a1520;font-weight:700}
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.kpi{flex:1;min-width:160px;background:#0a1520;border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:14px}
+.kpi .title{font-size:12px;color:var(--muted)}
+.kpi .value{font-size:20px;font-weight:800}
+
+/* Status */
+.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.ok{background:var(--ok)} .warn{background:var(--warn)} .err{background:var(--err)}
+
+/* Modal */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);align-items:center;justify-content:center;z-index:1200;padding:12px}
+.modal .modal-content{background:var(--panel);border-radius:14px;border:1px solid rgba(255,255,255,.08);box-shadow:0 12px 40px rgba(0,0,0,.5);width:95%;max-width:860px;overflow:hidden}
+.modal .modal-header{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06);font-weight:800}
+.modal .modal-body{padding:14px 16px}
+.modal .modal-footer{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px;justify-content:flex-end}
+
+/* Modal Ponto */
+.bat-dia-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.bat-dia-picker input[type="date"]{padding:8px 10px;border:1px solid rgba(0,224,255,.25);border-radius:10px;background:#0a1520;color:#eaf6ff}
+
+/* Assinatura */
+.sig-wrap{border:1px dashed rgba(255,255,255,.22);border-radius:12px;overflow:hidden;background:#0a1520}
+.sig-toolbar{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+
+/* Mapa */
+#map{width:100%;height:380px;border-radius:12px;border:1px solid rgba(255,255,255,.12);position:relative}
+.map-skeleton{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-weight:800; color:#eaf6ff;
+  background: linear-gradient(135deg,#0E1B2A,#091521);
+  animation: mapPulse 1.1s ease-in-out infinite alternate; z-index:1;
+}
+@keyframes mapPulse{from{opacity:.85} to{opacity:.55}}
+.leaflet-control-container{z-index:900}
+@media (max-width:960px){
+  .leaflet-top.leaflet-left{left:auto; right:8px; top:70px}
+}
+
+/* Funcionários */
+.emp-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.emp-tools input{max-width:360px}
+.emp-grid{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:12px}
+@media (max-width:1100px){ .emp-grid{grid-template-columns:repeat(2,minmax(220px,1fr))} }
+@media (max-width:640px){ .emp-grid{grid-template-columns:1fr} }
+.emp-card{
+  position:relative; /* necessário p/ botão X */
+  background:#0a1520;border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;display:flex;gap:12px;padding:12px;align-items:center;cursor:pointer
+}
+.emp-card:hover{outline:1px dashed rgba(255,255,255,.18)}
+.emp-card.inactive{
+  opacity:.55; filter:grayscale(.8);
+}
+.emp-avatar{
+  width:64px;height:64px;border-radius:14px;object-fit:cover;
+  background:radial-gradient(80% 80% at 20% 20%, var(--c1), transparent),
+             radial-gradient(80% 80% at 80% 80%, var(--c2), transparent);
+  border:1px solid rgba(255,255,255,.2)
+}
+.emp-name{font-weight:800}
+.emp-role{color:var(--muted);font-size:13px}
+
+/* === NOVO: botão X e selo INATIVO nos cards === */
+.emp-delete{
+  position:absolute; top:6px; right:6px; width:28px; height:28px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:50%; border:1px solid rgba(255,255,255,.25);
+  background:linear-gradient(135deg, var(--c2), var(--c1));
+  color:#00121E; font-weight:900; cursor:pointer;
+  box-shadow:0 6px 16px rgba(0,0,0,.35); transition:transform .12s ease, filter .12s ease;
+}
+.emp-delete:hover{ transform:scale(1.05); filter:brightness(1.05) }
+.emp-badge-off{
+  position:absolute; top:8px; left:8px;
+  background:linear-gradient(135deg, rgba(239,68,68,.18), transparent);
+  border:1px solid rgba(239,68,68,.5);
+  color:#fee2e2; font-weight:800; padding:4px 8px; border-radius:8px; font-size:11px;
+}
+
+/* Modal Funcionário (reaproveita .modal) */
+.emp-modal-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.emp-tabs{display:flex;gap:8px;margin:8px 0 14px}
+.emp-pane{display:none}
+.emp-pane.active{display:block}
+.docs-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.filehint{font-size:12px;color:var(--muted)}
+
+/* Splash */
+#splash{
+  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+  background:#0B1622; z-index:2000; transition:opacity .4s ease;
+}
+#splash.hide{opacity:0; pointer-events:none}
+.splash-card{display:flex;flex-direction:column;align-items:center;gap:10px}
+.splash-logo{
+  width:120px;height:120px;border-radius:24px;object-fit:cover;
+  border:1px solid rgba(255,255,255,.25);
+  background: radial-gradient(80% 80% at 20% 20%, var(--c1), transparent),
+              radial-gradient(80% 80% at 80% 80%, var(--c2), transparent);
+}
+.splash-title{font-weight:900;letter-spacing:.4px;color:#E7EEF6}
+
+/* Responsivo */
+@media (max-width:960px){
+  .menu-toggle{display:block}
+  aside{left:calc(-1 * var(--nav-width))}
+  aside.active{left:0}
+  main{margin-left:0;padding-top:56px}
+}
+
+/* Subopções em Funcionários */
+#tabFuncionarios .subtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+#cadastroPane{display:none}
+#tabFuncionarios.mode-cadastro #cadastroPane{display:block}
+#tabFuncionarios.mode-cadastro .emp-tools,
+#tabFuncionarios.mode-cadastro #empGrid{display:none}
+
+/* ======= TOAST/ALERT PERSONALIZADO ======= */
+.toast-container{
+  position:fixed; right:14px; bottom:14px; display:flex; flex-direction:column; gap:8px; z-index:3000;
+}
+.toast{
+  min-width:240px; max-width:380px; padding:12px 14px; border-radius:12px;
+  background:var(--panel); border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 10px 30px rgba(0,0,0,.4); display:flex; align-items:center; gap:10px;
+  opacity:0; transform:translateY(10px); transition:.2s ease;
+}
+.toast.show{opacity:1; transform:translateY(0)}
+.toast .msg{line-height:1.35}
+.toast .close{margin-left:auto; cursor:pointer; opacity:.7}
+.toast.success{ border-color: rgba(16,185,129,.5); background:linear-gradient(135deg, rgba(16,185,129,.18), transparent), var(--panel) }
+.toast.error{   border-color: rgba(239,68,68,.5);  background:linear-gradient(135deg, rgba(239,68,68,.18),  transparent), var(--panel) }
+.toast.warn{    border-color: rgba(245,158,11,.5); background:linear-gradient(135deg, rgba(245,158,11,.18), transparent), var(--panel) }
+.toast.info{    border-color: rgba(0,224,255,.5); background:linear-gradient(135deg, rgba(0,224,255,.18), transparent), var(--panel) }
+</style>
+</head>
+<body>
+
+<!-- Splash -->
+<div id="splash">
+  <div class="splash-card">
+    <img class="splash-logo" src="Assets/img/logo_new.png" alt="RCR" onerror="this.style.display='none'">
+    <div class="splash-title">RCR Engenharia</div>
+  </div>
+</div>
+
+<!-- Container de toasts (alerts personalizados) -->
+<div class="toast-container" id="toastContainer"></div>
+
+<button class="menu-toggle" id="btnHamb"><i class="fa fa-bars"></i></button>
+
+<div class="container">
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="brand">
+      <img class="brand-logo" src="Assets/img/logo_new.png" alt="RCR" onerror="this.remove()">
+      <strong>RCR Engenharia</strong>
+    </div>
+
+    <div class="user-card">
+      <div class="name" id="uNome">Colaborador(a)</div>
+      <div class="role" id="uFuncao">Função</div>
+    </div>
+
+    <ul class="menu" id="menu">
+      <li data-tab="tabPonto" class="active"><i class="fa-regular fa-calendar-days"></i> Cartão de Ponto</li>
+      <li data-tab="tabIncluir"><i class="fa-solid fa-location-dot"></i> Incluir Ponto</li>
+      <li data-tab="tabDocs"><i class="fa-regular fa-file-lines"></i> Documentos & Assinaturas</li>
+      <li data-tab="tabFuncionarios"><i class="fa-solid fa-users"></i> Funcionários</li>
+      <li data-tab="tabConfig"><i class="fa-solid fa-gear"></i> Configurações</li>
+    </ul>
+
+    <!-- Botão Voltar (mobile) -->
+    <div class="sidebar-mobile-footer">
+      <button class="btn btn-light" id="btnCloseSidebar"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main>
+    <div class="topbar">
+      <div class="hello">Olá, <span id="helloNome">Colaborador(a)</span></div>
+      <div class="right">
+        <span class="badge"><i class="fa-regular fa-clock"></i> <span id="nowClock">--:--:--</span></span>
+      </div>
+    </div>
+
+    <!-- Cartão de Ponto -->
+    <section id="tabPonto" class="tab active">
+      <div class="card">
+        <div class="card-header">Filtrar</div>
+        <div class="card-body">
+          <div class="filters">
+            <div class="chip"><label>Início</label><input type="date" id="pInicio"/></div>
+            <div class="chip"><label>Fim</label><input type="date" id="pFim"/></div>
+            <div class="chip"><label style="visibility:hidden">.</label><button class="btn btn-primary" id="btnAplicarFiltro"><i class="fa fa-filter"></i> Aplicar</button></div>
+            <div class="chip"><label style="visibility:hidden">.</label><button class="btn btn-light" id="btnPeriodoAtual"><i class="fa-regular fa-calendar"></i> 15 dias</button></div>
+            <div class="chip"><label style="visibility:hidden">.</label><button class="btn btn-primary" id="btnExportPonto"><i class="fa-regular fa-file-pdf"></i> Exportar PDF</button></div>
+          </div>
+
+          <div class="kpis">
+            <div class="kpi"><div class="title">Horas no período</div><div class="value" id="kHoras">00:00</div></div>
+            <div class="kpi"><div class="title">Saldo</div><div class="value" id="kSaldo">00:00</div></div>
+            <div class="kpi"><div class="title">Dias com pendência</div><div class="value" id="kPend">0</div></div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table" id="tPonto">
+              <thead>
+                <tr>
+                  <th>Status</th><th>Data</th>
+                  <th>Entrada 1</th><th>Saída 1</th>
+                  <th>Entrada 2</th><th>Saída 2</th>
+                  <th>Entrada 3</th><th>Saída 3</th>
+                  <th>Saldo</th>
+                </tr>
+              </thead>
+              <tbody><!-- via JS --></tbody>
+            </table>
+            <div style="font-size:12px;color:var(--muted);margin-top:6px">Dica: clique em uma linha para ver <b>todos</b> os batimentos daquele dia.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Incluir Ponto -->
+    <section id="tabIncluir" class="tab">
+      <div class="card">
+        <div class="card-header">Incluir Ponto (geolocalização)</div>
+        <div class="card-body">
+          <div id="map"><div class="map-skeleton">Carregando mapa…</div></div>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px">
+            <div class="chip"><label>Data/Hora atual</label><div id="lblAgora" style="font-weight:800">--/--/---- --:--:--</div></div>
+            <div class="chip"><label>Coordenadas</label><div id="lblCoord" style="font-weight:800">--</div></div>
+            <div class="chip"><label style="visibility:hidden">.</label><button class="btn btn-ok" id="btnBaterPonto"><i class="fa-regular fa-circle-dot"></i> Incluir Ponto</button></div>
+          </div>
+          <div style="margin-top:10px;font-size:13px;color:var(--muted)">*</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Documentos & Assinaturas -->
+    <section id="tabDocs" class="tab">
+      <div class="card">
+        <div class="card-header">Gerar & Assinar Documentos</div>
+        <div class="card-body">
+
+          <!-- Ações (IMPORTAR à esquerda, sem legenda extra) -->
+          <div class="row" style="align-items:flex-end">
+            <div class="col" style="max-width:320px">
+              <label>Importar documento/modelo</label>
+              <input type="file" id="tplImport" accept=".json,.txt,.md" multiple>
+            </div>
+
+            <div class="col">
+              <label>Tipo de documento</label>
+              <select id="docTipo">
+                <option value="interesse">Declaração de Interesse</option>
+                <option value="anuencia">Carta de Anuência</option>
+                <option value="dividas">Declaração de Ausência de Dívidas</option>
+                <optgroup id="docCustomGroup" label="— Personalizados —"></optgroup>
+              </select>
+            </div>
+
+            <div class="col" style="max-width:240px">
+              <label style="visibility:hidden">.</label>
+              <button class="btn btn-light" id="btnCriarTipoDoc">
+                <i class="fa-solid fa-plus"></i> Criar tipo de documento
+              </button>
+            </div>
+          </div>
+
+          <!-- ======== NOVO: Gerenciar / Excluir tipos personalizados ======== -->
+          <div class="row" id="tplManageRow">
+            <div class="col" style="max-width:520px">
+              <label>Excluir tipo de documento (personalizado)</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+                <select id="tplManageSelect" style="min-width:280px">
+                  <option value="">— Selecione um tipo personalizado —</option>
+                </select>
+                <button class="btn btn-ghost" id="btnExcluirTipoDoc">
+                  <i class="fa-solid fa-trash"></i> Excluir tipo
+                </button>
+              </div>
+              <div class="filehint">Apenas tipos criados/importados podem ser excluídos.</div>
+            </div>
+          </div>
+          <!-- ==================== FIM DO BLOCO NOVO ======================== -->
+
+          <div class="row">
+            <div class="col">
+              <label>Nome do colaborador</label>
+              <input type="text" id="docNome" placeholder="Nome completo">
+            </div>
+            <div class="col">
+              <label>Documento (CPF/RG)</label>
+              <input type="text" id="docDoc" placeholder="000.000.000-00">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label>Conteúdo (pode editar antes de assinar)</label>
+              <textarea id="docTexto" spellcheck="false"></textarea>
+            </div>
+            <div class="col">
+              <label>Assinatura do colaborador</label>
+
+              <input type="file" id="sigImport" accept="image/*" />
+              <div class="filehint">Importe uma imagem da assinatura (.png/.jpg). Ela será colocada no quadro abaixo.</div>
+
+              <div class="sig-toolbar" style="margin-top:8px">
+                <button class="btn btn-light" id="btnLimparAss">Limpar</button>
+                <button class="btn btn-primary" id="btnGerarPDF"><i class="fa-regular fa-file-pdf"></i> Gerar PDF assinado</button>
+              </div>
+              <div class="sig-wrap"><canvas id="sigPad" style="width:100%;height:240px"></canvas></div>
+              <div style="margin-top:8px;font-size:12px;color:var(--muted)">Assine usando o mouse (desktop) ou o dedo/caneta (mobile) — ou importe uma imagem.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Funcionários -->
+    <section id="tabFuncionarios" class="tab">
+      <div class="card">
+        <div class="card-header">Funcionários</div>
+        <div class="card-body">
+
+          <!-- Subopções -->
+          <div class="subtabs">
+            <button class="btn btn-primary" id="btnFuncConsulta">
+              <i class="fa-solid fa-magnifying-glass"></i> Consulta de Funcionários
+            </button>
+            <button class="btn btn-light" id="btnFuncCadastro">
+              <i class="fa-solid fa-user-plus"></i> Cadastro de Funcionários
+            </button>
+          </div>
+
+          <!-- Cadastro -->
+          <div id="cadastroPane">
+            <!-- FOTO DO FUNCIONÁRIO -->
+            <div class="row">
+              <div class="col" style="max-width:320px">
+                <label>Foto do funcionário</label>
+                <input type="file" id="cadFoto" accept="image/*">
+              </div>
+              <div class="col" style="display:flex;align-items:flex-end;gap:12px">
+                <div>
+                  <label style="visibility:hidden">.</label>
+                  <img id="cadFotoPreview" class="emp-avatar" src="" alt="" style="width:90px;height:90px;border-radius:16px">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <label>Nome</label>
+                <input type="text" id="cadNome" placeholder="Nome completo">
+              </div>
+              <div class="col">
+                <label>Função</label>
+                <input type="text" id="cadFuncao" placeholder="Cargo/Função">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <label>RG</label>
+                <input type="text" id="cadRG" placeholder="00.000.000-0">
+              </div>
+              <div class="col">
+                <label>CPF</label>
+                <input type="text" id="cadCPF" placeholder="000.000.000-00">
+              </div>
+              <div class="col">
+                <label>Idade</label>
+                <input type="number" id="cadIdade" min="0" placeholder="0">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <label>Documento (arquivo)</label>
+                <input type="file" id="cadDocumento">
+              </div>
+              <div class="col">
+                <label style="visibility:hidden">.</label>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <button class="btn btn-primary" id="btnSalvarCadastro">
+                    <i class="fa-regular fa-floppy-disk"></i> Salvar cadastro
+                  </button>
+                  <button class="btn btn-light" id="btnLimparCadastro">
+                    <i class="fa-solid fa-eraser"></i> Limpar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Consulta -->
+          <div class="emp-tools">
+            <input type="text" id="funcSearch" placeholder="Pesquisar funcionário… (digite para filtrar)">
+            <button class="btn btn-light" id="funcClear"><i class="fa-solid fa-xmark"></i> Limpar</button>
+          </div>
+          <div class="emp-grid" id="empGrid"><!-- via JS --></div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Configurações (vazia) -->
+    <section id="tabConfig" class="tab">
+      <div class="card">
+        <div class="card-header">Configurações</div>
+        <div class="card-body">
+          <div style="color:var(--muted);font-size:13px">
+            Nenhuma opção disponível no momento.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Modal: Batimentos do Dia -->
+<div class="modal" id="modalBatimentosDia">
+  <div class="modal-content">
+    <div class="modal-header"><span id="batimentosDiaTitulo">Batimentos do dia</span></div>
+    <div class="modal-body">
+      <div class="bat-dia-nav">
+        <button class="btn btn-light" id="btnPrevDia">◀ Dia anterior</button>
+        <div class="bat-dia-picker"><input type="date" id="batimentosDatePicker"></div>
+        <button class="btn btn-light" id="btnNextDia">Próximo dia ▶</button>
+      </div>
+      <table class="table">
+        <thead><tr><th>#</th><th>Tipo</th><th>Horário</th><th>Origem</th><th>Observação</th></tr></thead>
+        <tbody id="batimentosDiaBody"><tr><td colspan="5">-</td></tr></tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-light" id="fecharBatimentosDia">Fechar</button>
+      <button class="btn btn-ghost" id="justificarAusenciaDia">Justificar Ausência</button>
+      <button class="btn btn-primary" id="incluirPontoDia">Incluir Ponto</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Funcionário -->
+<div class="modal" id="modalFuncionario">
+  <div class="modal-content">
+    <div class="modal-header"><span id="funcModalTitle">Funcionário</span></div>
+    <div class="modal-body">
+      <div class="emp-modal-header">
+        <img id="funcModalAvatar" class="emp-avatar" src="" alt="">
+        <div>
+          <div class="emp-name" id="funcModalNome">—</div>
+          <div class="emp-role" id="funcModalFuncao">—</div>
+        </div>
+      </div>
+
+      <div class="emp-tabs">
+        <button class="btn btn-primary" id="btnTabDocs"><i class="fa-regular fa-folder-open"></i> Documentos</button>
+        <button class="btn btn-light" id="btnTabFoto"><i class="fa-regular fa-image"></i> Alterar foto</button>
+      </div>
+
+      <!-- Pane Documentos -->
+      <div class="emp-pane active" id="paneDocs">
+        <div class="docs-actions">
+          <input type="file" id="docUpload" multiple>
+        </div>
+        <div class="filehint">Arquivos ficam salvos no navegador (localStorage). Para limpar, use o botão de excluir.</div>
+        <table class="table" style="margin-top:8px">
+          <thead><tr><th>Nome</th><th>Tamanho</th><th>Enviado em</th><th>Ações</th></tr></thead>
+          <tbody id="docsTable"><tr><td colspan="4">—</td></tr></tbody>
+        </table>
+      </div>
+
+      <!-- Pane Alterar Foto -->
+      <div class="emp-pane" id="paneFoto">
+        <div class="row">
+          <div class="col">
+            <label>Nova foto</label>
+            <input type="file" id="fotoUpload" accept="image/*">
+            <div style="margin-top:10px">
+              <img id="fotoPreview" class="emp-avatar" src="" alt="" style="width:120px;height:120px;border-radius:16px">
+            </div>
+          </div>
+          <div class="col">
+            <label style="visibility:hidden">.</label>
+            <button class="btn btn-primary" id="btnSalvarFoto"><i class="fa-regular fa-floppy-disk"></i> Salvar foto</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-light" id="fecharFuncionario">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Criar Tipo de Documento -->
+<div class="modal" id="modalNovoDoc">
+  <div class="modal-content">
+    <div class="modal-header">Criar tipo de documento</div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col">
+          <label>Nome do tipo</label>
+          <input type="text" id="tplNome" placeholder="Ex.: Atestado, Termo de Responsabilidade">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label>Conteúdo do modelo</label>
+          <textarea id="tplTexto" spellcheck="false" placeholder="Digite o conteúdo do documento. Você pode usar {{nome}}, {{documento}} e {{data}} para preencher automaticamente."></textarea>
+        </div>
+      </div>
+      <div class="filehint">Dica: use <b>{{nome}}</b>, <b>{{documento}}</b> e <b>{{data}}</b> como variáveis que serão preenchidas.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-light" id="btnCancelarNovoDoc">Cancelar</button>
+      <button class="btn btn-primary" id="btnSalvarNovoDoc"><i class="fa-regular fa-floppy-disk"></i> Salvar tipo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== util ===== */
+function two(n){return String(n).padStart(2,'0')}
+function toYMD(d){return d.getFullYear()+'-'+two(d.getMonth()+1)+'-'+two(d.getDate())}
+function fromYMD(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
+function toBR(d){return d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'})}
+function nowTime(){const n=new Date();return two(n.getHours())+':'+two(n.getMinutes())+':'+two(n.getSeconds())}
+function todayYMD(){return toYMD(new Date())}
+function diffHHMM(mins){const sign=mins<0?'-':'';const a=Math.abs(mins);const h=Math.floor(a/60),m=a%60;return sign+two(h)+':'+two(m)}
+function bytesHuman(b){ if(b<1024) return b+' B'; const kb=b/1024; if(kb<1024) return kb.toFixed(1)+' KB'; const mb=kb/1024; return mb.toFixed(1)+' MB'; }
+function slugify(s){return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40)||'tipo-'+Date.now();}
+
+/* ===== alert personalizado ===== */
+const toastRoot = document.getElementById('toastContainer');
+function escapeHTML(str){return str.replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]))}
+function notify(message, type='info', {duration=3400}={}){
+  const el = document.createElement('div');
+  el.className = 'toast '+type;
+  const msg = document.createElement('div'); msg.className='msg'; msg.innerHTML = escapeHTML(String(message));
+  const close = document.createElement('span'); close.className='close'; close.innerHTML='&times;';
+  el.appendChild(msg); el.appendChild(close);
+  toastRoot.appendChild(el);
+  setTimeout(()=> el.classList.add('show'), 10);
+  const t = setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=> el.remove(), 200); }, duration);
+  close.onclick = ()=>{ clearTimeout(t); el.classList.remove('show'); setTimeout(()=> el.remove(), 200); };
+}
+// sobrescreve window.alert para usar os toasts
+window.alert = (msg)=> notify(msg, 'info');
+
+/* ===== storage ===== */
+const LS_KEYS = { ME:'rh_me', PUNCHES:'batimentos', FUNCS:'rh_funcionarios', DOCS:'rh_docs' };
+const KEY_DOC_TEMPLATES = 'rh_doc_templates';
+function getMe(){ return JSON.parse(localStorage.getItem(LS_KEYS.ME) || '{"nome":"Gustavo (exemplo)","funcao":"Colaborador"}'); }
+function setMe(obj){ localStorage.setItem(LS_KEYS.ME, JSON.stringify(obj || {})); }
+function getAllPunches(){ return JSON.parse(localStorage.getItem(LS_KEYS.PUNCHES) || '[]'); }
+function setAllPunches(arr){ localStorage.setItem(LS_KEYS.PUNCHES, JSON.stringify(arr||[])); }
+function getDocsMap(){ return JSON.parse(localStorage.getItem(LS_KEYS.DOCS) || '{}'); }
+function setDocsMap(obj){ localStorage.setItem(LS_KEYS.DOCS, JSON.stringify(obj || {})); }
+function getTemplates(){ return JSON.parse(localStorage.getItem(KEY_DOC_TEMPLATES) || '[]'); }
+function setTemplates(arr){ localStorage.setItem(KEY_DOC_TEMPLATES, JSON.stringify(arr||[])); }
+
+/* ===== menu/tabs ===== */
+const sidebar = document.getElementById('sidebar');
+document.getElementById('btnHamb').addEventListener('click', ()=>{
+  sidebar.classList.toggle('active');
+  document.body.classList.toggle('sidebar-open');
+});
+document.getElementById('menu').addEventListener('click', (e)=>{
+  const li = e.target.closest('li[data-tab]'); if(!li) return;
+  document.querySelectorAll('.menu li').forEach(x=>x.classList.remove('active')); li.classList.add('active');
+  const tab = li.getAttribute('data-tab');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.getElementById(tab).classList.add('active');
+  if(window.innerWidth<=960){ sidebar.classList.remove('active'); document.body.classList.remove('sidebar-open'); }
+  if(tab === 'tabIncluir' && !mapInited){ initMap(); }
+  if(tab === 'tabDocs'){ setTimeout(resizeSigCanvas, 50); }
+});
+document.getElementById('btnCloseSidebar').addEventListener('click', ()=>{
+  sidebar.classList.remove('active');
+  document.body.classList.remove('sidebar-open');
+});
+
+/* ===== relógio topo ===== */
+function tick(){
+  document.getElementById('nowClock').textContent = nowTime();
+  document.getElementById('lblAgora') && (document.getElementById('lblAgora').textContent = new Date().toLocaleString('pt-BR'));
+}
+setInterval(tick,1000); tick();
+
+/* ===== perfil (exibição) ===== */
+(function initMe(){
+  const me = getMe();
+  uNome.textContent = me.nome || 'Colaborador(a)';
+  uFuncao.textContent = me.funcao || 'Função';
+  helloNome.textContent = me.nome || 'Colaborador(a)';
+})();
+
+/* ===== dados exemplo ===== */
+if(getAllPunches().length===0){
+  const seed=[]; const base=new Date(); base.setDate(base.getDate()-7);
+  for(let i=0;i<10;i++){ const d=new Date(base); d.setDate(base.getDate()+i); const ymd=toYMD(d);
+    if(d.getDay()!==0){ seed.push({date: ymd, time:'09:00', type:'Entrada', origin:'Web', note:''});
+      seed.push({date: ymd, time:'12:00', type:'Saída', origin:'Web', note:'Almoço'});
+      seed.push({date: ymd, time:'13:00', type:'Entrada', origin:'Web', note:''});
+      seed.push({date: ymd, time:'18:00', type:'Saída', origin:'Web', note:''}); } }
+  setAllPunches(seed);
+}
+
+/* ===== cartão de ponto ===== */
+const tPonto = document.querySelector('#tPonto tbody');
+function setDefaultPeriod(){ const end=new Date(); const start=new Date(); start.setDate(end.getDate()-14); pInicio.value=toYMD(start); pFim.value=toYMD(end); }
+setDefaultPeriod();
+btnPeriodoAtual.addEventListener('click', ()=>{ setDefaultPeriod(); renderPonto(); });
+btnAplicarFiltro.addEventListener('click', renderPonto);
+
+function punchesByDate(ymd){ return getAllPunches().filter(b=>b.date===ymd).sort((a,b)=>a.time.localeCompare(b.time)); }
+function calcSaldoMinsForDay(list){ let mins=0,lastIn=null; for(const b of list){ if(b.type==='Entrada'){lastIn=b.time}
+ else if(b.type==='Saída' && lastIn){ const [h1,m1]=lastIn.split(':').map(Number); const [h2,m2]=b.time.split(':').map(Number); mins+=(h2*60+m2)-(h1*60+m1); lastIn=null; } } return mins; }
+function statusForDay(list){ if(list.length===0) return {cls:'warn', tip:'Sem marcações'}; const first=list[0].type,last=list[list.length-1].type; if(first==='Saída' || last==='Entrada') return {cls:'err', tip:'Pendências'}; return {cls:'ok', tip:'OK'}; }
+
+function dayRow(list, ymd){
+  const entries = list.filter(b=>b.type==='Entrada').map(b=>b.time);
+  const exits   = list.filter(b=>b.type==='Saída').map(b=>b.time);
+  const saldo=diffHHMM(calcSaldoMinsForDay(list)); const stat=statusForDay(list);
+  const d=fromYMD(ymd); const br=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'});
+  return `<tr class="row-dia" data-date="${ymd}" title="Clique para detalhar">
+    <td><span class="status-dot ${stat.cls}" title="${stat.tip}"></span></td>
+    <td>${br}</td>
+    <td>${entries[0]||''}</td><td>${exits[0]||''}</td>
+    <td>${entries[1]||''}</td><td>${exits[1]||''}</td>
+    <td>${entries[2]||''}</td><td>${exits[2]||''}</td>
+    <td>${saldo}</td>
+  </tr>`;
+}
+function renderPonto(){
+  const ini=fromYMD(pInicio.value), fim=fromYMD(pFim.value); if(fim<ini){ notify('Período inválido.', 'warn'); return; }
+  let html='',totalMins=0,pend=0;
+  for(let d=new Date(ini); d<=fim; d.setDate(d.getDate()+1)){
+    const ymd=toYMD(d), list=punchesByDate(ymd);
+    html+=dayRow(list, ymd); const st=statusForDay(list); if(st.cls!=='ok') pend++; totalMins+=calcSaldoMinsForDay(list);
+  }
+  tPonto.innerHTML = html || `<tr><td colspan="9" style="color:#9fb1c3">Sem registros no período.</td></tr>`;
+  kHoras.textContent=diffHHMM(totalMins); kSaldo.textContent=diffHHMM(totalMins); kPend.textContent=String(pend);
+}
+renderPonto();
+
+/* ===== modal batimentos ===== */
+document.addEventListener('click', (ev)=>{ const row=ev.target.closest('.row-dia[data-date]'); if(!row) return; openBatimentosDia(row.getAttribute('data-date')); });
+const modalDia=document.getElementById('modalBatimentosDia');
+function getPunchesForDate(ymd){ return punchesByDate(ymd).map((b,i)=>({idx:i+1,...b})); }
+function openBatimentosDia(ymd){
+  const d=fromYMD(ymd); batimentosDiaTitulo.textContent='Batimentos de '+toBR(d); batimentosDatePicker.value=ymd;
+  const rows=getPunchesForDate(ymd);
+  batimentosDiaBody.innerHTML = rows.length ? rows.map(r=>`<tr><td>${r.idx}</td><td>${r.type}</td><td>${r.time}</td><td>${r.origin||'-'}</td><td>${r.note||'-'}</td></tr>`).join('')
+                                             : `<tr><td colspan="5" style="color:#9fb1c3">Nenhum batimento para este dia.</td></tr>`;
+  modalDia.style.display='flex';
+}
+function closeBatimentosDia(){ modalDia.style.display='none'; }
+fecharBatimentosDia.addEventListener('click', closeBatimentosDia);
+btnPrevDia.addEventListener('click', ()=>{ const d=fromYMD(batimentosDatePicker.value||todayYMD()); d.setDate(d.getDate()-1); openBatimentosDia(toYMD(d)); });
+btnNextDia.addEventListener('click', ()=>{ const d=fromYMD(batimentosDatePicker.value||todayYMD()); d.setDate(d.getDate()+1); openBatimentosDia(toYMD(d)); });
+batimentosDatePicker.addEventListener('change', e=> e.target.value && openBatimentosDia(e.target.value));
+incluirPontoDia.addEventListener('click', ()=>{ closeBatimentosDia(); document.querySelector('.menu li[data-tab="tabIncluir"]').click(); });
+justificarAusenciaDia.addEventListener('click', ()=> notify('Abrir fluxo de justificativa (integração futura).','info'));
+
+/* ===== Exportar PDF do cartão ===== */
+async function imgElToDataURL_FIX(src){
+  return new Promise((resolve)=>{
+    const img = new Image();
+    try{
+      const u = new URL(src, location.href);
+      if (u.origin !== location.origin) img.crossOrigin = 'anonymous';
+    }catch(e){}
+    img.onload = ()=>{
+      try{
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth; c.height = img.naturalHeight;
+        c.getContext('2d').drawImage(img,0,0);
+        resolve(c.toDataURL('image/png'));
+      }catch(err){ resolve(null); }
+    };
+    img.onerror = ()=> resolve(null);
+    img.src = src;
+  });
+}
+async function getCompanyLogoDataURL(){
+  const el = document.querySelector('.brand-logo');
+  if (el && el.complete && el.naturalWidth){
+    try{
+      const c = document.createElement('canvas');
+      c.width = el.naturalWidth; c.height = el.naturalHeight;
+      c.getContext('2d').drawImage(el,0,0);
+      return c.toDataURL('image/png');
+    }catch(e){}
+  }
+  if (el && el.src){
+    const d = await imgElToDataURL_FIX(el.src);
+    if (d) return d;
+  }
+  const splash = document.querySelector('.splash-logo');
+  if (splash && splash.src){
+    const d = await imgElToDataURL_FIX(splash.src);
+    if (d) return d;
+  }
+  return await imgElToDataURL_FIX('Assets/img/logo_new.png');
+}
+
+document.getElementById('btnExportPonto').onclick = async function gerarFolhaPontoPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'pt', format:'a4'});
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const mx = 28;
+  let y = 22;
+
+  // Cabeçalho
+  doc.setFillColor(245,246,250);
+  doc.rect(0,0,pageW,70,'F');
+
+  const logo = await getCompanyLogoDataURL();
+  if (logo){
+    const fmtMatch = /^data:image\/(png|jpeg|jpg|webp)/i.exec(logo);
+    const fmt = (fmtMatch ? fmtMatch[1] : 'png').toUpperCase();
+    doc.addImage(logo, fmt, mx, 16, 120, 40);
+  } else {
+    doc.setDrawColor(160); doc.rect(mx, 16, 120, 40);
+  }
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(18);
+  doc.text('CARTÃO PONTO', pageW-mx, 32, {align:'right'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  doc.text(`Período: ${pInicio.value} até ${pFim.value}`, pageW-mx, 50, {align:'right'});
+
+  // Dados
+  const me = getMe();
+  const empresaNome = (document.querySelector('.brand strong')?.textContent?.trim()) || 'RCR ENGENHARIA';
+  const empresaCNPJ = localStorage.getItem('empresa_cnpj') || '00.000.000/0000-00';
+  const empresaInscr = localStorage.getItem('empresa_inscricao') || '—';
+  const funcDepto    = localStorage.getItem('empresa_departamento') || '—';
+  const funcAdmissao = localStorage.getItem('emp_admissao') || '--/--/----';
+  const funcCTPS     = localStorage.getItem('emp_ctps') || '—';
+
+  function kvRow(x, lab, val, x2, lab2, val2){
+    const lh = 14;
+    doc.setFont('helvetica','bold'); doc.text(lab, x, y);
+    doc.setFont('helvetica','normal'); doc.text(val, x+82, y);
+    if(lab2){
+      doc.setFont('helvetica','bold'); doc.text(lab2, x2, y);
+      doc.setFont('helvetica','normal'); doc.text(val2, x2+82, y);
+    }
+    y += lh;
+  }
+
+  y = 88;
+  kvRow(mx, 'EMPRESA:', empresaNome,           mx+300, 'INSCRIÇÃO:', empresaInscr);
+  kvRow(mx, 'CNPJ:',    empresaCNPJ,           mx+300, 'ADMISSÃO:',  funcAdmissao);
+  kvRow(mx, 'NOME:',    me.nome||'Colaborador(a)');
+  kvRow(mx, 'C.T.P.S.:',funcCTPS,              mx+300, 'DEPARTAMENTO:', funcDepto);
+  kvRow(mx, 'FUNÇÃO:',  me.funcao||'—');
+  kvRow(mx, 'OBSERVAÇÃO:', '');
+
+  y += 6;
+
+  // Tabela (ajustada para caber 10 colunas)
+  const tableX = mx;
+  const tableW = pageW - 2*mx;
+  const rowH   = 18;
+
+  const cols = [
+    {k:'data',    w:74,  title:'DATA'},
+    {k:'e1',      w:52,  title:'E1'},
+    {k:'s1',      w:52,  title:'S1'},
+    {k:'e2',      w:52,  title:'E2'},
+    {k:'s2',      w:52,  title:'S2'},
+    {k:'e3',      w:52,  title:'E3'},
+    {k:'s3',      w:52,  title:'S3'},
+    {k:'saldo',   w:51,  title:'SALDO'},
+    {k:'faltas',  w:51,  title:'FALTAS'},
+    {k:'not',     w:51,  title:'NOT.TOT.'},
+  ];
+
+  doc.setFillColor(230,232,236);
+  doc.rect(tableX, y, tableW, rowH, 'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  let cx = tableX + 6;
+  cols.forEach(c=>{ doc.text(c.title, cx, y+12); cx += c.w; });
+  doc.setDrawColor(180); doc.rect(tableX, y, tableW, rowH);
+  y += rowH;
+
+  // Linhas diárias
+  doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  let totalMins = 0;
+
+  const ini = new Date(pInicio.value);
+  const fim = new Date(pFim.value);
+
+  for(let d = new Date(ini); d <= fim; d.setDate(d.getDate()+1)){
+    const ymd = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const list = punchesByDate(ymd);
+
+    const entries = list.filter(b=>b.type==='Entrada').map(b=>b.time);
+    const exits   = list.filter(b=>b.type==='Saída').map(b=>b.time);
+
+    const colsVals = {
+      e1: entries[0]||'', s1: exits[0]||'',
+      e2: entries[1]||'', s2: exits[1]||'',
+      e3: entries[2]||'', s3: exits[2]||'',
+      saldo:'', faltas:'', not:''
+    };
+
+    if(list.length){
+      const mins = calcSaldoMinsForDay(list);
+      totalMins += mins;
+      colsVals.saldo = (mins===0?'00:00':diffHHMM(mins));
+    }else{
+      colsVals.e1 = colsVals.s1 = colsVals.e2 = colsVals.s2 = colsVals.e3 = colsVals.s3 = 'FOLGA';
+      colsVals.saldo = '';
+    }
+
+    const dtLabel = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}) + ' - ' + d.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.','');
+
+    if(y > pageH - 80){
+      doc.addPage();
+      y = 40;
+      doc.setFillColor(230,232,236);
+      doc.rect(tableX, y, tableW, rowH, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(10);
+      let cxh = tableX + 6;
+      cols.forEach(c=>{ doc.text(c.title, cxh, y+12); cxh += c.w; });
+      doc.setDrawColor(180); doc.rect(tableX, y, tableW, rowH);
+      y += rowH;
+      doc.setFont('helvetica','normal'); doc.setFontSize(10);
+    }
+
+    doc.setDrawColor(210);
+    doc.rect(tableX, y, tableW, rowH);
+
+    let tx = tableX + 6;
+    doc.text(dtLabel, tx, y+12);
+    tx += cols[0].w;
+
+    const values = [colsVals.e1, colsVals.s1, colsVals.e2, colsVals.s2, colsVals.e3, colsVals.s3, colsVals.saldo, colsVals.faltas, colsVals.not];
+    for(let i=1;i<cols.length;i++){
+      const w = cols[i].w;
+      doc.text(String(values[i-1]||''), tx + (w/2), y+12, {align:'center'});
+      tx += w;
+    }
+    y += rowH;
+  }
+
+  // Totais
+  if(y > pageH - 70){ doc.addPage(); y = 40; }
+  doc.setDrawColor(0); doc.setLineWidth(0.8);
+  doc.line(tableX, y+6, tableX+tableW, y+6); y += 20;
+  doc.setFont('helvetica','bold'); doc.setFontSize(11);
+  doc.text('TOTAIS', tableX, y);
+  doc.setFont('helvetica','normal'); doc.text(`Horas no período: ${diffHHMM(totalMins)}`, tableX+70, y);
+
+  // Rodapé
+  doc.setFontSize(9);
+  doc.text(me.nome || 'Colaborador(a)', mx, pageH-24);
+  doc.text(empresaNome, pageW-mx, pageH-24, {align:'right'});
+
+  doc.save('folha_de_ponto.pdf');
+};
+
+/* ===== mapa ===== */
+let mapInited=false, map, marker;
+function showMapSkeleton(){ const mapEl=document.getElementById('map'); if(!mapEl) return; if(!mapEl.querySelector('.map-skeleton')){ const s=document.createElement('div'); s.className='map-skeleton'; s.textContent='Carregando mapa…'; mapEl.appendChild(s);} }
+function hideMapSkeleton(){ const s=document.querySelector('#map .map-skeleton'); if(s) s.remove(); }
+function initMap(){
+  if(mapInited) return; mapInited=true; showMapSkeleton();
+  const last=JSON.parse(localStorage.getItem('lastLatLng')||'null');
+  map = L.map('map',{zoomControl:true,preferCanvas:true,zoomAnimation:false,fadeAnimation:false,inertia:true});
+  const tiles=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,detectRetina:false,updateWhenIdle:true,updateWhenZooming:false,keepBuffer:1,crossOrigin:true});
+  tiles.on('load', hideMapSkeleton); tiles.addTo(map);
+  const fallback=last||[-23.5619,-46.6564]; map.setView(fallback, last?16:13); if(last){ marker=L.marker(last).addTo(map); }
+  const GEO_OPTS={enableHighAccuracy:false,maximumAge:180000,timeout:7000};
+  if('geolocation' in navigator){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const latlng=[pos.coords.latitude,pos.coords.longitude];
+      if(!marker){marker=L.marker(latlng).addTo(map);}else{marker.setLatLng(latlng);}
+      map.setView(latlng,17); localStorage.setItem('lastLatLng', JSON.stringify(latlng));
+      lblCoord && (lblCoord.textContent=latlng[0].toFixed(5)+', '+latlng[1].toFixed(5)); hideMapSkeleton();
+    }, _=> hideMapSkeleton(), GEO_OPTS);
+  } else hideMapSkeleton();
+}
+function nextTypeFor(dateYMD){ const list=punchesByDate(dateYMD); if(list.length===0) return 'Entrada'; return list[list.length-1].type==='Entrada' ? 'Saída' : 'Entrada'; }
+btnBaterPonto && btnBaterPonto.addEventListener('click', ()=>{
+  const ymd=todayYMD(); const next=nextTypeFor(ymd);
+  const list=punchesByDate(ymd);
+  const eCount=list.filter(b=>b.type==='Entrada').length;
+  const sCount=list.filter(b=>b.type==='Saída').length;
+  if(next==='Entrada' && eCount>=3){ notify('Limite atingido: já existem 3 entradas neste dia.', 'error'); return; }
+  if(next==='Saída'   && sCount>=3){ notify('Limite atingido: já existem 3 saídas neste dia.', 'error'); return; }
+
+  let lat='--',lon='--'; if(map && map.getCenter()){ const c=map.getCenter(); lat=c.lat.toFixed(5); lon=c.lng.toFixed(5); }
+  const all=getAllPunches(); all.push({date: ymd, time: nowTime().slice(0,5), type: next, origin:'Web', note:`GPS ${lat},${lon}`}); setAllPunches(all);
+  renderPonto(); openBatimentosDia(ymd);
+});
+
+/* ===== documentos & assinatura ===== */
+function modeloTexto(tipo, nome, documento){
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  if(tipo==='interesse') return `DECLARAÇÃO DE INTERESSE
+
+Eu, ${nome} (doc. ${documento}), declaro para os devidos fins que tenho interesse em participar do processo/atividade em referência, estando ciente das condições e responsabilidades envolvidas.
+
+Local e data: ____________________, ${hoje}
+Assinatura: ____________________________`;
+  if(tipo==='anuencia') return `CARTA DE ANUÊNCIA
+
+Eu, ${nome} (doc. ${documento}), declaro que estou ciente e anuente quanto à(s) condições apresentada(s), não havendo qualquer oposição quanto à continuidade dos trâmites.
+
+Local e data: ____________________, ${hoje}
+Assinatura: ____________________________`;
+  if(tipo==='dividas') return `DECLARAÇÃO DE AUSÊNCIA DE DÍVIDAS
+
+Eu, ${nome} (doc. ${documento}), declaro, sob as penas da lei, não possuir quaisquer débitos/dívidas em aberto junto à empresa/entidade, até a presente data.
+
+Local e data: ____________________, ${hoje}
+Assinatura: ____________________________`;
+
+  if(tipo.startsWith('tpl:')){
+    const slug = tipo.slice(4);
+    const tpl = getTemplates().find(t=>t.id===slug);
+    if(tpl){
+      return (tpl.content||'')
+        .replaceAll('{{nome}}', nome)
+        .replaceAll('{{documento}}', documento || '________________')
+        .replaceAll('{{data}}', hoje);
+    }
+  }
+  return '';
+}
+function refreshTexto(){
+  const nome = docNome.value || (getMe().nome||'________________');
+  const documento = docDoc.value || '________________';
+  docTexto.value = modeloTexto(docTipo.value, nome, documento);
+}
+
+/* ========= (AJUSTADA) Popular lista de tipos personalizados + seletor de exclusão ========= */
+function populateCustomDocTypes(){
+  const group = document.getElementById('docCustomGroup');
+  if(!group) return;
+  const list = getTemplates();
+  group.innerHTML = list.map(t=>`<option value="tpl:${t.id}">${t.name}</option>`).join('');
+
+  // Preencher o novo seletor de gerenciamento/exclusão
+  const sel = document.getElementById('tplManageSelect');
+  if(sel){
+    const opts = [`<option value="">— Selecione um tipo personalizado —</option>`]
+      .concat(list.map(t=>`<option value="${t.id}">${t.name}</option>`));
+    sel.innerHTML = opts.join('');
+  }
+}
+/* ======================================================================================== */
+
+docTipo.addEventListener('change', refreshTexto); [docNome, docDoc].forEach(e=>e.addEventListener('input', refreshTexto));
+populateCustomDocTypes(); refreshTexto();
+
+/* ===== Assinatura: init, resize e importar imagem ===== */
+let sigPad;
+function initSig(){
+  const canvas=sigPadEl;
+  function fit(){
+    const ratio=Math.max(window.devicePixelRatio||1,1);
+    canvas.width=canvas.offsetWidth*ratio; canvas.height=canvas.offsetHeight*ratio;
+    const ctx=canvas.getContext('2d'); ctx.scale(ratio,ratio);
+    if(sigPad) sigPad.clear();
+  }
+  window.addEventListener('resize', fit); fit();
+  sigPad = new SignaturePad(canvas,{minWidth:1.2,maxWidth:2.5,penColor:'#eaf6ff',backgroundColor:'rgba(0,0,0,0)'});
+}
+function resizeSigCanvas(){
+  if(!sigPad) return; const canvas=sigPadEl; const ratio=Math.max(window.devicePixelRatio||1,1);
+  canvas.width=canvas.offsetWidth*ratio; canvas.height=canvas.offsetHeight*ratio; canvas.getContext('2d').scale(ratio,ratio); sigPad.clear();
+}
+setTimeout(initSig,300);
+btnLimparAss.addEventListener('click', ()=> sigPad && sigPad.clear());
+
+async function fileToDataURL(file){
+  return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); });
+}
+sigImport.addEventListener('change', async (e)=>{
+  if(!sigPad || !e.target.files || !e.target.files[0]) return;
+  const dataURL = await fileToDataURL(e.target.files[0]);
+  try{
+    sigPad.fromDataURL(dataURL, { ratio: 1, width: sigPadEl.offsetWidth, height: sigPadEl.offsetHeight });
+  }catch(_){}
+});
+
+/* =============================================================================
+   *** MODIFICADO: Exportar PDF (Documentos & Assinaturas) com quebra de página ***
+   ============================================================================= */
+btnGerarPDF.addEventListener('click', async (ev)=>{
+  ev.preventDefault();
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'pt',format:'a4'});
+  const margin = 56;
+  const pageW  = doc.internal.pageSize.getWidth();
+  const pageH  = doc.internal.pageSize.getHeight();
+  const contentW = pageW - margin*2;
+  const lineH = 16;
+  let y = margin;
+
+  const mapTitle = {
+    interesse:'DECLARAÇÃO DE INTERESSE',
+    anuencia:'CARTA DE ANUÊNCIA',
+    dividas:'DECLARAÇÃO DE AUSÊNCIA DE DÍVIDAS'
+  };
+  const titulo = (mapTitle[docTipo.value] || (docTipo.options[docTipo.selectedIndex]?.text || 'DOCUMENTO')).toUpperCase();
+
+  function addHeader(isCont=false){
+    doc.setFont('helvetica','bold'); doc.setFontSize(isCont?12:16);
+    doc.text(titulo, margin, y); y += isCont?18:22;
+    doc.setFont('helvetica','normal'); doc.setFontSize(12);
+  }
+  function ensureSpace(h){
+    if(y + h > pageH - margin){
+      doc.addPage();
+      y = margin;
+      addHeader(true);
+    }
+  }
+
+  addHeader(false);
+
+  // Corpo do documento com quebra automática
+  const paragraphs = (docTexto.value||'').split('\n');
+  for(const p of paragraphs){
+    const wrapped = doc.splitTextToSize(p || ' ', contentW);
+    for(const part of (Array.isArray(wrapped)?wrapped:[wrapped])){
+      ensureSpace(lineH);
+      doc.text(String(part), margin, y);
+      y += lineH;
+    }
+  }
+
+  // Assinatura + rodapé (com quebra)
+  const nomeAss = (docNome.value || getMe().nome || '________________');
+  ensureSpace(30);
+  doc.setFont('helvetica','bold'); doc.setFontSize(12);
+  doc.text('Assinatura do colaborador:', margin, y);
+  y += 10;
+
+  if(sigPad && !sigPad.isEmpty()){
+    ensureSpace(90);
+    const img = sigPad.toDataURL('image/png');
+    doc.addImage(img,'PNG',margin,y,240,80);
+    y += 90;
+  } else {
+    ensureSpace(50);
+    y += 50; doc.text('____________________________', margin, y); y += 14;
+  }
+
+  doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  ensureSpace(18);
+  doc.text(nomeAss, margin, y); y += 8;
+
+  doc.setFont('helvetica','normal'); doc.setFontSize(9);
+  const data = new Date().toLocaleString('pt-BR');
+  doc.text('Gerado por RCR Engenharia • ' + data, margin, pageH - 24);
+
+  doc.save(`${(titulo||'documento').replaceAll(' ','_')}.pdf`);
+});
+/* ============================ FIM DA MODIFICAÇÃO ============================ */
+
+/* ===== Funcionários (semente) ===== */
+const funcionarios = [
+  {id:'f1',nome:'Luana Ferreira', idade:28, funcao:'Assistente de RH', foto:'', ativo:true},
+  {id:'f2',nome:'Bruno Martins', idade:35, funcao:'Engenheiro Civil',  foto:'', ativo:true},
+];
+function getFuncionariosLS(){
+  let arr = JSON.parse(localStorage.getItem(LS_KEYS.FUNCS) || 'null');
+  if(!Array.isArray(arr) || arr.length===0){
+    arr = funcionarios;
+    localStorage.setItem(LS_KEYS.FUNCS, JSON.stringify(arr));
+  }
+  arr.forEach((f,i)=>{ if(!f.id) f.id = 'fid_'+i; if(typeof f.ativo==='undefined') f.ativo = true; });
+  localStorage.setItem(LS_KEYS.FUNCS, JSON.stringify(arr));
+  return arr;
+}
+function setFuncionariosLS(arr){
+  localStorage.setItem(LS_KEYS.FUNCS, JSON.stringify(arr||[]));
+}
+
+const empGrid=document.getElementById('empGrid');
+function photoOrFallback(url){ return url && url.trim() ? `<img class="emp-avatar" src="${url}" alt="">` : `<div class="emp-avatar"></div>`; }
+function renderFuncionarios(q=''){
+  const all = getFuncionariosLS();
+  const term=q.trim().toLowerCase();
+  const list=term? all.filter(f=>f.nome.toLowerCase().includes(term)) : all;
+
+  empGrid.innerHTML = list.map(f=>{
+    const inactiveClass = f.ativo ? '' : 'inactive';
+    const killBtn = f.ativo ? `<button class="emp-delete" data-del="${f.id}" title="Desativar funcionário"><i class="fa-solid fa-xmark"></i></button>` : '';
+    const offBadge = f.ativo ? '' : `<span class="emp-badge-off">INATIVO</span>`;
+    return `<div class="emp-card ${inactiveClass}" data-id="${f.id}">
+      ${killBtn}
+      ${offBadge}
+      ${photoOrFallback(f.foto)}
+      <div><div class="emp-name">${f.nome}</div><div class="emp-role">${f.funcao} • ${f.idade} anos</div></div>
+    </div>`;
+  }).join('')
+  || `<div style="color:#9fb1c3">Nenhum funcionário encontrado.</div>`;
+}
+renderFuncionarios();
+funcSearch.addEventListener('input', e=> renderFuncionarios(e.target.value));
+funcClear.addEventListener('click', ()=>{ funcSearch.value=''; renderFuncionarios(''); });
+
+/* ===== Modal Funcionário ===== */
+let currentEmpId = null;
+
+/* clique nos cards + desativar via X */
+empGrid.addEventListener('click', (e)=>{
+  const delBtn = e.target.closest('.emp-delete');
+  if(delBtn){
+    e.stopPropagation();
+    const id = delBtn.getAttribute('data-del');
+    if(confirm('Deseja desativar este funcionário?')){
+      const all = getFuncionariosLS();
+      const idx = all.findIndex(x=>x.id===id);
+      if(idx>=0){
+        all[idx].ativo = false;
+        all[idx].deletedAt = new Date().toISOString();
+        setFuncionariosLS(all);
+        notify('Funcionário desativado.', 'success');
+        renderFuncionarios(funcSearch.value);
+      }
+    }
+    return;
+  }
+
+  const card = e.target.closest('.emp-card[data-id]');
+  if(!card) return;
+  if(card.classList.contains('inactive')){ notify('Funcionário inativo.', 'warn'); return; }
+  openFuncionario(card.getAttribute('data-id'));
+});
+
+function openFuncionario(empId){
+  const all = getFuncionariosLS();
+  const f = all.find(x=>x.id===empId);
+  if(!f) return;
+
+  currentEmpId = f.id;
+  funcModalTitle.textContent = 'Funcionário';
+  funcModalNome.textContent = f.nome;
+  funcModalFuncao.textContent = `${f.funcao} • ${f.idade} anos`;
+  funcModalAvatar.src = f.foto || '';
+  fotoPreview.src = f.foto || '';
+
+  showEmpPane('docs');
+  renderDocsTable();
+
+  modalFuncionario.style.display='flex';
+}
+function closeFuncionario(){
+  modalFuncionario.style.display='none';
+}
+fecharFuncionario.addEventListener('click', closeFuncionario);
+
+/* Troca de panes do modal */
+function showEmpPane(which){
+  paneDocs.classList.remove('active'); paneFoto.classList.remove('active');
+  if(which==='docs'){ paneDocs.classList.add('active'); }
+  else { paneFoto.classList.add('active'); }
+}
+btnTabDocs.addEventListener('click', ()=> showEmpPane('docs'));
+btnTabFoto.addEventListener('click', ()=> showEmpPane('foto'));
+
+/* ===== Gerenciador de arquivos por funcionário ===== */
+async function fileToDataURL2(file){
+  return new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = ()=> res(r.result);
+    r.onerror= rej;
+    r.readAsDataURL(file);
+  });
+}
+function docsKeyForEmp(id){ return id; }
+async function handleUploadDocs(files){
+  const map = getDocsMap();
+  const key = docsKeyForEmp(currentEmpId);
+  map[key] = map[key] || [];
+  for(const f of files){
+    const dataURL = await fileToDataURL2(f);
+    map[key].push({ name: f.name, size: f.size, uploadedAt: new Date().toISOString(), dataURL });
+  }
+  setDocsMap(map);
+  renderDocsTable();
+}
+function renderDocsTable(){
+  const map = getDocsMap();
+  const key = docsKeyForEmp(currentEmpId);
+  const list = (map[key] || []);
+  if(list.length===0){
+    docsTable.innerHTML = `<tr><td colspan="4" style="color:#9fb1c3">Nenhum arquivo enviado.</td></tr>`;
+    return;
+  }
+  docsTable.innerHTML = list.map((d,idx)=>{
+    const date = new Date(d.uploadedAt).toLocaleString('pt-BR');
+    return `<tr>
+      <td style="text-align:left">${d.name}</td>
+      <td>${bytesHuman(d.size||0)}</td>
+      <td>${date}</td>
+      <td>
+        <a class="btn btn-light" href="${d.dataURL}" download="${d.name}" target="_blank"><i class="fa-solid fa-download"></i> Baixar</a>
+        <button class="btn btn-ghost" data-doc-del="${idx}"><i class="fa-solid fa-trash-can"></i> Excluir</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+docUpload.addEventListener('change', async (e)=>{
+  if(!currentEmpId || !e.target.files.length) return;
+  await handleUploadDocs(e.target.files);
+  e.target.value = '';
+});
+docsTable.addEventListener('click', (e)=>{
+  const del = e.target.closest('[data-doc-del]');
+  if(!del) return;
+  const idx = Number(del.getAttribute('data-doc-del'));
+  const map = getDocsMap();
+  const key = docsKeyForEmp(currentEmpId);
+  (map[key]||[]).splice(idx,1);
+  setDocsMap(map);
+  renderDocsTable();
+});
+
+/* ===== Alterar foto do funcionário ===== */
+let fotoDataURL = '';
+fotoUpload.addEventListener('change', async (e)=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  const dataURL = await fileToDataURL2(f);
+  fotoDataURL = dataURL;
+  fotoPreview.src = dataURL;
+});
+btnSalvarFoto.addEventListener('click', ()=>{
+  if(!currentEmpId){ notify('Selecione um funcionário.', 'warn'); return; }
+  if(!fotoDataURL){ notify('Escolha uma imagem.', 'warn'); return; }
+  const all = getFuncionariosLS();
+  const idx = all.findIndex(x=>x.id===currentEmpId);
+  if(idx>=0){
+    all[idx].foto = fotoDataURL;
+    setFuncionariosLS(all);
+    funcModalAvatar.src = fotoDataURL;
+    renderFuncionarios(funcSearch.value);
+    notify('Foto atualizada!', 'success');
+  }
+});
+
+/* ===== DOMContentLoaded extra ===== */
+document.addEventListener('DOMContentLoaded', ()=>{
+  const me = getMe(); if(!docNome.value) docNome.value = me.nome||''; refreshTexto();
+  const sp=document.getElementById('splash'); setTimeout(()=> sp && sp.classList.add('hide'), 1200); setTimeout(()=> sp && sp.remove(), 1800);
+});
+
+/* ===== Subabas Funcionários ===== */
+(function(){
+  const tabFuncionariosEl = document.getElementById('tabFuncionarios');
+  const btnFuncConsulta = document.getElementById('btnFuncConsulta');
+  const btnFuncCadastro = document.getElementById('btnFuncCadastro');
+
+  function setFuncMode(m){
+    tabFuncionariosEl.classList.remove('mode-cadastro','mode-consulta');
+    tabFuncionariosEl.classList.add('mode-'+m);
+    if(btnFuncCadastro && btnFuncConsulta){
+      if(m==='cadastro'){
+        btnFuncCadastro.classList.remove('btn-light'); btnFuncCadastro.classList.add('btn-primary');
+        btnFuncConsulta.classList.remove('btn-primary'); btnFuncConsulta.classList.add('btn-light');
+      }else{
+        btnFuncConsulta.classList.remove('btn-light'); btnFuncConsulta.classList.add('btn-primary');
+        btnFuncCadastro.classList.remove('btn-primary'); btnFuncCadastro.classList.add('btn-light');
+      }
+    }
+  }
+  setFuncMode('consulta');
+  btnFuncConsulta && btnFuncConsulta.addEventListener('click', ()=> setFuncMode('consulta'));
+  btnFuncCadastro && btnFuncCadastro.addEventListener('click', ()=> setFuncMode('cadastro'));
+  const liFuncionarios = document.querySelector('.menu li[data-tab="tabFuncionarios"]');
+  liFuncionarios && liFuncionarios.addEventListener('click', ()=> setFuncMode('consulta'));
+
+  // Cadastro handlers
+  const cadNome = document.getElementById('cadNome');
+  const cadFuncao = document.getElementById('cadFuncao');
+  const cadRG = document.getElementById('cadRG');
+  const cadCPF = document.getElementById('cadCPF');
+  const cadIdade = document.getElementById('cadIdade');
+  const cadDocumento = document.getElementById('cadDocumento');
+  const cadFoto = document.getElementById('cadFoto');
+  const cadFotoPreview = document.getElementById('cadFotoPreview');
+  const btnSalvarCadastro = document.getElementById('btnSalvarCadastro');
+  const btnLimparCadastro = document.getElementById('btnLimparCadastro');
+
+  cadFoto && cadFoto.addEventListener('change', async (e)=>{
+    const f = e.target.files?.[0];
+    if(!f){ cadFotoPreview.src=''; return; }
+    const dataURL = await fileToDataURL2(f);
+    cadFotoPreview.src = dataURL;
+  });
+
+  btnSalvarCadastro && btnSalvarCadastro.addEventListener('click', async ()=>{
+    const nome = (cadNome.value||'').trim();
+    const funcao = (cadFuncao.value||'').trim();
+    const rg = (cadRG.value||'').trim();
+    const cpf = (cadCPF.value||'').trim();
+    const idade = parseInt((cadIdade.value||'').trim(),10) || 0;
+
+    if(!nome || !funcao){
+      notify('Nome e Função são obrigatórios.', 'warn');
+      return;
+    }
+
+    let foto = '';
+    if(cadFoto && cadFoto.files && cadFoto.files[0]){
+      try{ foto = await fileToDataURL2(cadFoto.files[0]); }catch(e){}
+    }
+
+    const arr = getFuncionariosLS();
+    const id = 'fid_'+Date.now();
+    arr.push({id, nome, funcao, rg, cpf, idade, foto, ativo:true});
+    setFuncionariosLS(arr);
+
+    if(cadDocumento && cadDocumento.files && cadDocumento.files[0]){
+      try{
+        const file = cadDocumento.files[0];
+        const dataURL = await fileToDataURL2(file);
+        const map = getDocsMap();
+        map[id] = map[id] || [];
+        map[id].push({ name:file.name, size:file.size, uploadedAt:new Date().toISOString(), dataURL });
+        setDocsMap(map);
+      }catch(e){}
+    }
+
+    notify('Funcionário cadastrado!', 'success');
+    btnLimparCadastro && btnLimparCadastro.click();
+    btnFuncConsulta && btnFuncConsulta.click();
+    renderFuncionarios(funcSearch ? funcSearch.value : '');
+  });
+
+  btnLimparCadastro && btnLimparCadastro.addEventListener('click', ()=>{
+    [cadNome,cadFuncao,cadRG,cadCPF,cadIdade].forEach(el=>{ if(el) el.value=''; });
+    if(cadDocumento) cadDocumento.value='';
+    if(cadFoto){ cadFoto.value=''; cadFotoPreview.src=''; }
+  });
+})();
+
+/* ===== Criar tipo de documento (modal) ===== */
+const modalNovoDoc = document.getElementById('modalNovoDoc');
+const btnCriarTipoDoc = document.getElementById('btnCriarTipoDoc');
+const btnSalvarNovoDoc = document.getElementById('btnSalvarNovoDoc');
+const btnCancelarNovoDoc = document.getElementById('btnCancelarNovoDoc');
+const tplNome = document.getElementById('tplNome');
+const tplTexto = document.getElementById('tplTexto');
+
+btnCriarTipoDoc.addEventListener('click', ()=>{
+  tplNome.value=''; tplTexto.value='';
+  modalNovoDoc.style.display='flex';
+});
+btnCancelarNovoDoc.addEventListener('click', ()=> modalNovoDoc.style.display='none');
+modalNovoDoc.addEventListener('click', (e)=>{ if(e.target===modalNovoDoc) modalNovoDoc.style.display='none'; });
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') modalNovoDoc.style.display='none'; });
+
+btnSalvarNovoDoc.addEventListener('click', ()=>{
+  const name = (tplNome.value||'').trim();
+  const content = (tplTexto.value||'').trim();
+  if(!name || !content){ notify('Preencha o nome e o conteúdo do modelo.', 'warn'); return; }
+  let id = slugify(name);
+  const list = getTemplates();
+  let suffix=1; const base=id;
+  while(list.some(t=>t.id===id)){ suffix++; id=base+'-'+suffix; }
+  list.push({ id, name, content });
+  setTemplates(list);
+  populateCustomDocTypes();
+  const optVal = 'tpl:'+id;
+  docTipo.value = optVal;
+  refreshTexto();
+  modalNovoDoc.style.display='none';
+  notify('Tipo de documento criado!', 'success');
+});
+
+/* ===== Importar documento/modelo ===== */
+(function(){
+  const tplImportEl = document.getElementById('tplImport');
+  if(!tplImportEl) return;
+
+  async function readText(file){
+    return new Promise((resolve, reject)=>{
+      const r = new FileReader();
+      r.onload = ()=> resolve(String(r.result||'')); 
+      r.onerror = reject;
+      r.readAsText(file, 'utf-8');
+    });
+  }
+  function addTemplates(items){
+    if(!Array.isArray(items)) return 0;
+    const list = getTemplates();
+    let added = 0;
+    for(const it of items){
+      const name = (it?.name||'').trim();
+      const content = String(it?.content||'').trim();
+      if(!name || !content) continue;
+      let id = slugify(name), base=id, n=1;
+      while(list.some(t=>t.id===id)) { n++; id = base+'-'+n; }
+      list.push({id, name, content});
+      added++;
+    }
+    if(added>0) setTemplates(list);
+    return added;
+  }
+  function inferNameFromFilename(fn){
+    return (fn||'documento').replace(/\.[^.]+$/,'').replace(/[_\-]+/g,' ').trim();
+  }
+
+  tplImportEl.addEventListener('change', async (e)=>{
+    const files = Array.from(e.target.files||[]);
+    if(!files.length) return;
+
+    let totalAdded = 0;
+    let firstNewId = null;
+
+    for(const file of files){
+      try{
+        const text = await readText(file);
+        let addedNow = 0;
+
+        if(/\.(json)$/i.test(file.name.trim()) || (file.type||'').includes('json')){
+          try{
+            const data = JSON.parse(text);
+            let arr = [];
+            if(Array.isArray(data)) arr = data;
+            else if(data && Array.isArray(data.templates)) arr = data.templates;
+            else if(data && typeof data==='object' && data.name && data.content) arr = [data];
+            addedNow = addTemplates(arr);
+            if(addedNow>0 && !firstNewId){
+              const list = getTemplates();
+              const last = list.slice(-addedNow);
+              firstNewId = last[0]?.id || null;
+            }
+          }catch(err){
+            console.warn('JSON inválido:', err);
+          }
+        } else {
+          const name = inferNameFromFilename(file.name);
+          addedNow = addTemplates([{name, content:text}]);
+          if(addedNow>0 && !firstNewId){
+            const list = getTemplates();
+            const last = list.slice(-1)[0];
+            firstNewId = last?.id || null;
+          }
+        }
+        totalAdded += addedNow;
+      }catch(err){
+        console.warn('Falha ao ler arquivo', file?.name, err);
+      }
+    }
+
+    if(totalAdded>0){
+      populateCustomDocTypes();
+      if(firstNewId){
+        const docTipo = document.getElementById('docTipo');
+        if(docTipo){ docTipo.value = 'tpl:'+firstNewId; }
+        refreshTexto();
+      }
+      notify(`${totalAdded} modelo(s) importado(s) com sucesso!`, 'success');
+    }else{
+      notify('Não foi possível importar. Verifique o formato do(s) arquivo(s).', 'error');
+    }
+
+    e.target.value = '';
+  });
+})();
+
+/* ==================== NOVO: Excluir tipo de documento (personalizado) ==================== */
+(function(){
+  const manageSelect = document.getElementById('tplManageSelect');
+  const btnExcluir = document.getElementById('btnExcluirTipoDoc');
+
+  function removeTemplateById(id){
+    const list = getTemplates();
+    const idx = list.findIndex(t=>t.id===id);
+    if(idx<0) return false;
+    list.splice(idx,1);
+    setTemplates(list);
+    return true;
+  }
+
+  btnExcluir?.addEventListener('click', ()=>{
+    const id = manageSelect?.value || '';
+    if(!id){ notify('Selecione um tipo personalizado para excluir.', 'warn'); return; }
+    const list = getTemplates();
+    const tpl = list.find(t=>t.id===id);
+    if(!tpl){ notify('Tipo não encontrado.', 'error'); return; }
+
+    if(!confirm(`Confirmar exclusão do tipo:\n\n“${tpl.name}” ?`)) return;
+
+    const ok = removeTemplateById(id);
+    if(ok){
+      // Se o tipo excluído estava selecionado no docTipo, volta para padrão
+      if (docTipo.value === 'tpl:'+id){
+        docTipo.value = 'interesse';
+        refreshTexto();
+      }
+      populateCustomDocTypes();
+      notify('Tipo excluído com sucesso.', 'success');
+    }else{
+      notify('Não foi possível excluir o tipo.', 'error');
+    }
+  });
+
+  // Garantir que o select esteja sempre sincronizado
+  document.querySelector('.menu li[data-tab="tabDocs"]')?.addEventListener('click', populateCustomDocTypes);
+})();
+/* ================= FIM NOVO BLOCO EXCLUSÃO DE TIPOS ======================= */
+</script>
+
+<!-- Refs essenciais -->
+<script>
+const uNome = document.getElementById('uNome');
+const uFuncao = document.getElementById('uFuncao');
+const helloNome = document.getElementById('helloNome');
+
+const btnPeriodoAtual = document.getElementById('btnPeriodoAtual');
+const btnAplicarFiltro = document.getElementById('btnAplicarFiltro');
+const btnExportPonto = document.getElementById('btnExportPonto');
+const pInicio = document.getElementById('pInicio');
+const pFim = document.getElementById('pFim');
+const kHoras = document.getElementById('kHoras');
+const kSaldo = document.getElementById('kSaldo');
+const kPend = document.getElementById('kPend');
+const lblAgora = document.getElementById('lblAgora');
+const lblCoord = document.getElementById('lblCoord');
+const btnBaterPonto = document.getElementById('btnBaterPonto');
+const sigPadEl = document.getElementById('sigPad');
+const docTipo = document.getElementById('docTipo');
+const docNome = document.getElementById('docNome');
+const docDoc  = document.getElementById('docDoc');
+const docTexto= document.getElementById('docTexto');
+const btnLimparAss = document.getElementById('btnLimparAss');
+const btnGerarPDF = document.getElementById('btnGerarPDF');
+const sigImport = document.getElementById('sigImport');
+const tplImport = document.getElementById('tplImport');
+
+const funcSearch = document.getElementById('funcSearch');
+const funcClear  = document.getElementById('funcClear');
+const batimentosDiaTitulo = document.getElementById('batimentosDiaTitulo');
+const batimentosDiaBody   = document.getElementById('batimentosDiaBody');
+const batimentosDatePicker= document.getElementById('batimentosDatePicker');
+const fecharBatimentosDia = document.getElementById('fecharBatimentosDia');
+const btnPrevDia = document.getElementById('btnPrevDia');
+const btnNextDia = document.getElementById('btnNextDia');
+const incluirPontoDia = document.getElementById('incluirPontoDia');
+const justificarAusenciaDia = document.getElementById('justificarAusenciaDia');
+
+const modalFuncionario = document.getElementById('modalFuncionario');
+const funcModalTitle = document.getElementById('funcModalTitle');
+const funcModalNome = document.getElementById('funcModalNome');
+const funcModalFuncao = document.getElementById('funcModalFuncao');
+const funcModalAvatar = document.getElementById('funcModalAvatar');
+const btnTabDocs = document.getElementById('btnTabDocs');
+const btnTabFoto = document.getElementById('btnTabFoto');
+const paneDocs = document.getElementById('paneDocs');
+const paneFoto = document.getElementById('paneFoto');
+const fecharFuncionario = document.getElementById('fecharFuncionario');
+const docUpload = document.getElementById('docUpload');
+const docsTable = document.getElementById('docsTable');
+const fotoUpload = document.getElementById('fotoUpload');
+const fotoPreview = document.getElementById('fotoPreview');
+const btnCloseSidebar = document.getElementById('btnCloseSidebar');
+</script>
+
+<!-- =================== ADIÇÕES (APENAS SUPORTE/OUTROS RECURSOS) =================== -->
+<style>
+  /* Barra de ações na aba Funcionários (habilitar/inativar/excluir via select) */
+  .emp-actions{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+  .emp-actions select{min-width:280px;max-width:360px}
+</style>
+
+<!-- Pré-carregar logo para ajudar no PDF de ponto -->
+<img id="pdfLogoPreload" src="Assets/img/logo_new.png" alt="" style="display:none"/>
+
+<script>
+/* =========================================================================
+   LOGO NO PDF DO CARTÃO DE PONTO — reforço de carregamento da imagem
+   ========================================================================= */
+(function(){
+  async function fetchAsDataURL(url){
+    try{
+      const res = await fetch(url, {cache:'no-store'});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const blob = await res.blob();
+      return await new Promise(r=>{ const fr=new FileReader(); fr.onload=()=>r(fr.result); fr.readAsDataURL(blob); });
+    }catch(e){ return null; }
+  }
+
+  const original = window.getCompanyLogoDataURL;
+
+  window.getCompanyLogoDataURL = async function(){
+    if (typeof original === 'function'){
+      try{
+        const d = await original();
+        if (d) return d;
+      }catch(_){}
+    }
+    const preload = document.getElementById('pdfLogoPreload');
+    if (preload && preload.complete && preload.naturalWidth){
+      try{
+        const c = document.createElement('canvas');
+        c.width = preload.naturalWidth; c.height = preload.naturalHeight;
+        c.getContext('2d').drawImage(preload,0,0);
+        return c.toDataURL('image/png');
+      }catch(_){}
+    }
+    const paths = ['Assets/img/logo_new.png','./Assets/img/logo_new.png','/Assets/img/logo_new.png'];
+    for (const p of paths){
+      const d = await fetchAsDataURL(p);
+      if (d) return d;
+    }
+    const c = document.createElement('canvas'); c.width=120; c.height=40;
+    const g = c.getContext('2d');
+    const grd = g.createLinearGradient(0,0,120,0);
+    grd.addColorStop(0,'#00E0FF'); grd.addColorStop(1,'#FF2FB9');
+    g.fillStyle = grd; g.fillRect(0,0,120,40);
+    g.fillStyle = '#00121E'; g.font = 'bold 16px Helvetica';
+    g.fillText('RCR', 44, 26);
+    return c.toDataURL('image/png');
+  };
+})();
+
+/* =========================================================================
+   FUNCIONÁRIOS: HABILITAR / INATIVAR VIA SELECT + EXCLUIR INATIVO
+   ========================================================================= */
+(function(){
+  const host = document.querySelector('#tabFuncionarios .card-body');
+  const tools = document.querySelector('#tabFuncionarios .emp-tools');
+  if(!host || !tools) return;
+
+  const bar = document.createElement('div');
+  bar.className = 'emp-actions';
+  bar.innerHTML = `
+    <select id="selAtivos">
+      <option value="">Selecionar ATIVO para inativar…</option>
+    </select>
+    <button class="btn btn-warn" id="btnInativarSel"><i class="fa-solid fa-user-slash"></i> Inativar selecionado</button>
+
+    <select id="selInativos">
+      <option value="">Selecionar INATIVO para habilitar/excluir…</option>
+    </select>
+    <button class="btn btn-ok" id="btnHabilitarSel"><i class="fa-solid fa-user-check"></i> Habilitar selecionado</button>
+    <button class="btn btn-ghost" id="btnExcluirInativoSel"><i class="fa-solid fa-trash"></i> Excluir inativo</button>
+  `;
+  tools.insertAdjacentElement('afterend', bar);
+
+  const selAtivos = bar.querySelector('#selAtivos');
+  const selInativos = bar.querySelector('#selInativos');
+  const btnInativarSel = bar.querySelector('#btnInativarSel');
+  const btnHabilitarSel = bar.querySelector('#btnHabilitarSel');
+  const btnExcluirInativoSel = bar.querySelector('#btnExcluirInativoSel');
+
+  function pad3(n){ return String(n).padStart(3,'0'); }
+
+  function refreshEmpSelects(){
+    try{
+      const all = (window.getFuncionariosLS && window.getFuncionariosLS()) || [];
+      const ativos = all.filter(f=>f.ativo);
+      const inativos = all.filter(f=>!f.ativo);
+
+      selAtivos.innerHTML = `<option value="">Selecionar ATIVO para inativar…</option>` +
+        ativos.map((f,i)=>`<option value="${f.id}">${pad3(i+1)} — ${f.nome}</option>`).join('');
+
+      selInativos.innerHTML = `<option value="">Selecionar INATIVO para habilitar/excluir…</option>` +
+        inativos.map((f,i)=>`<option value="${f.id}">${pad3(i+1)} — ${f.nome}</option>`).join('');
+    }catch(e){ /* noop */ }
+  }
+
+  if (typeof window.renderFuncionarios === 'function'){
+    const _render = window.renderFuncionarios;
+    window.renderFuncionarios = function(q){
+      const r = _render(q);
+      refreshEmpSelects();
+      return r;
+    };
+  }
+
+  refreshEmpSelects();
+
+  btnInativarSel.addEventListener('click', ()=>{
+    const id = selAtivos.value;
+    if(!id){ notify('Selecione um funcionário ATIVO.', 'warn'); return; }
+    if(!confirm('Inativar o funcionário selecionado?')) return;
+    const all = window.getFuncionariosLS();
+    const idx = all.findIndex(x=>x.id===id);
+    if(idx>=0){
+      all[idx].ativo = false;
+      all[idx].deletedAt = new Date().toISOString();
+      window.setFuncionariosLS(all);
+      notify('Funcionário inativado.', 'success');
+      window.renderFuncionarios?.(funcSearch?.value||'');
+    }
+  });
+
+  btnHabilitarSel.addEventListener('click', ()=>{
+    const id = selInativos.value;
+    if(!id){ notify('Selecione um funcionário INATIVO.', 'warn'); return; }
+    const all = window.getFuncionariosLS();
+    const idx = all.findIndex(x=>x.id===id);
+    if(idx>=0){
+      all[idx].ativo = true;
+      delete all[idx].deletedAt;
+      window.setFuncionariosLS(all);
+      notify('Funcionário habilitado.', 'success');
+      window.renderFuncionarios?.(funcSearch?.value||'');
+    }
+  });
+
+  btnExcluirInativoSel.addEventListener('click', ()=>{
+    const id = selInativos.value;
+    if(!id){ notify('Selecione um INATIVO para excluir.', 'warn'); return; }
+    if(!confirm('Excluir definitivamente o funcionário INATIVO selecionado? Essa ação não pode ser desfeita.')) return;
+    let all = window.getFuncionariosLS();
+    const before = all.length;
+    all = all.filter(x=>x.id!==id);
+    window.setFuncionariosLS(all);
+    try{
+      const map = window.getDocsMap?.() || {};
+      if (map[id]){ delete map[id]; window.setDocsMap?.(map); }
+    }catch(_){}
+    const after = all.length;
+    notify(before!==after ? 'Funcionário excluído.' : 'Nada a excluir.', before!==after ? 'success' : 'info');
+    window.renderFuncionarios?.(funcSearch?.value||'');
+  });
+
+  document.querySelector('.menu li[data-tab="tabFuncionarios"]')?.addEventListener('click', refreshEmpSelects);
+  funcClear?.addEventListener('click', ()=> setTimeout(refreshEmpSelects, 50));
+})();
+</script>
+<!-- =================== FIM DAS ADIÇÕES =================== -->
+
+</body>
+</html>

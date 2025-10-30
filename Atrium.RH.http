@@ -1,0 +1,6 @@
+@Atrium.RH_HostAddress = http://localhost:5253
+
+GET {{Atrium.RH_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

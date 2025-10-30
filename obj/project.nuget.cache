@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "smsrPCY2fe0=",
+  "success": true,
+  "projectFilePath": "C:\\SistemaWeb\\System\\Atrium\\Atrium-rh\\Atrium.RH.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\gusta\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.8\\microsoft.aspnetcore.openapi.9.0.8.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,220 @@
+/* ============================================================
+   CONTEXTO DO BANCO (ajuste conforme necessário)
+   ============================================================ */
+-- USE RCR_RH;
+GO
+
+/* ============================================================
+   DROP TABLES (ordem: filhos -> pais)
+   ============================================================ */
+IF OBJECT_ID('dbo.Ponto','U') IS NOT NULL                DROP TABLE dbo.Ponto;
+IF OBJECT_ID('dbo.FuncionarioDocumento','U') IS NOT NULL DROP TABLE dbo.FuncionarioDocumento;
+IF OBJECT_ID('dbo.Documento','U') IS NOT NULL            DROP TABLE dbo.Documento;
+IF OBJECT_ID('dbo.DocumentoTipo','U') IS NOT NULL        DROP TABLE dbo.DocumentoTipo;
+IF OBJECT_ID('dbo.Funcionario','U') IS NOT NULL          DROP TABLE dbo.Funcionario;
+IF OBJECT_ID('dbo.Usuario','U') IS NOT NULL              DROP TABLE dbo.Usuario;
+IF OBJECT_ID('dbo.Empresa','U') IS NOT NULL              DROP TABLE dbo.Empresa;
+GO
+
+/* ============================================================
+   (Opcional) Criar schema dbo se não existir
+   ============================================================ */
+IF NOT EXISTS (SELECT 1 FROM sys.schemas WHERE name = 'dbo')
+    EXEC('CREATE SCHEMA dbo');
+GO
+
+/* ============================================================
+   EMPRESA
+   ============================================================ */
+CREATE TABLE dbo.Empresa (
+    id                  INT IDENTITY(1,1) PRIMARY KEY,
+    locid               NVARCHAR(64)  NULL,
+    ativo               BIT           NOT NULL CONSTRAINT DF_Empresa_Ativo DEFAULT (1),
+    criacao             DATETIME2(0)  NOT NULL CONSTRAINT DF_Empresa_Criacao DEFAULT (SYSDATETIME()),
+    datasincronizacao   DATETIME2(0)  NULL,
+    datainterface       DATETIME2(0)  NULL,
+
+    nome                NVARCHAR(150) NOT NULL,
+    cnpj                VARCHAR(18)   NULL,
+    inscricao           NVARCHAR(50)  NULL,
+    departamento_padrao NVARCHAR(100) NULL
+);
+GO
+CREATE INDEX IX_Empresa_locid ON dbo.Empresa(locid);
+GO
+
+/* ============================================================
+   USUARIO
+   ============================================================ */
+CREATE TABLE dbo.Usuario (
+    id                  INT IDENTITY(1,1) PRIMARY KEY,
+    locid               NVARCHAR(64)  NULL,
+    ativo               BIT           NOT NULL CONSTRAINT DF_Usuario_Ativo DEFAULT (1),
+    criacao             DATETIME2(0)  NOT NULL CONSTRAINT DF_Usuario_Criacao DEFAULT (SYSDATETIME()),
+    datasincronizacao   DATETIME2(0)  NULL,
+    datainterface       DATETIME2(0)  NULL,
+
+    empresa_id          INT           NOT NULL,
+    nome                NVARCHAR(150) NOT NULL,
+    login               NVARCHAR(120) NOT NULL,
+    email               NVARCHAR(200) NULL,
+    telefone            NVARCHAR(40)  NULL,
+    senhahash           VARBINARY(MAX) NULL,
+    typeuser            CHAR(1)       NOT NULL 
+        CONSTRAINT DF_Usuario_Type DEFAULT ('F')
+        CONSTRAINT CK_Usuario_Type CHECK (typeuser IN ('M','A','F')),
+    user_img            VARBINARY(MAX) NULL   -- imagem do usuário (PNG/JPEG em binário)
+);
+GO
+ALTER TABLE dbo.Usuario
+  ADD CONSTRAINT FK_Usuario_Empresa
+  FOREIGN KEY (empresa_id) REFERENCES dbo.Empresa(id);
+GO
+CREATE UNIQUE INDEX UX_Usuario_login ON dbo.Usuario(login);
+CREATE INDEX IX_Usuario_empresa ON dbo.Usuario(empresa_id);
+CREATE INDEX IX_Usuario_locid   ON dbo.Usuario(locid);
+GO
+
+/* ============================================================
+   FUNCIONARIO
+   ============================================================ */
+CREATE TABLE dbo.Funcionario (
+    id                  INT IDENTITY(1,1) PRIMARY KEY,
+    locid               NVARCHAR(64)  NULL,
+    ativo               BIT           NOT NULL CONSTRAINT DF_Funcionario_Ativo DEFAULT (1),
+    criacao             DATETIME2(0)  NOT NULL CONSTRAINT DF_Funcionario_Criacao DEFAULT (SYSDATETIME()),
+    datasincronizacao   DATETIME2(0)  NULL,
+    datainterface       DATETIME2(0)  NULL,
+
+    empresa_id          INT           NOT NULL,
+    usuario_id          INT           NULL,
+    nome                NVARCHAR(150) NOT NULL,
+    funcao              NVARCHAR(120) NULL,
+    rg                  NVARCHAR(20)  NULL,
+    cpf                 VARCHAR(14)   NULL,
+    idade               TINYINT       NULL,
+    foto_url            NVARCHAR(400) NULL
+);
+GO
+ALTER TABLE dbo.Funcionario
+  ADD CONSTRAINT FK_Funcionario_Empresa  FOREIGN KEY (empresa_id) REFERENCES dbo.Empresa(id),
+      CONSTRAINT FK_Funcionario_Usuario  FOREIGN KEY (usuario_id) REFERENCES dbo.Usuario(id);
+GO
+CREATE INDEX IX_Funcionario_empresa ON dbo.Funcionario(empresa_id);
+CREATE INDEX IX_Funcionario_usuario ON dbo.Funcionario(usuario_id);
+CREATE INDEX IX_Funcionario_cpf     ON dbo.Funcionario(cpf);
+CREATE INDEX IX_Funcionario_locid   ON dbo.Funcionario(locid);
+GO
+
+/* ============================================================
+   DOCUMENTOTIPO
+   ============================================================ */
+CREATE TABLE dbo.DocumentoTipo (
+    id                  INT IDENTITY(1,1) PRIMARY KEY,
+    locid               NVARCHAR(64)  NULL,
+    ativo               BIT           NOT NULL CONSTRAINT DF_DocTipo_Ativo DEFAULT (1),
+    criacao             DATETIME2(0)  NOT NULL CONSTRAINT DF_DocTipo_Criacao DEFAULT (SYSDATETIME()),
+    datasincronizacao   DATETIME2(0)  NULL,
+    datainterface       DATETIME2(0)  NULL,
+
+    empresa_id          INT           NOT NULL,
+    nome                NVARCHAR(160) NOT NULL,
+    conteudo            NVARCHAR(MAX) NOT NULL
+);
+GO
+ALTER TABLE dbo.DocumentoTipo
+  ADD CONSTRAINT FK_DocTipo_Empresa FOREIGN KEY (empresa_id) REFERENCES dbo.Empresa(id);
+GO
+CREATE UNIQUE INDEX UX_DocTipo_empresa_nome ON dbo.DocumentoTipo(empresa_id, nome);
+CREATE INDEX IX_DocTipo_locid ON dbo.DocumentoTipo(locid);
+GO
+
+/* ============================================================
+   DOCUMENTO
+   ============================================================ */
+CREATE TABLE dbo.Documento (
+    id                  INT IDENTITY(1,1) PRIMARY KEY,
+    locid               NVARCHAR(64)  NULL,
+    ativo               BIT           NOT NULL CONSTRAINT DF_Doc_Ativo DEFAULT (1),
+    criacao             DATETIME2(0)  NOT NULL CONSTRAINT DF_Doc_Criacao DEFAULT (SYSDATETIME()),
+    datasincronizacao   DATETIME2(0)  NULL,
+    datainterface       DATETIME2(0)  NULL,
+
+    empresa_id          INT           NOT NULL,
+    funcionario_id      INT           NOT NULL,
+    documentotipo_id    INT           NULL,
+    nome_documento      NVARCHAR(200) NOT NULL,
+    conteudo            NVARCHAR(MAX) NOT NULL,
+    arquivo_pdf         VARBINARY(MAX) NULL,
+    signatario_nome     NVARCHAR(150) NULL,
+    signatario_doc      NVARCHAR(40)  NULL,
+    assinatura_img      VARBINARY(MAX) NULL,
+    assinado_em         DATETIME2(0)  NULL
+);
+GO
+ALTER TABLE dbo.Documento
+  ADD CONSTRAINT FK_Doc_Empresa     FOREIGN KEY (empresa_id)       REFERENCES dbo.Empresa(id),
+      CONSTRAINT FK_Doc_Funcionario FOREIGN KEY (funcionario_id)   REFERENCES dbo.Funcionario(id),
+      CONSTRAINT FK_Doc_Tipo        FOREIGN KEY (documentotipo_id) REFERENCES dbo.DocumentoTipo(id);
+GO
+CREATE INDEX IX_Doc_empresa_func ON dbo.Documento(empresa_id, funcionario_id);
+CREATE INDEX IX_Doc_tipo         ON dbo.Documento(documentotipo_id);
+CREATE INDEX IX_Doc_assinadoem   ON dbo.Documento(assinado_em);
+CREATE INDEX IX_Doc_locid        ON dbo.Documento(locid);
+GO
+
+/* ============================================================
+   FUNCIONARIODOCUMENTO (uploads vinculados ao funcionário)
+   ============================================================ */
+CREATE TABLE dbo.FuncionarioDocumento (
+    id                  INT IDENTITY(1,1) PRIMARY KEY,
+    locid               NVARCHAR(64)  NULL,
+    ativo               BIT           NOT NULL CONSTRAINT DF_FuncDoc_Ativo DEFAULT (1),
+    criacao             DATETIME2(0)  NOT NULL CONSTRAINT DF_FuncDoc_Criacao DEFAULT (SYSDATETIME()),
+    datasincronizacao   DATETIME2(0)  NULL,
+    datainterface       DATETIME2(0)  NULL,
+
+    empresa_id          INT           NOT NULL,
+    funcionario_id      INT           NOT NULL,
+    nome_arquivo        NVARCHAR(260) NOT NULL,
+    content_type        NVARCHAR(100) NULL,
+    tamanho_bytes       BIGINT        NULL,
+    conteudo            VARBINARY(MAX) NULL
+);
+GO
+ALTER TABLE dbo.FuncionarioDocumento
+  ADD CONSTRAINT FK_FuncDoc_Empresa     FOREIGN KEY (empresa_id)     REFERENCES dbo.Empresa(id),
+      CONSTRAINT FK_FuncDoc_Funcionario FOREIGN KEY (funcionario_id) REFERENCES dbo.Funcionario(id);
+GO
+CREATE INDEX IX_FuncDoc_empresa_func ON dbo.FuncionarioDocumento(empresa_id, funcionario_id);
+CREATE INDEX IX_FuncDoc_locid        ON dbo.FuncionarioDocumento(locid);
+GO
+
+/* ============================================================
+   PONTO (batimentos E/S com data e hora única)
+   ============================================================ */
+CREATE TABLE dbo.Ponto (
+    id                  INT IDENTITY(1,1) PRIMARY KEY,
+    locid               NVARCHAR(64)  NULL,
+    ativo               BIT           NOT NULL CONSTRAINT DF_Ponto_Ativo DEFAULT (1),
+    criacao             DATETIME2(0)  NOT NULL CONSTRAINT DF_Ponto_Criacao DEFAULT (SYSDATETIME()),
+    datasincronizacao   DATETIME2(0)  NULL,
+    datainterface       DATETIME2(0)  NULL,
+
+    empresa_id          INT           NOT NULL,
+    funcionario_id      INT           NOT NULL,
+    tipobatimento       CHAR(1)       NOT NULL CONSTRAINT CK_Ponto_Tipo CHECK (tipobatimento IN ('E','S')),
+    datahora            DATETIME2(0)  NOT NULL,     -- data e hora em uma única coluna
+    origem              NVARCHAR(50)  NULL,
+    observacao          NVARCHAR(255) NULL,
+    latitude            DECIMAL(9,6)  NULL,
+    longitude           DECIMAL(9,6)  NULL
+);
+GO
+ALTER TABLE dbo.Ponto
+  ADD CONSTRAINT FK_Ponto_Empresa     FOREIGN KEY (empresa_id)     REFERENCES dbo.Empresa(id),
+      CONSTRAINT FK_Ponto_Funcionario FOREIGN KEY (funcionario_id) REFERENCES dbo.Funcionario(id);
+GO
+CREATE INDEX IX_Ponto_Func_Data ON dbo.Ponto(funcionario_id, datahora);
+CREATE INDEX IX_Ponto_locid     ON dbo.Ponto(locid);
+GO
