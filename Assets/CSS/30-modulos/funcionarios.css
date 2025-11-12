@@ -1,0 +1,84 @@
+/* Ferramentas de busca/ações */
+.emp-tools{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px }
+.emp-tools input{ max-width:360px }
+.emp-tools.centered{ justify-content:center }
+.emp-tools.centered input{ min-width:240px; max-width:480px }
+.emp-tools .search-group{ display:flex; gap:8px; align-items:center }
+
+
+/* Grid de cartões */
+.emp-grid{ display:grid; grid-template-columns:repeat(3,minmax(220px,1fr)); gap:12px }
+@media (max-width:1100px){ .emp-grid{ grid-template-columns:repeat(2,minmax(220px,1fr)) } }
+@media (max-width:640px){ .emp-grid{ grid-template-columns:1fr } }
+
+
+/* Card de funcionário */
+.emp-card{ position:relative; background:var(--surface); border:1px solid rgba(255,255,255,.08); border-radius:14px; display:flex; gap:12px; padding:12px; align-items:center; cursor:pointer }
+.emp-card:hover{ outline:1px dashed rgba(255,255,255,.18) }
+.emp-card.inactive{ opacity:.55; filter:grayscale(.8); }
+.emp-avatar{
+width:64px; height:64px; border-radius:14px; object-fit:cover;
+background:radial-gradient(80% 80% at 20% 20%, var(--c1), transparent),
+radial-gradient(80% 80% at 80% 80%, var(--c2), transparent);
+border:1px solid rgba(255,255,255,.2)
+}
+.emp-name{ font-weight:800 }
+.emp-role{ color:var(--muted); font-size:13px }
+
+
+/* Selo INATIVO */
+.emp-badge-off{ position:absolute; top:8px; left:8px; background:linear-gradient(135deg, rgba(239,68,68,.18), transparent); border:1px solid rgba(239,68,68,.5); color:#fee2e2; font-weight:800; padding:4px 8px; border-radius:8px; font-size:11px; }
+
+
+/* Botão 3 pontinhos + dropdown */
+.emp-menu{ position:absolute; top:6px; right:6px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1px solid rgba(255,255,255,.25); background:var(--surface); color:#d6e6f3; cursor:pointer; }
+.emp-menu:hover{ filter:brightness(1.1) }
+.emp-menu .fa-ellipsis-vertical{ font-size:16px }
+.emp-menu-dropdown{ position:absolute; top:42px; right:6px; background:var(--surface); border:1px solid rgba(255,255,255,.18); border-radius:10px; box-shadow:0 10px 26px rgba(0,0,0,.35); display:none; min-width:160px; z-index:5; overflow:hidden; }
+.emp-menu-dropdown.open{ display:block; }
+.emp-menu-dropdown button{ width:100%; text-align:left; padding:10px 12px; background:transparent; border:none; color:#e7eef6; cursor:pointer; }
+.emp-menu-dropdown button:hover{ background:rgba(255,255,255,.08) }
+.emp-menu-dropdown .danger{ color:#ffd3d3; }
+
+
+/* Modal Funcionário */
+#modalFuncionario .emp-modal-header{ display:flex; align-items:center; gap:14px; margin-bottom:12px; }
+#modalFuncionario .emp-avatar{ width:72px; height:72px; border-radius:16px; }
+#modalFuncionario .emp-name{ font-size:22px; font-weight:900; line-height:1.1; }
+#modalFuncionario .emp-role{ font-size:15px; font-weight:700; color:#d6e6f3; opacity:0.95; }
+#modalFuncionario .emp-tabs{ display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px; }
+#modalFuncionario .emp-tab-btn.active{ outline:2px solid rgba(0,224,255,.35); }
+
+
+/* Panes */
+.emp-pane{ display:none; }
+.emp-pane.active{ display:block; }
+
+
+/* Cadastro modal refinado */
+#modalCadastroUsuario .modal-content{ max-width:860px }
+#modalCadastroUsuario .modal-body{ max-height: calc(100vh - 160px); overflow:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+#modalCadastroUsuario .gestao-cadastro .card{ background:transparent; border:none; box-shadow:none }
+#modalCadastroUsuario .gestao-cadastro .card-header{ display:none }
+#modalCadastroUsuario .gestao-cadastro .card-body{ padding:0 }
+@media (max-width:960px){
+#modalCadastroUsuario .modal-content{ width:100%; height:100%; max-width:none; border-radius:0 }
+#modalCadastroUsuario .modal-body{ max-height: calc(100vh - 110px) }
+#modalCadastroUsuario .gestao-cadastro .col{ min-width:100%!important }
+}
+
+
+/* Esconder cargo no form (mantido no HTML) */
+#wrapCargoField{ display:none !important }
+
+
+/* Esconder “Alterar foto” legado (se existir) */
+#modalFuncionario #btnTabFoto, #modalFuncionario #paneFoto { display:none !important; }
+
+
+/* Ações alinhadas à esquerda em gestão */
+.gestao-actions-left{ display:flex; justify-content:flex-start; align-items:center; margin:8px 0 12px }
+
+
+/* Wrapper de cadastro antigo (abre em modal) */
+.gestao-cadastro-wrap{ display:none !important; }

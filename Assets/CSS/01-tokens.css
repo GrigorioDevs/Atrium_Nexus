@@ -1,0 +1,23 @@
+:root{
+--nav-width: 240px;
+--c1: #00E0FF;
+--c2: #FF2FB9;
+--pink: #F774D1;
+--pink-2:#ECB8DD;
+--bg:#0B1622;
+--panel:#0F1E2C;
+--surface:#0a1520; /* NOVO: usado por docs-cta-card, inputs dark */
+--border: rgba(255,255,255,.12); /* NOVO: usado por chips, cards e grids */
+--white:#fff;
+--text:#E7EEF6;
+--muted:#9fb1c3;
+--ok:#10b981;
+--warn:#f59e0b;
+--err:#ef4444;
+--ui:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
+
+
+--scroll-thumb: rgba(0,224,255,.45);
+--scroll-thumb-hover: rgba(255,47,185,.60);
+--scroll-track: rgba(255,255,255,.08);
+}

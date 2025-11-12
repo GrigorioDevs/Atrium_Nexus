@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <!-- Viewport corrigido: reduz leve zoom inicial e corrige atributo maximum-scale -->
-<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=1, viewport-fit=cover, user-scalable=no"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>RCR Engenharia — RH (Ponto, Documentos & Assinaturas)</title>
 
 <!-- Ícones -->
@@ -27,393 +27,40 @@
 <!-- Signature Pad -->
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 
-<style>
-:root{
-  --nav-width: 240px;
-  --c1: #00E0FF;
-  --c2: #FF2FB9;
-  --pink: #F774D1;
-  --pink-2:#ECB8DD;
-  --bg:#0B1622;
-  --panel:#0F1E2C;
-  --white:#fff;
-  --text:#E7EEF6;
-  --muted:#9fb1c3;
-  --ok:#10b981;
-  --warn:#f59e0b;
-  --err:#ef4444;
-  --ui:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
+<!-- Link css -->
+ <link rel="stylesheet" href="assets/css/00-reset.css">
+<link rel="stylesheet" href="assets/css/01-tokens.css">
+<link rel="stylesheet" href="assets/css/02-base.css">
+<link rel="stylesheet" href="assets/css/10-layout.css">
 
-  --scroll-thumb: rgba(0,224,255,.45);
-  --scroll-thumb-hover: rgba(255,47,185,.60);
-  --scroll-track: rgba(255,255,255,.08);
-}
 
-*{box-sizing:border-box;margin:0;padding:0}
+<link rel="stylesheet" href="assets/css/20-components/button.css">
+<link rel="stylesheet" href="assets/css/20-components/card.css">
+<link rel="stylesheet" href="assets/css/20-components/table.css">
+<link rel="stylesheet" href="assets/css/20-components/form.css">
+<link rel="stylesheet" href="assets/css/20-components/modal.css">
+<link rel="stylesheet" href="assets/css/20-components/tabs.css">
+<link rel="stylesheet" href="assets/css/20-components/toast.css">
+<link rel="stylesheet" href="assets/css/20-components/splash.css">
 
-/* Scrollbar */
-*{ scrollbar-color: var(--scroll-thumb) var(--scroll-track); scrollbar-width: thin; }
-*::-webkit-scrollbar{ width:10px; height:10px }
-*::-webkit-scrollbar-track{ background: var(--scroll-track); border-radius: 10px; }
-*::-webkit-scrollbar-thumb{
-  background: linear-gradient(135deg, var(--c1), var(--c2));
-  background-clip: padding-box; border:2px solid transparent; border-radius: 10px; opacity:.9;
-}
-*::-webkit-scrollbar-thumb:hover{ background: linear-gradient(135deg, var(--scroll-thumb), var(--scroll-thumb-hover)); border-color: transparent; }
 
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--ui)}
-a{color:inherit;text-decoration:none}
-.container{display:flex;min-height:100vh}
+<link rel="stylesheet" href="assets/css/30-modulos/ponto.css">
+<link rel="stylesheet" href="assets/css/30-modulos/incluir-ponto.css">
+<link rel="stylesheet" href="assets/css/30-modulos/documentos.css">
+<link rel="stylesheet" href="assets/css/30-modulos/funcionarios.css">
+<link rel="stylesheet" href="assets/css/30-modulos/beneficios.css">
+<link rel="stylesheet" href="assets/css/30-modulos/assinatura-publica.css">
 
-/* Sidebar */
-aside{
-  position:fixed;top:0;left:0;height:100%;width:var(--nav-width);
-  background: linear-gradient(160deg, rgba(0,224,255,.14), rgba(255,47,185,.12)), #0A111A;
-  border-right: 1px solid rgba(255,255,255,.06);
-  color:#fff;z-index:1000;padding:18px 14px 18px;
-  display:flex;flex-direction:column;gap:14px;transition:left .25s ease;
-}
-.brand{display:flex;align-items:center;gap:10px;margin-bottom:4px}
-.brand-logo{
-  width:38px;height:38px;border-radius:9px;object-fit:cover;flex:0 0 auto;
-  background: radial-gradient(80% 80% at 20% 20%, var(--c1), transparent),
-              radial-gradient(80% 80% at 80% 80%, var(--c2), transparent);
-  border:1px solid rgba(255,255,255,.18);
-}
-.brand strong{font-weight:800;letter-spacing:.4px}
-.user-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px}
-.user-card .name{font-weight:700}
-.user-card .role{font-size:12px;opacity:.85}
-.menu{list-style:none}
-.menu li{
-  display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:10px;cursor:pointer;
-  font-weight:600;color:#e8f0f7;transition: background .15s ease, transform .12s ease;
-}
-.menu li:hover{background:rgba(255,255,255,.08)}
-.menu li.active{background:linear-gradient(90deg, rgba(0,224,255,.25), rgba(255,47,185,.25));color:#fff}
-.menu li i{width:20px;text-align:center}
 
-/* Submenu */
-.menu li.has-submenu{flex-direction:column; align-items:stretch; position:relative;}
-.menu li.has-submenu .row-head{display:flex; align-items:center; gap:10px;}
-.menu li.has-submenu .caret{margin-left:auto; transition:transform .2s ease;}
-.menu li.has-submenu.open .caret{transform:rotate(180deg)}
-.menu li .submenu{ display:none; list-style:none; margin-top:6px; padding-left:28px; border-left:1px dashed rgba(255,255,255,.18); }
-.menu li.open > .submenu{display:block}
-.menu li .submenu li{padding:8px 10px;border-radius:8px;margin:4px 0}
-.menu li .submenu li.active,
-.menu li .submenu li:hover{background:rgba(255,255,255,.08)}
+<link rel="stylesheet" href="assets/css/40-integracoes.css">
+<link rel="stylesheet" href="assets/css/90-utilities.css">
+<link rel="stylesheet" href="assets/css/95-print.css">
+<link rel="stylesheet" href="assets/css/99-overrides.css">
 
-/* Footer (mobile) */
-.sidebar-mobile-footer{display:none}
-@media (max-width:960px){
-  .sidebar-mobile-footer{ margin-top:auto; position:sticky; bottom:0; background:linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.25)) , rgba(255,255,255,.04); border-top:1px solid rgba(255,255,255,.08); padding:12px 6px 6px; display:block; }
-  .sidebar-mobile-footer .btn{width:100%}
-}
-
-/* Hamburger */
-.menu-toggle{
-  display:none;position:fixed;top:12px;left:12px;
-  background:linear-gradient(135deg, var(--c1), var(--c2));
-  color:#00121E;padding:8px 10px;border-radius:10px;z-index:1100;cursor:pointer;
-  box-shadow:0 10px 26px rgba(0,0,0,.24);
-  border:1px solid rgba(255,255,255,.25);
-  font-weight:800; transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
-}
-.menu-toggle:active{transform:scale(.98)}
-.menu-toggle:hover{box-shadow:0 8px 22px rgba(0,0,0,.26)}
-@media (max-width:960px){ .sidebar-open .menu-toggle{display:none} }
-
-/* Main */
-main{flex:1;margin-left:var(--nav-width);padding:18px 18px 30px;transition:margin-left .25s ease}
-
-/* Topbar */
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.hello{font-weight:800;letter-spacing:.2px}
-.right{display:flex;align-items:center;gap:10px}
-.badge{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:6px 10px;font-size:13px}
-
-/* Tabs & Cards */
-.tab{display:none}
-.tab.active{display:block}
-.card{background:var(--panel);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.08)}
-.card-header{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);font-weight:800}
-.card-body{padding:14px 16px}
-.row{display:flex;gap:12px;flex-wrap:wrap}
-.col{flex:1;min-width:380px; min-height:0px}
-.section-flat .card-header{display:flex;align-items:center;justify-content:space-between}
-.inline-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
-.mt-8{margin-top:8px}
-.kv-strong{font-weight:800}
-
-/* Inputs */
-label{font-weight:700;font-size:13px;margin:6px 0 6px;display:block}
-input[type="text"],input[type="date"],input[type="time"],input[type="number"],select,textarea{
-  width:100%;padding:10px 12px;border:1px solid rgba(0,224,255,.20);
-  border-radius:10px;background:#0a1520;color:var(--text);font-size:14px;
-  outline:none; appearance:none; -webkit-appearance:none; caret-color: var(--c1);
-  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
-}
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
-input[type="checkbox"], input[type="radio"]{ accent-color: var(--c1); }
-input:focus, select:focus, textarea:focus{
-  border-color: rgba(0,224,255,.45);
-  box-shadow: 0 0 0 3px rgba(0,224,255,.15), inset 0 0 0 1px rgba(255,255,255,.06);
-  background:#0b1a27;
-}
-::placeholder{ color:#93a7ba; opacity:.9 }
-textarea{min-height:110px;resize:vertical}
-.scroll-styled{ overflow:auto; -webkit-overflow-scrolling: touch; overscroll-behavior:auto; }
-
-/* Buttons */
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:10px 14px;border:none;border-radius:10px;cursor:pointer;font-weight:800;
-  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
-}
-.btn:active{transform:scale(.98)}
-.btn-primary{background:linear-gradient(135deg, var(--c1), var(--c2)); color:#00121E;border:1px solid rgba(255,255,255,.25)}
-.btn-primary:hover{filter:brightness(1.08)}
-.btn-light{background:#0a1520;color:#d6e6f3;border:1px solid rgba(255,255,255,.18)}
-.btn-ok{background:#0bbf7a;color:#00121E}
-.btn-warn{background:#f59e0b;color:#1a0b00}
-.btn-ghost{background:transparent;border:1px dashed rgba(255,255,255,.35);color:#cfe0ef}
-
-/* File inputs */
-#docUpload, #fotoUpload, #cadDocumento, #sigImport, #tplImport, #cadFoto, #genDocFile{
-  width:100%; padding:10px 12px; border:1px solid rgba(0,224,255,.20);
-  border-radius:10px; background:#0a1520; color:var(--text); font-size:14px; outline:none; transition:0.3s;
-}
-#docUpload:focus, #fotoUpload:focus, #cadDocumento:focus, #sigImport:focus, #tplImport:focus, #cadFoto:focus, #genDocFile:focus{ border-color: rgba(0,224,255,.45); }
-#docUpload::file-selector-button, #fotoUpload::file-selector-button, #cadDocumento::file-selector-button, #sigImport::file-selector-button, #tplImport::file-selector-button, #cadFoto::file-selector-button, #genDocFile::file-selector-button{
-  margin-right:10px; padding:8px 12px; border:1px solid rgba(255,255,255,.25);
-  border-radius:8px; background:linear-gradient(135deg, var(--c1), var(--c2));
-  color:#00121E; font-weight:800; cursor:pointer; transition:filter .15s ease, transform .15s ease;
-}
-
-/* Tabela */
-.table{width:100%;border-collapse:collapse;border-radius:12px;overflow:hidden}
-.table th,.table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);text-align:center}
-.table th{background:linear-gradient(90deg, rgba(0,224,255,.22), rgba(255,47,185,.22));color:#eaf6ff}
-.table .btn{padding:6px 10px;border-radius:8px}
-
-/* KPIs/Filtros/ajudas */
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.filters .chip{padding:8px 12px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:#0a1520;font-weight:700}
-.kpis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
-.kpi{flex:1;min-width:160px;background:#0a1520;border:1px solid rgba(255,255,255,.08);padding:12px;border-radius:14px}
-.kpi .title{font-size:12px;color:var(--muted)}
-.kpi .value{font-size:20px;font-weight:800}
-.muted-hint{font-size:12px;color:var(--muted);margin-top:6px}
-
-/* Status */
-.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-.ok{background:var(--ok)} .warn{background:var(--warn)} .err{background:var(--err)}
-
-/* Modal */
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);align-items:center;justify-content:center;z-index:1200;padding:12px}
-.modal .modal-content{background:var(--panel);border-radius:14px;border:1px solid rgba(255,255,255,.08);box-shadow:0 12px 40px rgba(0,0,0,.5);width:95%;max-width:860px;overflow:hidden}
-.modal .modal-header{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06);font-weight:800}
-.modal .modal-body{padding:14px 16px}
-.modal .modal-footer{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px;justify-content:flex-end}
-
-/* Assinatura */
-.sig-wrap{border:1px dashed rgba(255,255,255,.22);border-radius:12px;overflow:hidden;background:#0a1520}
-.sig-wrap canvas{width:100%;height:240px;display:block}
-.sig-toolbar{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
-
-/* Mapa */
-#map{width:100%;height:380px;border-radius:12px;border:1px solid rgba(255,255,255,.12);position:relative}
-.map-skeleton{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:800; color:#eaf6ff; background: linear-gradient(135deg,#0E1B2A,#091521); animation: mapPulse 1.1s ease-in-out infinite alternate; z-index:1;}
-@keyframes mapPulse{from{opacity:.85} to{opacity:.55}}
-.leaflet-control-container{z-index:900}
-@media (max-width:960px){
-  .leaflet-top.leaflet-left{left:auto; right:8px; top:70px}
-}
-
-/* Funcionários */
-.emp-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.emp-tools input{max-width:360px}
-.emp-tools.centered{justify-content:center}
-.emp-tools.centered input{min-width:240px;max-width:480px}
-.emp-tools .search-group{display:flex;gap:8px;align-items:center}
-
-.emp-grid{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:12px}
-@media (max-width:1100px){ .emp-grid{grid-template-columns:repeat(2,minmax(220px,1fr))} }
-@media (max-width:640px){ .emp-grid{grid-template-columns:1fr} }
-.emp-card{position:relative;background:#0a1520;border:1px solid rgba(255,255,255,.08);border-radius:14px;display:flex;gap:12px;padding:12px;align-items:center;cursor:pointer}
-.emp-card:hover{outline:1px dashed rgba(255,255,255,.18)}
-.emp-card.inactive{opacity:.55; filter:grayscale(.8);}
-.emp-avatar{
-  width:64px;height:64px;border-radius:14px;object-fit:cover;
-  background:radial-gradient(80% 80% at 20% 20%, var(--c1), transparent),
-             radial-gradient(80% 80% at 80% 80%, var(--c2), transparent);
-  border:1px solid rgba(255,255,255,.2)
-}
-.emp-name{font-weight:800}
-.emp-role{color:var(--muted);font-size:13px}
-
-/* Selo INATIVO */
-.emp-badge-off{position:absolute; top:8px; left:8px; background:linear-gradient(135deg, rgba(239,68,68,.18), transparent); border:1px solid rgba(239,68,68,.5); color:#fee2e2; font-weight:800; padding:4px 8px; border-radius:8px; font-size:11px;}
-
-/* NOVO: botão 3 pontinhos + menu dentro do card */
-.emp-menu{
-  position:absolute; top:6px; right:6px; width:32px; height:32px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius:10px; border:1px solid rgba(255,255,255,.25);
-  background:#0a1520; color:#d6e6f3; cursor:pointer;
-}
-.emp-menu:hover{ filter:brightness(1.1) }
-.emp-menu .fa-ellipsis-vertical{font-size:16px}
-.emp-menu-dropdown{
-  position:absolute; top:42px; right:6px; background:#0a1520; border:1px solid rgba(255,255,255,.18);
-  border-radius:10px; box-shadow:0 10px 26px rgba(0,0,0,.35); display:none; min-width:160px; z-index:5;
-  overflow:hidden;
-}
-.emp-menu-dropdown.open{ display:block; }
-.emp-menu-dropdown button{
-  width:100%; text-align:left; padding:10px 12px; background:transparent; border:none; color:#e7eef6; cursor:pointer;
-}
-.emp-menu-dropdown button:hover{ background:rgba(255,255,255,.08) }
-.emp-menu-dropdown .danger{ color:#ffd3d3; }
-
-/* Splash */
-#splash{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#0B1622; z-index:2000; transition:opacity .4s ease;}
-#splash.hide{opacity:0; pointer-events:none}
-.splash-card{display:flex;flex-direction:column;align-items:center;gap:10px}
-.splash-logo{width:120px;height:120px;border-radius:24px;object-fit:cover;border:1px solid rgba(255,255,255,.25);background: radial-gradient(80% 80% at 20% 20%, var(--c1), transparent), radial-gradient(80% 80% at 80% 80%, var(--c2), transparent);}
-.splash-title{font-weight:900;letter-spacing:.4px;color:#E7EEF6}
-
-/* Responsivo */
-@media (max-width:960px){
-  .menu-toggle{display:block}
-  aside{left:calc(-1 * var(--nav-width))}
-  aside.active{left:0}
-  main{margin-left:0;padding-top:56px}
-  .col{ min-width: min(100%, 520px); }
-  .scroll-styled{ max-height:55vh; }
-}
-@media (max-width:640px){ .col{ min-width:100%; } }
-
-/* Tabela Ponto em iPhone 14 */
-.table-wrap{ width:100%; overflow-x:auto; -webkit-overflow-scrolling: touch; }
-@media (max-width:430px){
-  #tPonto{ font-size:12px; }
-  .table th,.table td{ padding:6px 4px; }
-  .table.fit-mobile{ transform-origin: top left; }
-}
-
-/* Telas públicas de assinatura */
-.public-sign{ position:fixed; inset:0; background:var(--bg); color:var(--text); z-index:2200; overflow:auto; display:none; }
-.public-sign .wrap{ max-width:920px; margin:16px auto; padding:12px; }
-.public-sign .card{ margin:0 auto; }
-.public-sign .doc-box{
-  padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,.08);
-  background:#0a1520; white-space:pre-wrap; line-height:1.35;
-}
-
-/* Modal Funcionário — layout */
-#modalFuncionario .emp-modal-header{ display:flex; align-items:center; gap:14px; margin-bottom:12px; }
-#modalFuncionario .emp-avatar{ width:72px; height:72px; border-radius:16px; }
-#modalFuncionario .emp-name{ font-size:22px; font-weight:900; line-height:1.1; }
-#modalFuncionario .emp-role{ font-size:15px; font-weight:700; color:#d6e6f3; opacity:0.95; }
-#modalFuncionario .emp-tabs{ display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px; }
-#modalFuncionario .emp-tab-btn.active{ outline:2px solid rgba(0,224,255,.35); }
-
-/* Panes */
-.emp-pane{ display:none; }
-.emp-pane.active{ display:block; }
-
-/* Cadastro modal refinado */
-#modalCadastroUsuario .modal-content{max-width:860px}
-#modalCadastroUsuario .modal-body{
-  max-height: calc(100vh - 160px);
-  overflow:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
-}
-#modalCadastroUsuario .gestao-cadastro .card{background:transparent;border:none;box-shadow:none}
-#modalCadastroUsuario .gestao-cadastro .card-header{display:none}
-#modalCadastroUsuario .gestao-cadastro .card-body{padding:0}
-@media (max-width:960px){
-  #modalCadastroUsuario .modal-content{width:100%;height:100%;max-width:none;border-radius:0}
-  #modalCadastroUsuario .modal-body{max-height: calc(100vh - 110px)}
-  #modalCadastroUsuario .gestao-cadastro .col{min-width:100%!important}
-}
-
-/* Esconder cargo no form (mantido no HTML) */
-#wrapCargoField{display:none !important}
-
-/* Switches VR/VT */
-.benefit-toggles{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:6px 0 10px}
-.benefit-toggles label{display:inline-flex;align-items:center;gap:10px;font-weight:800}
-#cadOptVR,#cadOptVT{
-  appearance:none; width:46px; height:26px; border-radius:999px;
-  background:#132433; border:1px solid rgba(0,224,255,.22);
-  position:relative; cursor:pointer; transition:.18s ease;
-}
-#cadOptVR::after,#cadOptVT::after{
-  content:''; position:absolute; top:3px; left:3px; width:20px; height:20px;
-  border-radius:50%; background:linear-gradient(135deg, var(--c1), var(--c2));
-  transform:translateX(0); transition:transform .18s ease;
-}
-#cadOptVR:checked,#cadOptVT:checked{background:rgba(0,224,255,.25);border-color:rgba(0,224,255,.45)}
-#cadOptVR:checked::after,#cadOptVT:checked::after{transform:translateX(20px)}
-
-/* Benefícios: pequenos helpers */
-.vt-help,.vr-help{font-size:12px;color:var(--muted)}
-.vt-on{filter:none;opacity:1}
-.vt-off{filter:grayscale(.85);opacity:.55}
-.vt-cell-left{text-align:left}
-.t-right{text-align:right}
-.t-center{text-align:center}
-.vr-cell-left{text-align:left}
-.vr-meta{font-size:12px;color:var(--muted)}
-.vr-money{font-weight:800}
-.export-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
-
-/* Doc layout grid */
-.doc-tools{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-.doc-layout{display:grid;grid-template-columns:repeat(3,minmax(200px,1fr));gap:10px}
-@media (max-width:960px){ .doc-layout{grid-template-columns:1fr} }
-.doc-layout .field{display:flex;flex-direction:column}
-.doc-layout .field small{font-size:12px;color:var(--muted)}
-
-/* Alertas (sino topo) */
-.right .icon-btn{
-  position:relative; padding:8px 10px; border:1px solid rgba(255,255,255,.18);
-  background:#0a1520; color:#d6e6f3; border-radius:10px;
-}
-.notif-dot{ position:absolute; top:4px; right:4px; width:8px; height:8px; border-radius:50%; background:var(--warn); }
-.notif-dot[hidden]{ display:none }
-
-/* Documentos importantes (form) */
-.imp-docs-form{ display:grid; grid-template-columns: 1.2fr 1fr 1fr 1fr auto; gap:10px; align-items:end; margin-bottom:10px; }
-@media (max-width:960px){ .imp-docs-form{ grid-template-columns:1fr } }
-
-/* Esconder “Alterar foto” legado (se existir) */
-#modalFuncionario #btnTabFoto, #modalFuncionario #paneFoto { display:none !important; }
-
-/* Toasts */
-.toast-container{position:fixed; right:14px; bottom:14px; display:flex; flex-direction:column; gap:8px; z-index:3000;}
-.toast{min-width:240px; max-width:380px; padding:12px 14px; border-radius:12px; background:var(--panel); border:1px solid rgba(255,255,255,.12); box-shadow:0 10px 30px rgba(0,0,0,.4); display:flex; align-items:center; gap:10px; opacity:0; transform:translateY(10px); transition:.2s ease;}
-.toast.show{opacity:1; transform:translateY(0)}
-.toast .msg{line-height:1.35}
-.toast .close{margin-left:auto; cursor:pointer; opacity:.7}
-.toast.success{ border-color: rgba(16,185,129,.5); background:linear-gradient(135deg, rgba(16,185,129,.18), transparent), var(--panel) }
-.toast.error{   border-color: rgba(239,68,68,.5);  background:linear-gradient(135deg, rgba(239,68,68,.18),  transparent), var(--panel) }
-.toast.warn{    border-color: rgba(245,158,11,.5); background:linear-gradient(135deg, rgba(245,158,11,.18), transparent), var(--panel) }
-.toast.info{    border-color: rgba(0,224,255,.5); background:linear-gradient(135deg, rgba(0,224,255,.18), transparent), var(--panel) }
-
-/* Pequenos utilitários extras */
-.hint-row{margin-top:8px}
-.gestao-cadastro-wrap{display:none !important;} /* o cadastro abre em modal */
-.gestao-actions-left{display:flex;justify-content:flex-start;align-items:center;margin:8px 0 12px}
-
-</style>
 </head>
 <body>
 
-<!-- Splash -->
+  <!-- Splash -->
   <div id="splash">
     <div class="splash-card">
       <img class="splash-logo" src="Assets/img/logo_new.png" alt="RCR" onerror="this.style.display='none'">
@@ -424,55 +71,67 @@ textarea{min-height:110px;resize:vertical}
   <!-- Toasts -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <button class="menu-toggle" id="btnHamb"><i class="fa fa-bars"></i></button>
+  <button class="menu-toggle" id="btnHamb" aria-label="Abrir menu"><i class="fa fa-bars" aria-hidden="true"></i></button>
 
   <div class="container">
     <!-- Sidebar -->
-    <aside id="sidebar">
+    <aside id="sidebar" aria-label="Menu lateral">
       <div class="brand">
         <img class="brand-logo" src="Assets/img/logo_new.png" alt="RCR" onerror="this.remove()">
         <strong>RCR Engenharia</strong>
       </div>
 
-      <div class="user-card">
+      <div class="user-card" aria-live="polite">
         <div class="name" id="uNome">Colaborador(a)</div>
         <div class="role" id="uFuncao">Função</div>
       </div>
 
       <ul class="menu" id="menu">
-        <li data-tab="tabPonto" class="active"><i class="fa-regular fa-calendar-days"></i> Cartão de Ponto</li>
-        <li data-tab="tabIncluir"><i class="fa-solid fa-location-dot"></i> Incluir Ponto</li>
-        <li data-tab="tabDocs"><i class="fa-regular fa-file-lines"></i> Documentos & Assinaturas</li>
+        <li data-tab="tabPonto" class="active" aria-controls="tabPonto">
+          <i class="fa-regular fa-calendar-days" aria-hidden="true"></i> Cartão de Ponto
+        </li>
+        <li data-tab="tabIncluir" aria-controls="tabIncluir">
+          <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Incluir Ponto
+        </li>
+        <li data-tab="tabDocs" aria-controls="tabDocs">
+          <i class="fa-regular fa-file-lines" aria-hidden="true"></i> Documentos & Assinaturas
+        </li>
 
-        <!-- Funcionários com SUBMENU -->
-        <li data-tab="tabFuncionarios" class="has-submenu menu-func-root">
+        <!-- Funcionários com SUBMENU (item-pai sem data-tab) -->
+        <li class="has-submenu menu-func-root" aria-haspopup="true" aria-expanded="false">
           <div class="row-head">
-            <i class="fa-solid fa-users"></i> Funcionários
-            <i class="fa-solid fa-caret-down caret"></i>
+            <i class="fa-solid fa-users" aria-hidden="true"></i> Funcionários
+            <i class="fa-solid fa-caret-down caret" aria-hidden="true"></i>
           </div>
-          <ul class="submenu" id="submenuFuncionarios">
-            <li data-tab="tabFuncGestao"><i class="fa-solid fa-clipboard-user"></i> Gestão de Funcionários</li>
-            <li data-tab="tabFuncionarios"><i class="fa-solid fa-user-gear"></i> Gerenciar Funcionários</li>
+          <ul class="submenu" id="submenuFuncionarios" role="menu">
+            <li data-tab="tabFuncGestao" aria-controls="tabFuncGestao" role="menuitem">
+              <i class="fa-solid fa-clipboard-user" aria-hidden="true"></i> Gestão de Funcionários
+            </li>
+            <li data-tab="tabFuncionarios" aria-controls="tabFuncionarios" role="menuitem">
+              <i class="fa-solid fa-user-gear" aria-hidden="true"></i> Gerenciar Funcionários
+            </li>
           </ul>
         </li>
 
         <!-- Benefícios (submenu) -->
-        <li class="has-submenu menu-benef-root">
+        <li class="has-submenu menu-benef-root" aria-haspopup="true" aria-expanded="false">
           <div class="row-head">
-            <i class="fa-solid fa-hand-holding-heart"></i> Benefícios
-            <i class="fa-solid fa-caret-down caret"></i>
+            <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i> Benefícios
+            <i class="fa-solid fa-caret-down caret" aria-hidden="true"></i>
           </div>
-          <ul class="submenu" id="submenuBeneficios">
-            <li data-tab="tabVT"><i class="fa-solid fa-bus"></i> Vale Transporte</li>
-            <li data-tab="tabVR"><i class="fa-solid fa-utensils"></i> Vale Refeição</li>
+          <ul class="submenu" id="submenuBeneficios" role="menu">
+            <li data-tab="tabVT" aria-controls="tabVT" role="menuitem">
+              <i class="fa-solid fa-bus" aria-hidden="true"></i> Vale Transporte
+            </li>
+            <li data-tab="tabVR" aria-controls="tabVR" role="menuitem">
+              <i class="fa-solid fa-utensils" aria-hidden="true"></i> Vale Refeição
+            </li>
           </ul>
         </li>
-
-        <li data-tab="tabConfig"><i class="fa-solid fa-gear"></i> Configurações</li>
       </ul>
 
       <div class="sidebar-mobile-footer">
-        <button class="btn btn-light" id="btnCloseSidebar"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+        <button class="btn btn-light" id="btnCloseSidebar"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Voltar</button>
       </div>
     </aside>
 
@@ -481,25 +140,25 @@ textarea{min-height:110px;resize:vertical}
       <div class="topbar">
         <div class="hello">Olá, <span id="helloNome">Colaborador(a)</span></div>
         <div class="right">
-          <span class="badge"><i class="fa-regular fa-clock"></i> <span id="nowClock">--:--:--</span></span>
-          <button class="btn btn-light icon-btn" id="btnAlerts" title="Lembretes">
-            <i class="fa-regular fa-bell"></i>
+          <span class="badge"><i class="fa-regular fa-clock" aria-hidden="true"></i> <span id="nowClock">--:--:--</span></span>
+          <button class="btn btn-light icon-btn" id="btnAlerts" title="Lembretes" aria-haspopup="dialog">
+            <i class="fa-regular fa-bell" aria-hidden="true"></i>
             <span class="notif-dot" id="notifDot" hidden></span>
           </button>
         </div>
       </div>
 
       <!-- Cartão de Ponto -->
-      <section id="tabPonto" class="tab active">
+      <section id="tabPonto" class="tab active" role="region" aria-labelledby="hdrPonto">
         <div class="card">
-          <div class="card-header">Filtrar</div>
+          <div class="card-header" id="hdrPonto">Filtrar</div>
           <div class="card-body">
             <div class="filters">
-              <div class="chip"><label>Início</label><input type="date" id="pInicio"/></div>
-              <div class="chip"><label>Fim</label><input type="date" id="pFim"/></div>
-              <div class="chip"><label style="visibility:hidden">.</label><button class="btn btn-primary" id="btnAplicarFiltro"><i class="fa fa-filter"></i> Aplicar</button></div>
-              <div class="chip"><label style="visibility:hidden">.</label><button class="btn btn-light" id="btnPeriodoAtual"><i class="fa-regular fa-calendar"></i> 15 dias</button></div>
-              <div class="chip"><label style="visibility:hidden">.</label><button class="btn btn-primary" id="btnExportPonto"><i class="fa-regular fa-file-pdf"></i> Exportar PDF</button></div>
+              <div class="chip"><label for="pInicio">Início</label><input type="date" id="pInicio"/></div>
+              <div class="chip"><label for="pFim">Fim</label><input type="date" id="pFim"/></div>
+              <div class="chip"><label style="visibility:hidden">.</label><button class="btn btn-primary" id="btnAplicarFiltro"><i class="fa fa-filter" aria-hidden="true"></i> Aplicar</button></div>
+              <div class="chip"><label style="visibility:hidden">.</label><button class="btn btn-light" id="btnPeriodoAtual"><i class="fa-regular fa-calendar" aria-hidden="true"></i> 15 dias</button></div>
+              <div class="chip"><label style="visibility:hidden">.</label><button class="btn btn-primary" id="btnExportPonto"><i class="fa-regular fa-file-pdf" aria-hidden="true"></i> Exportar PDF</button></div>
             </div>
 
             <div class="kpis">
@@ -528,183 +187,339 @@ textarea{min-height:110px;resize:vertical}
       </section>
 
       <!-- Incluir Ponto -->
-      <section id="tabIncluir" class="tab">
+      <section id="tabIncluir" class="tab" role="region" aria-labelledby="hdrIncluir">
         <div class="card">
-          <div class="card-header">Incluir Ponto (geolocalização)</div>
+          <div class="card-header" id="hdrIncluir">Incluir Ponto (geolocalização)</div>
           <div class="card-body">
             <div id="map"><div class="map-skeleton">Carregando mapa…</div></div>
 
             <div class="inline-row">
               <div class="chip"><label>Data/Hora atual</label><div id="lblAgora" class="kv-strong">--/--/---- --:--:--</div></div>
               <div class="chip"><label>Coordenadas</label><div id="lblCoord" class="kv-strong">--</div></div>
-              <div class="chip"><label style="visibility:hidden">.</label><button class="btn btn-ok" id="btnBaterPonto"><i class="fa-regular fa-circle-dot"></i> Incluir Ponto</button></div>
+              <div class="chip"><label style="visibility:hidden">.</label><button class="btn btn-ok" id="btnBaterPonto"><i class="fa-regular fa-circle-dot" aria-hidden="true"></i> Incluir Ponto</button></div>
             </div>
           </div>
         </div>
       </section>
 
       <!-- Documentos & Assinaturas -->
-      <section id="tabDocs" class="tab">
-        <div class="card">
-          <div class="card-header">Gerar & Assinar Documentos</div>
-          <div class="card-body">
+      <section id="tabDocs" class="tab" role="region" aria-labelledby="hdrDocs">
+        <div class="card" style="height:100%;min-height:580px">
+          <div class="card-header" id="hdrDocs">Documentos &amp; Assinaturas</div>
+          <div class="card-body" style="padding:0;height:calc(100% - 48px)">
 
-            <div class="row" style="align-items:flex-end">
-              <div class="col" style="max-width:320px">
-                <label>Importar documento/modelo</label>
-                <input type="file" id="tplImport" accept=".json,.txt,.md,.pdf" multiple>
+            <!-- ================== Documentos & Assinaturas: HERO ================== -->
+            <div id="docs-sign-root" class="docs-shell" hidden>
+              <div class="docs-hero">
+                <!-- Chip "Templates" (abre o gerenciador de templates existente) -->
+                <button id="btn-templates" type="button" class="chip chip-primary">Templates</button>
+
+                <!-- Cartão central com CTA -->
+                <section class="docs-cta-card" role="region" aria-labelledby="docs-cta-title">
+                  <h2 id="docs-cta-title" class="sr-only">Documentos & Assinaturas</h2>
+                  <button id="btn-open" type="button" class="btn-gradient btn-cta">Gerar documento</button>
+                </section>
               </div>
 
-              <div class="col">
-                <label>Tipo de documento</label>
-                <select id="docTipo">
-                  <option value="interesse">Declaração de Interesse</option>
-                  <option value="anuencia">Carta de Anuência</option>
-                  <option value="dividas">Declaração de Ausência de Dívidas</option>
-                  <optgroup id="docCustomGroup" label="— Personalizados —"></optgroup>
-                </select>
-              </div>
+              <footer class="docs-footer">© Atrium • Somente front. <span class="grad">ciano→magenta</span></footer>
 
-              <div class="col" style="max-width:240px">
-                <label style="visibility:hidden">.</label>
-                <button class="btn btn-light" id="btnCriarTipoDoc">
-                  <i class="fa-solid fa-plus"></i> Criar tipo de documento
-                </button>
-              </div>
-            </div>
+              <!-- MODAL WIZARD GERAR DOCUMENTO (resizável) -->
+              <div id="wizard" class="backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+                <div class="modal" id="wizardModal">
+                  <div class="modal-h">Geração de documentos</div>
+                  <div class="modal-b">
+                    <!-- STEP 1 -->
+                    <div id="step1" class="grid grid-2">
+                      <div>
+                        <label for="template">Selecione o template</label>
+                        <select id="template" class="select-dark"></select>
+                        <small class="tiny">Crie/edite templates no botão “Templates”.</small>
+                      </div>
 
-            <!-- Gerenciar tipos personalizados -->
-            <div class="row" id="tplManageRow">
-              <div class="col" style="max-width:520px">
-                <label>Excluir tipo de documento (personalizado)</label>
-                <div class="inline-row">
-                  <select id="tplManageSelect" style="min-width:280px">
-                    <option value="">— Selecione um tipo personalizado —</option>
-                  </select>
-                  <button class="btn btn-ghost" id="btnExcluirTipoDoc">
-                    <i class="fa-solid fa-trash"></i> Excluir tipo
-                  </button>
-                </div>
-                <div class="filehint">Apenas tipos criados/importados podem ser excluídos.</div>
-              </div>
-            </div>
+                      <div>
+                        <label>Vincular funcionário?</label>
+                        <!-- radios sem fundo/borda -->
+                        <div class="radio-inline">
+                          <label><input type="radio" name="vinc" value="sim" checked> Sim</label>
+                          <label><input type="radio" name="vinc" value="nao"> Não</label>
+                        </div>
+                      </div>
 
-            <div class="row">
-              <div class="col">
-                <label>Nome do colaborador</label>
-                <input type="text" id="docNome" placeholder="Nome completo">
-              </div>
-              <div class="col">
-                <label>Documento (CPF/RG)</label>
-                <input type="text" id="docDoc" placeholder="000.000.000-00">
-              </div>
-            </div>
+                      <div id="func-wrap">
+                        <label for="func">Escolha o funcionário</label>
+                        <select id="func" class="select-dark"></select>
+                      </div>
 
-            <div class="row">
-              <div class="col">
-                <label>Conteúdo (pode editar antes de assinar)</label>
-                <textarea id="docTexto" class="scroll-styled" spellcheck="false"></textarea>
-              </div>
-              <div class="col">
-                <label>Assinatura do colaborador</label>
+                      <div class="panel" style="grid-column:1/-1">
+                        <small class="muted">Variáveis: <code>{nome}</code>, <code>{cpf}</code>, <code>{endereco.cidade}</code>, <code>{salario|money}</code>, <code>{admissao|date}</code>, <code>{nome|upper}</code>, <code>{hoje}</code>.</small>
+                      </div>
+                    </div>
 
-                <input type="file" id="sigImport" accept="image/*" />
-                <div class="filehint">Importe uma imagem da assinatura (.png/.jpg). Ela será colocada no quadro abaixo.</div>
+                    <!-- STEP 2 -->
+                    <div id="step2" style="display:none;">
+                      <div class="cols">
+                        <div class="panel">
+                          <h4>Variáveis detectadas</h4>
+                          <div id="vars"></div>
+                          <hr style="border-color:rgba(255,255,255,.08);margin:10px 0">
+                          <label class="radio-inline" style="gap:8px;">
+                            <input type="checkbox" id="chk-preview" checked> Pré-visualizar com dados do funcionário
+                          </label>
+                          <div class="panel" style="margin-top:10px;">
+                            <small class="muted">Clique em uma variável para inserir no cursor do editor.</small>
+                          </div>
 
-                <div class="sig-toolbar">
-                  <button class="btn btn-light" id="btnLimparAss">Limpar</button>
-                  <button class="btn btn-primary" id="btnGerarPDF"><i class="fa-regular fa-file-pdf"></i> Gerar PDF assinado</button>
-                </div>
-                <div class="sig-wrap"><canvas id="sigPad"></canvas></div>
-                <div class="muted-hint">Assine usando o mouse (desktop) ou o dedo/caneta (mobile) — ou importe uma imagem.</div>
-              </div>
-            </div>
+                          <!-- ======= Configurações de Layout ======= -->
+                          <div class="panel" style="margin-top:12px;">
+                            <h4>Configurações de layout</h4>
+                            <div class="grid">
+                              <div>
+                                <label for="ly-font-family">Fonte</label>
+                                <select id="ly-font-family" class="select-dark">
+                                  <option value="Arial, Helvetica, sans-serif">Arial / Helvetica</option>
+                                  <option value="Times New Roman, Times, serif">Times New Roman</option>
+                                  <option value="Calibri, Arial, Helvetica, sans-serif">Calibri</option>
+                                  <option value="Cambria, Georgia, 'Times New Roman', Times, serif">Cambria</option>
+                                  <option value="Roboto, Arial, Helvetica, sans-serif">Roboto</option>
+                                </select>
+                              </div>
+                              <div>
+                                <label for="ly-font-size">Tamanho base da fonte (px)</label>
+                                <input id="ly-font-size" type="number" class="input-dark" min="8" max="20" step="1" />
+                              </div>
+                              <div>
+                                <label for="ly-line-height">Altura de linha</label>
+                                <input id="ly-line-height" type="number" class="input-dark" min="1" max="2" step="0.05" />
+                              </div>
+                              <div>
+                                <label for="ly-p-spacing">Espaço entre parágrafos (px)</label>
+                                <input id="ly-p-spacing" type="number" class="input-dark" min="0" max="40" step="1" />
+                              </div>
 
-            <!-- Layout do documento -->
-            <div class="card section-flat">
-              <div class="card-header">Layout (cabeçalho e rodapé)</div>
-              <div class="card-body">
-                <div class="doc-layout">
-                  <div class="field">
-                    <label>Título do cabeçalho</label>
-                    <input type="text" id="docHeaderTitle" placeholder="Ex.: Declaração • RCR Engenharia">
-                    <small>Será exibido no topo de cada página.</small>
+                              <div>
+                                <label for="ly-h1">Tamanho H1 (x da base)</label>
+                                <input id="ly-h1" type="number" class="input-dark" min="1.0" max="3" step="0.05" />
+                              </div>
+                              <div>
+                                <label for="ly-h2">Tamanho H2 (x da base)</label>
+                                <input id="ly-h2" type="number" class="input-dark" min="1.0" max="3" step="0.05" />
+                              </div>
+                              <div>
+                                <label for="ly-h3">Tamanho H3 (x da base)</label>
+                                <input id="ly-h3" type="number" class="input-dark" min="1.0" max="3" step="0.05" />
+                              </div>
+
+                              <div>
+                                <label for="ly-page-format">Formato da página</label>
+                                <select id="ly-page-format" class="select-dark">
+                                  <option value="a4">A4</option>
+                                  <option value="letter">Carta (Letter)</option>
+                                </select>
+                              </div>
+                              <div>
+                                <label for="ly-orientation">Orientação</label>
+                                <select id="ly-orientation" class="select-dark">
+                                  <option value="p">Retrato</option>
+                                  <option value="l">Paisagem</option>
+                                </select>
+                              </div>
+
+                              <div>
+                                <label for="ly-mt">Margem superior (mm)</label>
+                                <input id="ly-mt" type="number" class="input-dark" min="0" max="50" step="1" />
+                              </div>
+                              <div>
+                                <label for="ly-mr">Margem direita (mm)</label>
+                                <input id="ly-mr" type="number" class="input-dark" min="0" max="50" step="1" />
+                              </div>
+                              <div>
+                                <label for="ly-mb">Margem inferior (mm)</label>
+                                <input id="ly-mb" type="number" class="input-dark" min="0" max="50" step="1" />
+                              </div>
+                              <div>
+                                <label for="ly-ml">Margem esquerda (mm)</label>
+                                <input id="ly-ml" type="number" class="input-dark" min="0" max="50" step="1" />
+                              </div>
+                            </div>
+
+                            <div class="panel" style="margin-top:12px;">
+                              <div class="row">
+                                <label class="radio-inline" style="gap:8px;">
+                                  <input type="checkbox" id="ly-logo-enabled"> Inserir logo no topo
+                                </label>
+                              </div>
+                              <div class="grid" style="margin-top:8px;">
+                                <div>
+                                  <label for="ly-logo-size">Tamanho do logo (px)</label>
+                                  <input id="ly-logo-size" type="number" class="input-dark" min="24" max="600" step="1" />
+                                </div>
+                                <div>
+                                  <label for="ly-logo-align">Alinhamento do logo</label>
+                                  <select id="ly-logo-align" class="select-dark">
+                                    <option value="left">Esquerda</option>
+                                    <option value="center">Centro</option>
+                                    <option value="right">Direita</option>
+                                  </select>
+                                </div>
+                                <div>
+                                  <label for="ly-logo-space">Espaço abaixo do logo (px)</label>
+                                  <input id="ly-logo-space" type="number" class="input-dark" min="0" max="80" step="1" />
+                                </div>
+                                <div>
+                                  <label for="ly-logo-file">Logo (imagem)</label>
+                                  <div class="file-input">
+                                    <input id="ly-logo-file" type="file" accept="image/*" hidden />
+                                    <button id="ly-logo-file-btn" type="button" class="input-like">
+                                      <span>Selecionar imagem</span>
+                                      <span class="tiny">🖼️</span>
+                                    </button>
+                                    <div id="ly-logo-file-info" class="tiny file-name">Nenhum arquivo selecionado</div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="row" style="margin-top:10px;">
+                                <label class="radio-inline" style="gap:8px;">
+                                  <input type="checkbox" id="ly-logo-resize-first" checked>
+                                  Redimensionar primeira imagem do conteúdo (usa o tamanho do logo)
+                                </label>
+                              </div>
+                            </div>
+
+                            <div class="row" style="margin-top:10px;">
+                              <button id="ly-reset" class="btn secondary">Resetar</button>
+                              <div style="display:flex;gap:8px;">
+                                <button id="ly-save" class="btn">Salvar como padrão</button>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- ======= /Configurações de Layout ======= -->
+                        </div>
+
+                        <div>
+                          <div class="toolbar">
+                            <button class="tb-btn" data-cmd="bold"><b>N</b></button>
+                            <button class="tb-btn" data-cmd="italic"><i>I</i></button>
+                            <button class="tb-btn" data-cmd="underline"><u>S</u></button>
+                            <button class="tb-btn" data-cmd="insertUnorderedList">• Lista</button>
+                            <button class="tb-btn" data-cmd="insertOrderedList">1. Lista</button>
+                            <button class="tb-btn" id="btn-clear">Limpar formatação</button>
+                          </div>
+                          <div id="editor" class="editor" contenteditable="true"></div>
+                          <div id="preview" class="preview"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="field">
-                    <label>Alinhamento do cabeçalho</label>
-                    <select id="docHeaderAlign">
-                      <option value="left">Esquerda</option>
-                      <option value="center">Centralizado</option>
-                      <option value="right">Direita</option>
-                    </select>
+
+                  <div class="modal-f">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                      <button id="btn-back" class="btn secondary">Voltar</button>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                      <button id="btn-close" class="btn secondary">Fechar</button>
+                      <button id="btn-next" class="btn">Avançar</button>
+                      <button id="btn-concluir" class="btn" style="display:none;">Concluir (PDF)</button>
+                    </div>
                   </div>
-                  <div class="field">
-                    <label>Rodapé</label>
-                    <input type="text" id="docFooterText" placeholder="Ex.: Confidencial • Uso interno">
-                    <small>Mostrado no rodapé de cada página.</small>
-                  </div>
-                  <div class="field">
-                    <label>Numeração</label>
-                    <select id="docPageNums">
-                      <option value="none">Sem numeração</option>
-                      <option value="p_de_n">pág. X de Y</option>
-                      <option value="p_simples">pág. X</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label>Logo no cabeçalho</label>
-                    <select id="docHeaderLogo">
-                      <option value="auto">Automático</option>
-                      <option value="off">Sem logo</option>
-                    </select>
-                    <small>Usa a logo atual quando disponível.</small>
-                  </div>
-                </div>
-                <div class="hint-row">
-                  <button class="btn btn-ghost" id="btnSalvarLayoutDoc">
-                    <i class="fa-regular fa-floppy-disk"></i> Salvar layout como padrão
-                  </button>
+
+                  <!-- handles de resize -->
+                  <div class="resizer-e" id="wizardResizeE"></div>
+                  <div class="resizer-se" id="wizardResizeSE"></div>
                 </div>
               </div>
-            </div>
 
-            <!-- Ferramentas de formatação -->
-            <div class="doc-tools">
-              <button class="btn btn-primary" id="btnFormatarIA">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Formatar com IA (beta)
-              </button>
-              <button class="btn btn-light" id="btnFormatarBasico">
-                <i class="fa-regular fa-magic"></i> Formatar básico
-              </button>
-            </div>
+              <!-- MODAL GERENCIAR TEMPLATES -->
+              <div id="tplModal" class="backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+                <div class="modal" style="width:min(1100px,96vw)">
+                  <div class="modal-h row">
+                    <span>Templates</span>
+                    <button id="btn-close-tpl" class="btn secondary">Fechar</button>
+                  </div>
+                  <div class="modal-b">
+                    <!-- Lista -->
+                    <div id="tplListView">
+                      <div class="row" style="margin-bottom:10px;">
+                        <h3 style="margin:0">Meus templates</h3>
+                        <button id="btn-new-tpl" class="btn">Criar template</button>
+                      </div>
+                      <div class="list" id="tplList"></div>
+                      <div class="panel" style="margin-top:10px;">
+                        <small class="muted">Templates “padrão” não podem ser apagados. Para editar, use “Duplicar” e edite a cópia.</small>
+                      </div>
+                    </div>
 
-            <!-- Assinatura via link público -->
-            <div class="row" style="margin-top:14px">
-              <div class="col">
-                <label>Assinatura via link público</label>
-                <div class="inline-row">
-                  <button class="btn btn-primary" id="btnGerarLinkAss">
-                    <i class="fa-solid fa-link"></i> Gerar link de assinatura
-                  </button>
-                  <input type="text" id="assLink" class="scroll-styled" readonly
-                        placeholder="Clique em “Gerar link” para criar a URL…"
-                        style="flex:1;min-width:280px">
-                  <button class="btn btn-light" id="btnCopiarLinkAss">
-                    <i class="fa-regular fa-copy"></i> Copiar link
-                  </button>
+                    <!-- Criar/Editar -->
+                    <div id="tplEditView" style="display:none;">
+                      <div class="grid grid-2">
+                        <div>
+                          <label for="tplName">Nome do template</label>
+                          <input id="tplName" type="text" class="input-dark" placeholder="Ex: Contrato CLT – Loja SP" />
+                        </div>
+
+                        <div>
+                          <label for="docxTpl">Importar Word (.docx)</label>
+                          <!-- controle estilizado (mesma altura do input) -->
+                          <div class="file-input">
+                            <input id="docxTpl" type="file" accept=".docx" hidden />
+                            <button id="docxTplBtn" type="button" class="input-like">
+                              <span>Selecionar arquivo .docx</span>
+                              <span class="tiny">📄</span>
+                            </button>
+                            <div id="docxTplInfo" class="tiny file-name">Nenhum arquivo selecionado</div>
+                          </div>
+                          <small class="tiny">A importação mantém a formatação (títulos, listas, negrito etc.).</small>
+                        </div>
+
+                        <div class="panel" style="grid-column:1/-1">
+                          <small class="muted">Variáveis: <code>{nome}</code>, <code>{cpf}</code>, <code>{endereco.cidade}</code>, <code>{salario|money}</code>, <code>{admissao|date}</code>, <code>{nome|upper}</code>, <code>{hoje}</code>.</small>
+                        </div>
+                      </div>
+
+                      <div class="cols" style="margin-top:12px;">
+                        <div class="panel">
+                          <h4>Variáveis detectadas</h4>
+                          <div id="tplVars"></div>
+                        </div>
+                        <div>
+                          <div class="toolbar">
+                            <button class="tb-btn" data-cmd="bold"><b>N</b></button>
+                            <button class="tb-btn" data-cmd="italic"><i>I</i></button>
+                            <button class="tb-btn" data-cmd="underline"><u>S</u></button>
+                            <button class="tb-btn" data-cmd="insertUnorderedList">• Lista</button>
+                            <button class="tb-btn" data-cmd="insertOrderedList">1. Lista</button>
+                            <button class="tb-btn" id="btn-clear-tpl">Limpar formatação</button>
+                          </div>
+                          <div id="tplEditor" class="editor" contenteditable="true"></div>
+                        </div>
+                      </div>
+
+                      <div class="row" style="margin-top:12px;">
+                        <button id="btn-back-list" class="btn secondary">Cancelar</button>
+                        <div style="display:flex;gap:8px;">
+                          <button id="btn-save-tpl" class="btn">Salvar template</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-f">
+                    <small class="tiny">Armazenamento local: <code>localStorage</code></small>
+                  </div>
                 </div>
-                <div class="filehint">Envie este link para o colaborador assinar em uma tela simplificada, sem acessar o sistema.</div>
               </div>
-            </div>
 
+              <!-- Área oculta para render do PDF -->
+              <div id="print-area"></div>
+
+            </div>
           </div>
         </div>
       </section>
 
       <!-- GESTÃO DE FUNCIONÁRIOS -->
-      <section id="tabFuncGestao" class="tab">
+      <section id="tabFuncGestao" class="tab" role="region" aria-labelledby="hdrFuncGestao">
         <div class="card">
-          <div class="card-header">Gestão de Funcionários</div>
+          <div class="card-header" id="hdrFuncGestao">Gestão de Funcionários</div>
           <div class="card-body">
 
             <!-- (Bloco de cadastro é aberto em modal) -->
@@ -716,7 +531,7 @@ textarea{min-height:110px;resize:vertical}
                     <!-- FOTO -->
                     <div class="row">
                       <div class="col" style="max-width:320px">
-                        <label>Foto do funcionário</label>
+                        <label for="cadFoto">Foto do funcionário</label>
                         <input type="file" id="cadFoto" accept="image/*">
                       </div>
                       <div class="col" style="display:flex;align-items:flex-end;gap:12px">
@@ -729,55 +544,55 @@ textarea{min-height:110px;resize:vertical}
 
                     <div class="row">
                       <div class="col">
-                        <label>Nome</label>
+                        <label for="cadNome">Nome</label>
                         <input type="text" id="cadNome" placeholder="Nome completo">
                       </div>
                       <div class="col">
-                        <label>Função</label>
+                        <label for="cadFuncao">Função</label>
                         <input type="text" id="cadFuncao" placeholder="Cargo/Função">
                       </div>
                     </div>
 
                     <div class="row">
                       <div class="col">
-                        <label>RG</label>
+                        <label for="cadRG">RG</label>
                         <input type="text" id="cadRG" placeholder="00.000.000-0">
                       </div>
                       <div class="col">
-                        <label>CPF</label>
+                        <label for="cadCPF">CPF</label>
                         <input type="text" id="cadCPF" placeholder="000.000.000-00">
                       </div>
                       <div class="col">
-                        <label>Idade</label>
+                        <label for="cadIdade">Idade</label>
                         <input type="number" id="cadIdade" min="0" placeholder="0">
                       </div>
                     </div>
 
                     <div class="row" id="wrapAdmissaoSalario">
                       <div class="col">
-                        <label>Data de admissão</label>
+                        <label for="cadAdmissao">Data de admissão</label>
                         <input type="date" id="cadAdmissao">
                       </div>
                       <div class="col">
-                        <label>Salário (R$)</label>
+                        <label for="cadSalario">Salário (R$)</label>
                         <input type="number" id="cadSalario" min="0" step="0.01" placeholder="0,00">
                       </div>
                     </div>
 
                     <div class="row benefit-prices">
                       <div class="col">
-                        <label>Tarifa VT (R$)</label>
+                        <label for="cadVtUnit">Tarifa VT (R$)</label>
                         <input type="number" id="cadVtUnit" step="0.01" min="0" placeholder="ex.: 5,00">
                       </div>
                       <div class="col">
-                        <label>Valor diário VR (R$)</label>
+                        <label for="cadVrDaily">Valor diário VR (R$)</label>
                         <input type="number" id="cadVrDaily" step="0.01" min="0" placeholder="ex.: 25,00">
                       </div>
                     </div>
 
                     <div class="row" id="wrapCargoField">
                       <div class="col">
-                        <label>Cargo</label>
+                        <label for="cadCargo">Cargo</label>
                         <input type="text" id="cadCargo" placeholder="Ex.: Analista, Engenheiro">
                       </div>
                     </div>
@@ -794,17 +609,17 @@ textarea{min-height:110px;resize:vertical}
 
                     <div class="row">
                       <div class="col">
-                        <label>Documento (arquivo)</label>
+                        <label for="cadDocumento">Documento (arquivo)</label>
                         <input type="file" id="cadDocumento">
                       </div>
                       <div class="col">
                         <label style="visibility:hidden">.</label>
                         <div class="inline-row">
                           <button class="btn btn-primary" id="btnSalvarCadastro">
-                            <i class="fa-regular fa-floppy-disk"></i> Salvar cadastro
+                            <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i> Salvar cadastro
                           </button>
                           <button class="btn btn-light" id="btnLimparCadastro">
-                            <i class="fa-solid fa-eraser"></i> Limpar
+                            <i class="fa-solid fa-eraser" aria-hidden="true"></i> Limpar
                           </button>
                         </div>
                       </div>
@@ -820,10 +635,10 @@ textarea{min-height:110px;resize:vertical}
               <div class="search-group">
                 <input type="text" id="funcSearchGestao" placeholder="Pesquisar funcionário… (digite para filtrar)">
                 <button class="btn btn-light" id="funcSearchGestaoBtn" title="Pesquisar">
-                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 </button>
                 <button class="btn btn-light" id="funcClearGestao">
-                  <i class="fa-solid fa-xmark"></i> Limpar
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i> Limpar
                 </button>
               </div>
             </div>
@@ -831,7 +646,7 @@ textarea{min-height:110px;resize:vertical}
             <!-- Botão Cadastro de Usuário -->
             <div class="gestao-actions-left">
               <button class="btn btn-primary" id="btnAbrirCadastro">
-                <i class="fa-solid fa-user-plus"></i> Cadastro de Usuário
+                <i class="fa-solid fa-user-plus" aria-hidden="true"></i> Cadastro de Usuário
               </button>
             </div>
 
@@ -843,9 +658,9 @@ textarea{min-height:110px;resize:vertical}
       <!-- FIM GESTÃO -->
 
       <!-- GERENCIAR FUNCIONÁRIOS -->
-      <section id="tabFuncionarios" class="tab">
+      <section id="tabFuncionarios" class="tab" role="region" aria-labelledby="hdrFuncionarios">
         <div class="card">
-          <div class="card-header">Funcionários</div>
+          <div class="card-header" id="hdrFuncionarios">Funcionários</div>
           <div class="card-body">
 
             <!-- Busca simples -->
@@ -853,9 +668,11 @@ textarea{min-height:110px;resize:vertical}
               <div class="search-group">
                 <input type="text" id="funcSearch" placeholder="Pesquisar funcionário… (digite para filtrar)">
                 <button class="btn btn-light" id="funcSearchBtn" title="Pesquisar">
-                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 </button>
-                <button class="btn btn-light" id="funcClear"><i class="fa-solid fa-xmark"></i> Limpar</button>
+                <button class="btn btn-light" id="funcClear">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i> Limpar
+                </button>
               </div>
             </div>
 
@@ -868,9 +685,9 @@ textarea{min-height:110px;resize:vertical}
       </section>
 
       <!-- Benefícios — VT -->
-      <section id="tabVT" class="tab">
+      <section id="tabVT" class="tab" role="region" aria-labelledby="hdrVT">
         <div class="card">
-          <div class="card-header">Benefícios — Vale Transporte</div>
+          <div class="card-header" id="hdrVT">Benefícios — Vale Transporte</div>
           <div class="card-body">
             <div class="kpis">
               <div class="kpi">
@@ -889,11 +706,11 @@ textarea{min-height:110px;resize:vertical}
 
             <div class="row" style="align-items:flex-end">
               <div class="col" style="max-width:220px">
-                <label>Tarifa padrão (R$)</label>
+                <label for="vtUnit">Tarifa padrão (R$)</label>
                 <input type="number" step="0.01" min="0" id="vtUnit" placeholder="ex.: 5.00" disabled>
               </div>
               <div class="col" style="max-width:220px">
-                <label>Dia do crédito (geral)</label>
+                <label for="vtCreditDay">Dia do crédito (geral)</label>
                 <input type="number" min="1" max="31" id="vtCreditDay" placeholder="1 a 31" disabled>
               </div>
               <div class="col">
@@ -902,8 +719,8 @@ textarea{min-height:110px;resize:vertical}
             </div>
 
             <div class="filters">
-              <button class="btn btn-light" id="btnExportVTCSV"><i class="fa-regular fa-file-excel"></i> Exportar Excel (CSV)</button>
-              <button class="btn btn-primary" id="btnExportVTPDF"><i class="fa-regular fa-file-pdf"></i> Exportar PDF</button>
+              <button class="btn btn-light" id="btnExportVTCSV"><i class="fa-regular fa-file-excel" aria-hidden="true"></i> Exportar Excel (CSV)</button>
+              <button class="btn btn-primary" id="btnExportVTPDF"><i class="fa-regular fa-file-pdf" aria-hidden="true"></i> Exportar PDF</button>
             </div>
 
             <div class="table-wrap">
@@ -938,9 +755,9 @@ textarea{min-height:110px;resize:vertical}
       </section>
 
       <!-- Benefícios — VR -->
-      <section id="tabVR" class="tab">
+      <section id="tabVR" class="tab" role="region" aria-labelledby="hdrVR">
         <div class="card">
-          <div class="card-header">Benefícios — Vale Refeição</div>
+          <div class="card-header" id="hdrVR">Benefícios — Vale Refeição</div>
           <div class="card-body">
             <div class="kpis">
               <div class="kpi">
@@ -961,26 +778,26 @@ textarea{min-height:110px;resize:vertical}
               </div>
 
               <div class="export-actions">
-                <button class="btn btn-light" id="btnExportVRCSV"><i class="fa-regular fa-file-excel"></i> Exportar Excel (CSV)</button>
-                <button class="btn btn-primary" id="btnExportVRPDF"><i class="fa-regular fa-file-pdf"></i> Exportar PDF</button>
+                <button class="btn btn-light" id="btnExportVRCSV"><i class="fa-regular fa-file-excel" aria-hidden="true"></i> Exportar Excel (CSV)</button>
+                <button class="btn btn-primary" id="btnExportVRPDF"><i class="fa-regular fa-file-pdf" aria-hidden="true"></i> Exportar PDF</button>
               </div>
             </div>
 
             <div class="row" style="align-items:flex-end">
               <div class="col" style="max-width:220px">
-                <label>Valor diário (R$)</label>
+                <label for="vrDaily">Valor diário (R$)</label>
                 <input type="number" step="0.01" min="0" id="vrDaily" placeholder="ex.: 25.00">
               </div>
               <div class="col" style="max-width:220px">
-                <label>Dias úteis / mês</label>
+                <label for="vrDays">Dias úteis / mês</label>
                 <input type="number" min="0" max="31" id="vrDays" placeholder="ex.: 22">
               </div>
               <div class="col" style="max-width:220px">
-                <label>% desconto sobre salário</label>
+                <label for="vrPct">% desconto sobre salário</label>
                 <input type="number" min="0" max="100" step="0.01" id="vrPct" placeholder="6">
               </div>
               <div class="col" style="max-width:220px">
-                <label>Dia do crédito (geral)</label>
+                <label for="vrCreditDay">Dia do crédito (geral)</label>
                 <input type="number" min="1" max="31" id="vrCreditDay" placeholder="1 a 31">
               </div>
             </div>
@@ -1033,11 +850,11 @@ textarea{min-height:110px;resize:vertical}
       </section>
 
       <!-- Configurações -->
-      <section id="tabConfig" class="tab">
+      <section id="tabConfig" class="tab" role="region" aria-labelledby="hdrConfig">
         <div class="card">
-          <div class="card-header">Configurações</div>
+          <div class="card-header" id="hdrConfig">Configurações</div>
           <div class="card-body">
-          <div class="muted-hint">Nenhuma opção disponível no momento.</div>
+            <div class="muted-hint">Nenhuma opção disponível no momento.</div>
           </div>
         </div>
       </section>
@@ -1045,7 +862,7 @@ textarea{min-height:110px;resize:vertical}
   </div>
 
   <!-- Modal: Batimentos do Dia -->
-  <div class="modal" id="modalBatimentosDia">
+  <div class="modal" id="modalBatimentosDia" role="dialog" aria-modal="true" aria-labelledby="batimentosDiaTitulo">
     <div class="modal-content">
       <div class="modal-header"><span id="batimentosDiaTitulo">Batimentos do dia</span></div>
       <div class="modal-body">
@@ -1068,7 +885,7 @@ textarea{min-height:110px;resize:vertical}
   </div>
 
   <!-- Modal Funcionário -->
-  <div class="modal" id="modalFuncionario">
+  <div class="modal" id="modalFuncionario" role="dialog" aria-modal="true" aria-labelledby="funcModalTitle">
     <div class="modal-content">
       <div class="modal-header"><span id="funcModalTitle">Funcionário</span></div>
       <div class="modal-body">
@@ -1083,10 +900,10 @@ textarea{min-height:110px;resize:vertical}
         <!-- Abas (duas: Documentos e Documentos Importantes) -->
         <div class="emp-tabs" role="tablist" aria-label="Documentos do funcionário">
           <button class="btn btn-light emp-tab-btn active" id="btnTabDocsSimples" data-target="#paneDocsSimples">
-            <i class="fa-regular fa-folder-open"></i> Documentos
+            <i class="fa-regular fa-folder-open" aria-hidden="true"></i> Documentos
           </button>
           <button class="btn btn-warn emp-tab-btn" id="btnTabDocsImportantes" data-target="#paneDocsImportantes">
-            <i class="fa-regular fa-bell"></i> Documentos importantes
+            <i class="fa-regular fa-bell" aria-hidden="true"></i> Documentos importantes
           </button>
         </div>
 
@@ -1094,7 +911,7 @@ textarea{min-height:110px;resize:vertical}
         <div class="emp-pane active" id="paneDocsSimples">
           <div class="inline-row" style="margin-bottom:10px">
             <input type="file" id="genDocFile" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.txt" style="min-width:260px">
-            <button class="btn btn-ok" id="btnAddGenDoc"><i class="fa-solid fa-upload"></i> Anexar</button>
+            <button class="btn btn-ok" id="btnAddGenDoc"><i class="fa-solid fa-upload" aria-hidden="true"></i> Anexar</button>
           </div>
           <table class="table">
             <thead>
@@ -1113,15 +930,15 @@ textarea{min-height:110px;resize:vertical}
         <div class="emp-pane" id="paneDocsImportantes">
           <div class="imp-docs-form">
             <div>
-              <label>Arquivo</label>
+              <label for="impDocFile">Arquivo</label>
               <input type="file" id="impDocFile" accept=".pdf,.png,.jpg,.jpeg">
             </div>
             <div>
-              <label>Nome do documento</label>
+              <label for="impDocName">Nome do documento</label>
               <input type="text" id="impDocName" placeholder="Ex.: CNH, ASO, Certidão">
             </div>
             <div>
-              <label>Tipo</label>
+              <label for="impDocType">Tipo</label>
               <select id="impDocType">
                 <option value="CNH">CNH</option>
                 <option value="ASO">ASO</option>
@@ -1130,22 +947,22 @@ textarea{min-height:110px;resize:vertical}
               </select>
             </div>
             <div>
-              <label>Data de emissão</label>
+              <label for="impDocIssue">Data de emissão</label>
               <input type="date" id="impDocIssue">
             </div>
             <div>
-              <label>Data de validade</label>
+              <label for="impDocDue">Data de validade</label>
               <input type="date" id="impDocDue">
             </div>
             <div>
               <button class="btn btn-ok" id="btnAddImpDoc">
-                <i class="fa-solid fa-plus"></i> Adicionar
+                <i class="fa-solid fa-plus" aria-hidden="true"></i> Adicionar
               </button>
             </div>
           </div>
 
           <div class="filehint imp-bell" style="margin-bottom:6px">
-            <i class="fa-regular fa-bell"></i> Ative o sino por documento para ser avisado no vencimento.
+            <i class="fa-regular fa-bell" aria-hidden="true"></i> Ative o sino por documento para ser avisado no vencimento.
           </div>
 
           <table class="table" style="margin-top:8px">
@@ -1170,19 +987,19 @@ textarea{min-height:110px;resize:vertical}
   </div>
 
   <!-- Modal Criar Tipo de Documento -->
-  <div class="modal" id="modalNovoDoc">
+  <div class="modal" id="modalNovoDoc" role="dialog" aria-modal="true" aria-labelledby="novoDocTitulo">
     <div class="modal-content">
-      <div class="modal-header">Criar tipo de documento</div>
+      <div class="modal-header" id="novoDocTitulo">Criar tipo de documento</div>
       <div class="modal-body">
         <div class="row">
           <div class="col">
-            <label>Nome do tipo</label>
+            <label for="tplNome">Nome do tipo</label>
             <input type="text" id="tplNome" placeholder="Ex.: Atestado, Termo de Responsabilidade">
           </div>
         </div>
         <div class="row">
           <div class="col">
-            <label>Conteúdo do modelo</label>
+            <label for="tplTexto">Conteúdo do modelo</label>
             <textarea id="tplTexto" spellcheck="false" placeholder="Digite o conteúdo do documento. Você pode usar {{nome}}, {{documento}} e {{data}} para preencher automaticamente."></textarea>
           </div>
         </div>
@@ -1190,14 +1007,14 @@ textarea{min-height:110px;resize:vertical}
       </div>
       <div class="modal-footer">
         <button class="btn btn-light" id="btnCancelarNovoDoc">Cancelar</button>
-        <button class="btn btn-primary" id="btnSalvarNovoDoc"><i class="fa-regular fa-floppy-disk"></i> Salvar tipo</button>
+        <button class="btn btn-primary" id="btnSalvarNovoDoc"><i class="fa-regular fa-floppy-disk" aria-hidden="true"></i> Salvar tipo</button>
       </div>
     </div>
   </div>
 
   <!-- Modal Cadastro de Usuário -->
-  <div class="modal" id="modalCadastroUsuario">
-    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="cadastroTitulo">
+  <div class="modal" id="modalCadastroUsuario" role="dialog" aria-modal="true" aria-labelledby="cadastroTitulo">
+    <div class="modal-content">
       <div class="modal-header" id="cadastroTitulo">Cadastro de Usuário</div>
       <div class="modal-body" id="modalCadastroBody"><!-- o bloco .gestao-cadastro será movido aqui via JS --></div>
       <div class="modal-footer">
@@ -1207,9 +1024,9 @@ textarea{min-height:110px;resize:vertical}
   </div>
 
   <!-- Modal Lembretes -->
-  <div class="modal" id="modalAlerts">
+  <div class="modal" id="modalAlerts" role="dialog" aria-modal="true" aria-labelledby="alertsTitulo">
     <div class="modal-content">
-      <div class="modal-header">Lembretes</div>
+      <div class="modal-header" id="alertsTitulo">Lembretes</div>
       <div class="modal-body">
         <table class="table">
           <thead><tr><th>Funcionário</th><th>Documento</th><th>Vencimento</th><th>Status</th><th>Ações</th></tr></thead>
@@ -1249,13 +1066,13 @@ textarea{min-height:110px;resize:vertical}
               <label>Assinatura</label>
               <div class="sig-toolbar" style="margin-bottom:6px">
                 <button class="btn btn-light" id="btnLimparAssPublic">Limpar</button>
-                <button class="btn btn-primary" id="btnBaixarPDFPublic"><i class="fa-regular fa-file-pdf"></i> Assinar e baixar PDF</button>
+                <button class="btn btn-primary" id="btnBaixarPDFPublic"><i class="fa-regular fa-file-pdf" aria-hidden="true"></i> Assinar e baixar PDF</button>
               </div>
               <div class="sig-wrap"><canvas id="sigPadPublic"></canvas></div>
             </div>
           </div>
           <div class="inline-row mt-8">
-            <button class="btn btn-light" id="btnFecharPublic"><i class="fa-solid fa-xmark"></i> Fechar</button>
+            <button class="btn btn-light" id="btnFecharPublic"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Fechar</button>
           </div>
         </div>
       </div>
@@ -1321,6 +1138,12 @@ textarea{min-height:110px;resize:vertical}
   const impDocDue = $('impDocDue');
   const btnAddImpDoc = $('btnAddImpDoc');
   const impDocsTable = $('impDocsTable');
+
+  // >>> NOVO: Documentos simples (anexos gerais no modal do funcionário)
+  const genDocFile = $('genDocFile');
+  const btnAddGenDoc = $('btnAddGenDoc');
+  const genDocsTable = $('genDocsTable');
+  // <<<
 
   const btnAlerts = $('btnAlerts');
   const notifDot = $('notifDot');
@@ -1425,6 +1248,71 @@ textarea{min-height:110px;resize:vertical}
   /* Extras */
   const toastRoot = $('toastContainer');
 
+
+  // [FIX] Sistema de abas robusto + registro da aba "funcionarios"
+function ensureTab(id, label) {
+  const nav = document.querySelector('#leftNav, nav, .sidebar'); // ajuste se necessário
+  const main = document.querySelector('#main, main, .content');  // ajuste se necessário
+  if (!nav || !main) return;
+
+  // botão da aba
+  let btn = nav.querySelector(`[data-tab="${id}"]`);
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.type = 'button';
+    btn.dataset.tab = id;
+    btn.id = `tabBtn-${id}`;
+    btn.className = 'nav-btn';
+    btn.textContent = label;
+    nav.appendChild(btn);
+  }
+
+  // container da aba
+  let tab = document.querySelector(`#tab-${id}`);
+  if (!tab) {
+    tab = document.createElement('section');
+    tab.id = `tab-${id}`;
+    tab.className = 'tab';
+    tab.hidden = true;
+    tab.innerHTML = `
+      <h2>Funcionários</h2>
+      <div id="funcGrid"></div>
+      <div id="funcMiniModal" hidden></div>
+    `;
+    main.appendChild(tab);
+  }
+}
+
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(el => (el.hidden = true));
+  document.querySelectorAll('[data-tab]').forEach(b => b.classList?.remove('active'));
+  const sec = document.querySelector(`#tab-${name}`);
+  const btn = document.querySelector(`[data-tab="${name}"]`);
+  if (sec) sec.hidden = false;
+  btn?.classList?.add('active');
+}
+
+function wireTabs() {
+  const nav = document.querySelector('#leftNav, nav, .sidebar');
+  if (!nav || nav.__wired) return;
+  nav.__wired = true;
+  nav.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-tab]');
+    if (!t) return;
+    e.preventDefault();
+    showTab(t.dataset.tab);
+    if (t.dataset.tab === 'funcionarios') {
+      initFuncionarios?.(); // não quebra se não existir
+    }
+  });
+}
+
+// chame no boot:
+ensureTab('funcionarios', 'Gestão de Funcionários');
+wireTabs();
+// se quiser já abrir essa aba ao carregar, depois do boot:
+try { showTab('funcionarios'); } catch {}
+
   /* ===================== UTILS ===================== */
   const two = (n) => String(n).padStart(2, '0');
   const toYMD = (d) => d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate());
@@ -1469,7 +1357,18 @@ textarea{min-height:110px;resize:vertical}
 
   /* ===================== TOAST ===================== */
   function notify(message, type = 'info', { duration = 3400 } = {}) {
-    if (!toastRoot) return alert(message);
+    if (!window.__nativeAlert) {
+      // preserva o alert nativo antes de qualquer override
+      window.__nativeAlert = window.alert.bind(window);
+    }
+    function notify(msg) {
+      try {
+        // Se você tiver um toast/snackbar, chame aqui
+        console.log('[notify]', msg);
+      } catch (e) {
+        __nativeAlert(String(msg));
+      }
+    }
     const el = document.createElement('div');
     el.className = 'toast ' + type;
     el.innerHTML = `
@@ -1500,6 +1399,9 @@ textarea{min-height:110px;resize:vertical}
   const KEY_DOC_LAYOUT = 'rh_doc_layout';
   const KEY_DOCS_IMPORT = 'rh_docs_important'; // por funcionário
   const KEY_ALERTS = 'rh_alerts';
+  // >>> NOVO: documentos simples anexados (por funcionário)
+  const KEY_GEN_DOCS = 'rh_docs_general';
+  // <<<
 
   /* VT/VR */
   const KEY_VT_SETTINGS = 'rh_benef_vt_settings';
@@ -1521,10 +1423,51 @@ textarea{min-height:110px;resize:vertical}
   const getImpDocsMap = () => JSON.parse(localStorage.getItem(KEY_DOCS_IMPORT) || '{}');
   const setImpDocsMap = (o) => localStorage.setItem(KEY_DOCS_IMPORT, JSON.stringify(o || {}));
 
+  // >>> NOVO: docs simples (anexos gerais)
+  const getGenDocsMap = () => JSON.parse(localStorage.getItem(KEY_GEN_DOCS) || '{}');
+  const setGenDocsMap = (o) => localStorage.setItem(KEY_GEN_DOCS, JSON.stringify(o || {}));
+  // <<<
+
   const getAlerts = () => JSON.parse(localStorage.getItem(KEY_ALERTS) || '[]');
   const setAlerts = (a) => localStorage.setItem(KEY_ALERTS, JSON.stringify(a || []));
 
   const uid = (p = 'id') => `${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
+
+  let __docsAppMounted = false;
+  function mountDocsApp(){
+
+    // Dentro de mountDocsApp(), logo após pegar o root:
+    const root = document.getElementById('docs-sign-root');
+    if (root) root.classList.add('docs-shell');
+
+    // Só isola em <iframe> se DOCS_APP_HTML existir.
+    const hasIsolatedApp = typeof window.DOCS_APP_HTML !== 'undefined' && window.DOCS_APP_HTML;
+    if (!hasIsolatedApp) {
+      // Usa o markup inline já presente na página (fallback seguro)
+      root.style.display = 'block';
+      root.style.height = '100%';
+      __docsAppMounted = true;
+      return;
+    }
+
+    // Caso você passe a injetar o app isolado, este trecho continua funcionando.
+    const blob = new Blob([window.DOCS_APP_HTML], { type: 'text/html' });
+    const url  = URL.createObjectURL(blob);
+
+    const ifr = document.createElement('iframe');
+    ifr.src = url;
+    ifr.title = 'Documentos & Assinaturas';
+    ifr.style.width  = '100%';
+    ifr.style.height = '100%';
+    ifr.style.border = '0';
+
+    root.innerHTML = '';
+    root.appendChild(ifr);
+    __docsAppMounted = true;
+
+    ifr.addEventListener('load', () => { try{ URL.revokeObjectURL(url); }catch{} }, { once:true });
+  }
+
 
   /* ===================== MENU / TABS ===================== */
   btnHamb?.addEventListener('click', () => {
@@ -1573,8 +1516,8 @@ textarea{min-height:110px;resize:vertical}
 
     if (tab === 'tabIncluir' && !mapInited) initMap();
     if (tab === 'tabDocs') {
-      setTimeout(resizeSigCanvas, 50);
-      fitDocTextarea();
+      // carrega o novo módulo (uma única vez)
+      mountDocsApp();
     }
     if (tab === 'tabVT') renderVT();
     if (tab === 'tabVR') renderVR();
@@ -1994,31 +1937,42 @@ textarea{min-height:110px;resize:vertical}
   let mapInited = false,
     map,
     marker;
-  function initMap() {
-    if (mapInited) return;
-    mapInited = true;
-    const last = JSON.parse(localStorage.getItem('lastLatLng') || 'null');
-    map = L.map('map', { zoomControl: true, preferCanvas: true });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-    const fallback = last || [-23.5619, -46.6564];
-    map.setView(fallback, last ? 16 : 13);
-    if (last) marker = L.marker(last).addTo(map);
-    const GEO_OPTS = { enableHighAccuracy: false, maximumAge: 180000, timeout: 7000 };
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const latlng = [pos.coords.latitude, pos.coords.longitude];
-          if (!marker) marker = L.marker(latlng).addTo(map);
-          else marker.setLatLng(latlng);
-          map.setView(latlng, 17);
-          localStorage.setItem('lastLatLng', JSON.stringify(latlng));
-          lblCoord && (lblCoord.textContent = latlng[0].toFixed(5) + ', ' + latlng[1].toFixed(5));
-        },
-        () => {},
-        GEO_OPTS
-      );
-    }
+
+ function initMap() {
+  if (mapInited) return;
+  mapInited = true;
+
+  const skel = document.querySelector('#map .map-skeleton');
+
+  const last = JSON.parse(localStorage.getItem('lastLatLng') || 'null');
+  map = L.map('map', { zoomControl: true, preferCanvas: true });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 })
+    .addTo(map)
+    .on('load', () => skel?.remove()); // <<< remove skeleton ao carregar
+
+  const fallback = last || [-23.5619, -46.6564];
+  map.setView(fallback, last ? 16 : 13);
+  if (last) marker = L.marker(last).addTo(map);
+
+  const GEO_OPTS = { enableHighAccuracy: false, maximumAge: 180000, timeout: 7000 };
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const latlng = [pos.coords.latitude, pos.coords.longitude];
+        if (!marker) marker = L.marker(latlng).addTo(map); else marker.setLatLng(latlng);
+        map.setView(latlng, 17);
+        localStorage.setItem('lastLatLng', JSON.stringify(latlng));
+        lblCoord && (lblCoord.textContent = latlng[0].toFixed(5) + ', ' + latlng[1].toFixed(5));
+        skel?.remove(); // <<< garante remoção
+      },
+      () => {}
+      , GEO_OPTS
+    );
   }
+}
+
+
   function nextTypeFor(dateYMD) {
     const list = punchesByDate(dateYMD);
     if (list.length === 0) return 'Entrada';
@@ -2370,17 +2324,16 @@ Assinatura: ____________________________`;
       return (fn || 'documento').replace(/\.[^.]+$/, '').replace(/[_\-]+/g, ' ').trim();
     }
     function populateCustomDocTypes() {
-      const group = $('docCustomGroup');
-      if (!group) return;
+      const esc = (s) => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      const group = $('docCustomGroup'); if (!group) return;
       const list = getTemplates();
-      group.innerHTML = list.map((t) => `<option value="tpl:${t.id}">${t.name}</option>`).join('');
+      group.innerHTML = list.map(t => `<option value="tpl:${t.id}">${esc(t.name)}</option>`).join('');
 
       const sel = $('tplManageSelect');
       if (sel) {
-        const opts = [`<option value="">— Selecione um tipo personalizado —</option>`].concat(
-          list.map((t) => `<option value="${t.id}">${t.name}</option>`)
-        );
-        sel.innerHTML = opts.join('');
+        sel.innerHTML = [`<option value="">— Selecione um tipo personalizado —</option>`]
+          .concat(list.map(t => `<option value="${t.id}">${esc(t.name)}</option>`))
+          .join('');
       }
     }
     function setTipoAndRefresh(id) {
@@ -2533,6 +2486,7 @@ Assinatura: ____________________________`;
   })();
 
   /* ===================== FUNCIONÁRIOS ===================== */
+
   const funcionariosSeed = [
     { id: 'f1', nome: 'Luana Ferreira', idade: 28, funcao: 'Assistente de RH', cargo: 'Assistente de RH', salario: 3200, optVR: true, optVT: true, foto: '', ativo: true },
     { id: 'f2', nome: 'Bruno Martins', idade: 35, funcao: 'Engenheiro Civil', cargo: 'Engenheiro', salario: 6800, optVR: false, optVT: true, foto: '', ativo: true }
@@ -2568,58 +2522,54 @@ Assinatura: ____________________________`;
     return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
   }
   function photoOrFallback(url) {
-    return url && url.trim() ? `<img class="emp-avatar" src="${url}" alt="">` : `<div class="emp-avatar"></div>`;
+    return url && url.trim()
+      ? `<img class="emp-avatar" src="${url}" alt="Foto" title="Clique para alterar foto">`
+      : `<div class="emp-avatar" title="Clique para adicionar foto"></div>`;
   }
 
-  /* >>> NOVO: render com 3 pontinhos e dropdown */
-  function renderFuncionarios(q = '') {
-    if (!empGrid) return;
-    const all = getFuncionariosLS();
-    const term = q.trim().toLowerCase();
-    const list = term ? all.filter((f) => f.nome.toLowerCase().includes(term)) : all;
+  /* >>> NOVO: render com 3 pontinhos e dropdown (mantido) */
+function renderFuncionarios(q = '') {
+  if (!empGrid) return;
+  const all = getFuncionariosLS();
+  const term = q.trim().toLowerCase();
+  const list = term ? all.filter((f) => f.nome.toLowerCase().includes(term)) : all;
 
-    empGrid.innerHTML =
-      list
-        .map((f) => {
-          const inactiveClass = f.ativo ? '' : 'inactive';
-          const offBadge = f.ativo ? '' : `<span class="emp-badge-off">INATIVO</span>`;
+  empGrid.innerHTML = list.map((f) => {
+    const inactiveClass = f.ativo ? '' : 'inactive';
+    const offBadge = f.ativo ? '' : `<span class="emp-badge-off">INATIVO</span>`;
+    const nameSafe = escapeHTML(f.nome);
+    const roleSafe = escapeHTML(f.funcao);
 
-          const menu = `
-            <div class="emp-menu" data-id="${f.id}" title="Opções" aria-haspopup="menu" aria-expanded="false">
-              <i class="fa-solid fa-ellipsis-vertical"></i>
-            </div>
-            <div class="emp-menu-dropdown" data-menu="${f.id}" role="menu">
-              ${
-                f.ativo
-                  ? `
-                    <button data-action="desativar" data-id="${f.id}">
-                      <i class="fa-regular fa-circle-xmark"></i> Desativar
-                    </button>
-                  `
-                  : `
-                    <button data-action="ativar" data-id="${f.id}">
-                      <i class="fa-regular fa-circle-check"></i> Ativar
-                    </button>
-                  `
-              }
-              <button class="danger" data-action="excluir" data-id="${f.id}">
-                <i class="fa-solid fa-trash"></i> Excluir
-              </button>
-            </div>`;
+    const menu = `
+      <div class="emp-menu" data-id="${f.id}" title="Opções" aria-haspopup="menu" aria-expanded="false">
+        <i class="fa-solid fa-ellipsis-vertical"></i>
+      </div>
+      <div class="emp-menu-dropdown" data-menu="${f.id}" role="menu">
+        ${f.ativo
+          ? `<button data-action="desativar" data-id="${f.id}">
+               <i class="fa-regular fa-circle-xmark"></i> Desativar
+             </button>`
+          : `<button data-action="ativar" data-id="${f.id}">
+               <i class="fa-regular fa-circle-check"></i> Ativar
+             </button>`
+        }
+        <button class="danger" data-action="excluir" data-id="${f.id}">
+          <i class="fa-solid fa-trash"></i> Excluir
+        </button>
+      </div>`;
 
-          return `
-            <div class="emp-card ${inactiveClass}" data-id="${f.id}">
-              ${menu}
-              ${offBadge}
-              ${photoOrFallback(f.foto)}
-              <div>
-                <div class="emp-name">${f.nome}</div>
-                <div class="emp-role">${f.funcao} • ${f.idade} anos</div>
-              </div>
-            </div>`;
-        })
-        .join('') || `<div style="color:#9fb1c3">Nenhum funcionário encontrado.</div>`;
-  }
+    return `
+      <div class="emp-card ${inactiveClass}" data-id="${f.id}">
+        ${menu}
+        ${offBadge}
+        ${photoOrFallback(f.foto)}
+        <div>
+          <div class="emp-name">${nameSafe}</div>
+          <div class="emp-role">${roleSafe} • ${escapeHTML(String(f.idade))} anos</div>
+        </div>
+      </div>`;
+  }).join('') || `<div style="color:#9fb1c3">Nenhum funcionário encontrado.</div>`;
+}
   renderFuncionarios();
   /* <<< FIM NOVO render */
 
@@ -2652,28 +2602,92 @@ Assinatura: ____________________________`;
   /* Modal Funcionário (apenas Documentos Importantes) */
   let currentEmpId = null;
 
-  /* >>> NOVO: alternância das abas dentro do modal */
+  /* >>> AJUSTE: Mini-modal para “Documentos importantes” */
+  let impDocsMiniModal = null;
+  function ensureImpDocsMiniModal() {
+    if (impDocsMiniModal) return impDocsMiniModal;
+    const wrap = document.createElement('div');
+    wrap.className = 'modal';
+    wrap.id = 'modalImpDocs';
+    wrap.innerHTML = `
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="impDocsTitle">
+        <div class="modal-header" id="impDocsTitle">Documentos importantes</div>
+        <div class="modal-body" id="impDocsMiniBody"></div>
+        <div class="modal-footer">
+          <button class="btn btn-light" id="btnCloseImpDocs">Fechar</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(wrap);
+
+    // fechar ao clicar fora
+    wrap.addEventListener('click', (e) => {
+      if (e.target === wrap) closeImpDocsMini();
+    });
+    // fechar via ESC
+    document.addEventListener('keydown', (e) => {
+      if (wrap.style.display === 'flex' && e.key === 'Escape') closeImpDocsMini();
+    });
+    // botão fechar
+    wrap.querySelector('#btnCloseImpDocs')?.addEventListener('click', () => closeImpDocsMini());
+
+    impDocsMiniModal = wrap;
+    return impDocsMiniModal;
+  }
+  function openImpDocsMini() {
+    const modal = ensureImpDocsMiniModal();
+    const pane = $('paneDocsImportantes');
+    const body = $('impDocsMiniBody');
+    if (!pane || !body) return;
+
+    // Move o conteúdo existente para dentro do mini-modal (mantém listeners)
+    if (body.children.length === 0) {
+      while (pane.firstChild) body.appendChild(pane.firstChild);
+    }
+    renderImpDocsTable(); // garante atualização
+    modal.style.display = 'flex';
+  }
+  function closeImpDocsMini(silent = false) {
+    if (!impDocsMiniModal) return;
+    const pane = $('paneDocsImportantes');
+    const body = $('impDocsMiniBody');
+    if (pane && body && body.children.length > 0) {
+      while (body.firstChild) pane.appendChild(body.firstChild);
+    }
+    impDocsMiniModal.style.display = 'none';
+    if (!silent) {
+      // volta visualmente para a aba “Documentos”
+      document.querySelectorAll('#modalFuncionario .emp-tab-btn').forEach(b => b.classList.remove('active'));
+      $('btnTabDocsSimples')?.classList.add('active');
+      document.querySelectorAll('#modalFuncionario .emp-pane').forEach(p => p.classList.remove('active'));
+      $('paneDocsSimples')?.classList.add('active');
+    }
+  }
+  /* <<< FIM AJUSTE mini-modal */
+
+  /* >>> AJUSTE: Alternância das abas — abrir mini-modal ao clicar em “Documentos importantes” */
   modalFuncionario?.addEventListener('click', (e) => {
     const btn = e.target.closest('.emp-tab-btn');
     if (!btn) return;
     e.preventDefault();
 
-    // Botões
+    const targetSel = btn.getAttribute('data-target');
+
+    // Se clicar em “Documentos importantes”, abre a telinha (mini-modal) e mantém a aba “Documentos” ativa por baixo
+    if (targetSel === '#paneDocsImportantes') {
+      openImpDocsMini();
+      return;
+    }
+
+    // Comportamento padrão para outras abas
     document.querySelectorAll('#modalFuncionario .emp-tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
-    // Panes
     document.querySelectorAll('#modalFuncionario .emp-pane').forEach(p => p.classList.remove('active'));
-    const targetSel = btn.getAttribute('data-target');
     const pane = document.querySelector(targetSel);
     if (pane) pane.classList.add('active');
-
-    // Sempre recarregar tabela quando entra em "Documentos importantes"
-    if (targetSel === '#paneDocsImportantes') {
-      renderImpDocsTable();
-    }
   });
-  /* <<< FIM novo listener de abas */
+  /* <<< FIM AJUSTE listener de abas */
 
   function openFuncionario(empId) {
     const all = getFuncionariosLS();
@@ -2682,24 +2696,40 @@ Assinatura: ____________________________`;
     currentEmpId = f.id;
     if (funcModalNome) funcModalNome.textContent = f.nome;
     if (funcModalFuncao) funcModalFuncao.textContent = `${f.funcao} • ${f.idade} anos`;
-    if (funcModalAvatar) funcModalAvatar.src = f.foto || defaultAvatarDataURL();
+    if (funcModalAvatar) {
+      funcModalAvatar.src = f.foto || defaultAvatarDataURL();
+      funcModalAvatar.title = 'Clique para alterar a foto';
+      funcModalAvatar.style.cursor = 'pointer';
+    }
 
-    /* >>> NOVO: força abrir na aba "Documentos importantes" */
+    /* >>> abrir inicialmente na aba “Documentos” */
     document.querySelectorAll('#modalFuncionario .emp-tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('#modalFuncionario .emp-pane').forEach(p => p.classList.remove('active'));
-    $('btnTabDocsImportantes')?.classList.add('active');
-    $('paneDocsImportantes')?.classList.add('active');
-    /* <<< */
+    $('btnTabDocsSimples')?.classList.add('active');
+    $('paneDocsSimples')?.classList.add('active');
+
+    // Garante mini-modal fechado/limpo
+    closeImpDocsMini(true);
+
+    // Render dos anexos gerais (Documentos)
+    renderGenDocsTable();
+
+    // Render dos importantes (caso já aberto via mini)
+    renderImpDocsTable();
+
+    // limpa input de anexo
+    if (genDocFile) genDocFile.value = '';
 
     modalFuncionario && (modalFuncionario.style.display = 'flex');
-    renderImpDocsTable();
   }
   function closeFuncionario() {
+    // fecha mini-modal se estiver aberto e devolve conteúdo
+    closeImpDocsMini(true);
     modalFuncionario && (modalFuncionario.style.display = 'none');
   }
   fecharFuncionario?.addEventListener('click', closeFuncionario);
 
-  /* >>> NOVO: gerenciamento do menu de 3 pontinhos e ações */
+  /* >>> NOVO: gerenciamento do menu de 3 pontinhos e ações + clique no avatar */
   function closeAllEmpMenus() {
     document.querySelectorAll('.emp-menu-dropdown.open').forEach((el) => el.classList.remove('open'));
     document.querySelectorAll('.emp-menu[aria-expanded="true"]').forEach((el) => el.setAttribute('aria-expanded', 'false'));
@@ -2713,6 +2743,8 @@ Assinatura: ____________________________`;
     if (willOpen) {
       dd.classList.add('open');
       btn.setAttribute('aria-expanded', 'true');
+    } else {
+      btn.setAttribute('aria-expanded', 'false');
     }
   }
   function setFuncionarioAtivo(id, ativo) {
@@ -2740,6 +2772,7 @@ Assinatura: ____________________________`;
       const vrMap = getVRMap(); delete vrMap[id]; setVRMap(vrMap);
       const vtMap = getVTMap(); delete vtMap[id]; setVTMap(vtMap);
       const imp = getImpDocsMap(); delete imp[id]; setImpDocsMap(imp);
+      const gen = getGenDocsMap(); delete gen[id]; setGenDocsMap(gen);
       const alerts = getAlerts().filter(a => a.empId !== id); setAlerts(alerts);
       updateNotifDot();
     } catch {}
@@ -2755,7 +2788,57 @@ Assinatura: ____________________________`;
     renderVR();
   }
 
+  // >>> NOVO: seletor de foto reutilizável
+  let hiddenPhotoInput = null;
+  function ensureHiddenPhotoInput() {
+    if (!hiddenPhotoInput) {
+      hiddenPhotoInput = document.createElement('input');
+      hiddenPhotoInput.type = 'file';
+      hiddenPhotoInput.accept = 'image/*';
+      hiddenPhotoInput.style.display = 'none';
+      document.body.appendChild(hiddenPhotoInput);
+    }
+    return hiddenPhotoInput;
+  }
+  async function changePhotoForEmp(empId) {
+    const input = ensureHiddenPhotoInput();
+    input.value = '';
+    input.onchange = async (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      try {
+        const dataURL = await fileToDataURL(f);
+        const arr = getFuncionariosLS();
+        const idx = arr.findIndex(x => x.id === empId);
+        if (idx >= 0) {
+          arr[idx].foto = dataURL;
+          setFuncionariosLS(arr);
+          renderFuncionarios(funcSearch?.value || '');
+          if (currentEmpId === empId && funcModalAvatar) funcModalAvatar.src = dataURL;
+          notify('Foto atualizada.', 'success');
+        }
+      } catch {
+        notify('Não foi possível carregar a imagem.', 'error');
+      }
+    };
+    input.click();
+  }
+  // Avatar clicável no modal
+  funcModalAvatar?.addEventListener('click', () => {
+    if (currentEmpId) changePhotoForEmp(currentEmpId);
+  });
+
   empGrid?.addEventListener('click', (e) => {
+    // Clique na foto/placeholder -> alterar foto
+    const avatar = e.target.closest('.emp-avatar');
+    if (avatar) {
+      e.stopPropagation();
+      const card = e.target.closest('.emp-card');
+      const id = card?.getAttribute('data-id');
+      if (id) changePhotoForEmp(id);
+      return;
+    }
+
     const onMenuBtn = e.target.closest('.emp-menu');
     const onMenuDD  = e.target.closest('.emp-menu-dropdown');
     const onAction  = e.target.closest('.emp-menu-dropdown [data-action]');
@@ -2786,7 +2869,7 @@ Assinatura: ____________________________`;
       return;
     }
 
-    // Clique no card (fora do menu) -> abre modal
+    // Clique no card (fora do menu/foto) -> abre modal
     const card = e.target.closest('.emp-card');
     if (!card) return;
     const id = card.getAttribute('data-id');
@@ -2799,12 +2882,23 @@ Assinatura: ____________________________`;
       closeAllEmpMenus();
     }
   });
-  /* <<< FIM NOVO bloco de menus */
+  /* <<< FIM NOVO bloco de menus/foto */
 
   /* Documentos Importantes (por funcionário) + Alertas */
+  /* Versão com limite, usada nos Documentos Importantes */
   async function fileToDataURL_imp(file) {
-    return fileToDataURL(file);
+    const MAX = 4 * 1024 * 1024; // 4MB
+    if (file.size > MAX) {
+      notify('Arquivo grande (>' + (MAX/1024/1024) + 'MB). Considere armazenar fora do navegador.', 'warn');
+    }
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
   }
+
   function renderImpDocsTable() {
     if (!impDocsTable) return;
     const map = getImpDocsMap();
@@ -2930,6 +3024,73 @@ Assinatura: ____________________________`;
       }
     }
   });
+
+  /* >>> NOVO: Documentos Simples (anexos gerais) */
+  function renderGenDocsTable() {
+    if (!genDocsTable) return;
+    const map = getGenDocsMap();
+    const list = map[currentEmpId] || [];
+    if (!list.length) {
+      genDocsTable.innerHTML = `<tr><td colspan="4">—</td></tr>`;
+      return;
+    }
+    genDocsTable.innerHTML = list
+      .map((d, idx) => {
+        const when = d.uploadedAt ? new Date(d.uploadedAt) : null;
+        const whenLabel = when
+          ? `${two(when.getDate())}/${two(when.getMonth() + 1)}/${when.getFullYear()} ${two(when.getHours())}:${two(when.getMinutes())}`
+          : '—';
+        return `<tr>
+          <td style="text-align:left">${escapeHTML(d.name || '(sem nome)')}</td>
+          <td>${bytesHuman(d.size || 0)}</td>
+          <td>${whenLabel}</td>
+          <td>
+            ${d.dataURL ? `<a class="btn btn-light" href="${d.dataURL}" download="${encodeURIComponent(d.name || 'documento')}" target="_blank"><i class="fa-solid fa-download"></i> Baixar</a>` : ''}
+            <button class="btn btn-ghost" data-gen-del="${idx}"><i class="fa-solid fa-trash"></i> Excluir</button>
+          </td>
+        </tr>`;
+      })
+      .join('');
+  }
+  btnAddGenDoc?.addEventListener('click', async () => {
+    if (!currentEmpId) return notify('Abra um funcionário primeiro.', 'warn');
+    const file = genDocFile?.files?.[0];
+    if (!file) return notify('Selecione um arquivo para anexar.', 'warn');
+    try {
+      const dataURL = await fileToDataURL(file);
+      const map = getGenDocsMap();
+      map[currentEmpId] = map[currentEmpId] || [];
+      map[currentEmpId].push({
+        id: uid('gdoc'),
+        name: file.name,
+        size: file.size || 0,
+        uploadedAt: new Date().toISOString(),
+        dataURL
+      });
+      setGenDocsMap(map);
+      if (genDocFile) genDocFile.value = '';
+      renderGenDocsTable();
+      notify('Documento anexado.', 'success');
+    } catch {
+      notify('Falha ao anexar o documento.', 'error');
+    }
+  });
+  genDocsTable?.addEventListener('click', (e) => {
+    const del = e.target.closest('[data-gen-del]');
+    if (!del) return;
+    const idx = Number(del.getAttribute('data-gen-del'));
+    if (!Number.isFinite(idx)) return;
+    const map = getGenDocsMap();
+    const list = map[currentEmpId] || [];
+    if (!list[idx]) return;
+    if (!confirm(`Excluir o anexo “${list[idx].name}”?`)) return;
+    list.splice(idx, 1);
+    map[currentEmpId] = list;
+    setGenDocsMap(map);
+    renderGenDocsTable();
+    notify('Anexo excluído.', 'success');
+  });
+  /* <<< FIM Documentos Simples */
 
   /* Alertas */
   function updateNotifDot() {
@@ -3977,10 +4138,1198 @@ Assinatura: ____________________________`;
     const data = parseSignHash();
     if (data) showPublicSign(data);
   });
+(() => {
+  'use strict';
+
+  /* ===== Chaves de storage ===== */
+  const KEY_THEME = 'rh_theme_v2';
+  const KEY_AUTH  = 'rh_auth_v1';
+
+  /* ===== 3 Paletas ===== */
+  const THEMES = {
+    aurora: {
+      name: 'Aurora (claro)',
+      vars: { bg:'#f5f6fa', surface:'#ffffff', text:'#0f172a', muted:'#475569', primary:'#2563eb', accent:'#22c55e', border:'#e2e8f0', ok:'#16a34a', warn:'#f59e0b', err:'#ef4444' }
+    },
+    midnight: {
+      name: 'Midnight (escuro)',
+      vars: { bg:'#0b1220', surface:'#121a2b', text:'#e6edf3', muted:'#9fb1c3', primary:'#7aa2ff', accent:'#4ade80', border:'#24324a', ok:'#22c55e', warn:'#eab308', err:'#f87171' }
+    },
+    neon: {
+      name: 'Neon (alto contraste)',
+      vars: { bg:'#000000', surface:'#0d0d10', text:'#ffffff', muted:'#bdbdbd', primary:'#ff2fb9', accent:'#00e0ff', border:'#222222', ok:'#22d3ee', warn:'#fbbf24', err:'#fb7185' }
+    }
+  };
+
+  /* ===== Utils ===== */
+  const $ = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+   const notify = (msg, type='info') => {  
+  let box = $('#toastContainer');
+  if (!box) { (window.__nativeAlert || window.alert)(msg); return; }
+    const el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.innerHTML = `<div class="msg">${String(msg)}</div><span class="close">&times;</span>`;
+    box.appendChild(el);
+    setTimeout(()=>el.classList.add('show'), 10);
+    const t = setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(), 180); }, 3200);
+    el.querySelector('.close').onclick = ()=>{ clearTimeout(t); el.classList.remove('show'); setTimeout(()=>el.remove(), 120); };
+  };
+
+  /* ===== Tema (CSS Vars) ===== */
+  function ensureThemeStyle() {
+    let s = $('#themeVars');
+    if (!s) { s = document.createElement('style'); s.id='themeVars'; document.head.appendChild(s); }
+    return s;
+  }
+  function setThemeVars(vars) {
+    const s = ensureThemeStyle();
+    const rootVars = Object.entries(vars).map(([k,v])=>`--${k}:${v}`).join(';');
+    s.textContent = `
+      :root{${rootVars}}
+      body{background:var(--bg);color:var(--text)}
+      .card{background:var(--surface);border:1px solid var(--border)}
+      .card-header{border-bottom:1px solid var(--border);color:var(--text)}
+      .btn{background:var(--primary);border:1px solid var(--primary);color:#fff}
+      .btn:hover{filter:brightness(.95)}
+      .btn-light,.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+      input,select,textarea{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+      a{color:var(--primary)}
+      .sidebar{background:var(--surface);border-right:1px solid var(--border)}
+      .table-wrap table{background:var(--surface);color:var(--text)}
+      .status-dot.ok{background:var(--ok)} .status-dot.warn{background:var(--warn)} .status-dot.err{background:var(--err)}
+      .toast{background:var(--surface);border:1px solid var(--border);color:var(--text)}
+      .toast.info{border-left:4px solid var(--primary)} .toast.success{border-left:4px solid var(--ok)}
+      .toast.warn{border-left:4px solid var(--warn)} .toast.error{border-left:4px solid var(--err)}
+    `;
+  }
+  function applyTheme(key) {
+    const t = THEMES[key] || THEMES.aurora;
+    document.documentElement.setAttribute('data-theme', key);
+    setThemeVars(t.vars);
+    localStorage.setItem(KEY_THEME, key);
+    $$('.theme-option').forEach(el => el.classList.toggle('active', el.dataset.theme === key));
+  }
+  function initThemeAtStartup() {
+    const saved = localStorage.getItem(KEY_THEME) || 'aurora';
+    applyTheme(saved);
+  }
+
+  /* ===== Segurança (senha local) ===== */
+  const enc = new TextEncoder();
+  const subtle = (crypto && crypto.subtle) ? crypto.subtle : null;
+
+  const hex = (buf) => Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  const randHex = (n=16) => { const a = new Uint8Array(n); crypto.getRandomValues(a); return Array.from(a).map(x=>x.toString(16).padStart(2,'0')).join(''); };
+
+  async function sha256Hex(str){
+    if (!subtle) return btoa(unescape(encodeURIComponent(str))); // fallback simples
+    const buf = await subtle.digest('SHA-256', enc.encode(str));
+    return hex(buf);
+  }
+  async function hashPassword(pass, salt){ return sha256Hex(`${salt}|${pass}`); }
+  function getAuth(){ try { return JSON.parse(localStorage.getItem(KEY_AUTH)||'null'); } catch { return null; } }
+  function setAuth(o){ localStorage.setItem(KEY_AUTH, JSON.stringify(o||{})); }
+
+  async function verifyPassword(plain){
+    const a = getAuth();
+    if (!a || !a.hash) return (plain||'') === ''; // se nunca definiu senha
+    const h = await hashPassword(plain||'', a.salt||'');
+    return h === a.hash;
+  }
+  async function saveNewPassword(newPass){
+    const salt = randHex(16);
+    const hash = await hashPassword(newPass, salt);
+    setAuth({ alg:'SHA-256', salt, hash, updatedAt:new Date().toISOString() });
+  }
+
+  /* ===== UI: Modal de Configurações + FAB ===== */
+  function ensureBaseStyles(){
+    if ($('#cfgBaseStyles')) return;
+    const s = document.createElement('style'); s.id='cfgBaseStyles';
+    s.textContent = `
+      #cfgFab{position:fixed;right:24px;bottom:24px;width:56px;height:56px;border-radius:9999px;border:none;cursor:pointer;z-index:9999;
+              background:var(--primary);color:#fff;font-size:22px;display:grid;place-items:center;box-shadow:0 10px 25px rgba(0,0,0,.25)}
+      #cfgFab:active{transform:scale(.98)}
+      #cfgOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:9998}
+      #cfgModal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(820px,96vw);max-height:86vh;overflow:auto;
+                background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.35);display:none;z-index:9999}
+      #cfgModal .modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+      #cfgModal .modal-body{padding:16px}
+      #cfgClose{background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text);cursor:pointer}
+      .theme-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:10px}
+      .theme-option{border:1px solid var(--border);border-radius:14px;padding:12px;cursor:pointer;background:var(--surface);transition:transform .12s ease}
+      .theme-option:hover{transform:translateY(-2px)} .theme-option.active{outline:2px solid var(--primary)}
+      .theme-name{font-weight:600;margin-bottom:8px}
+      .swatches{display:flex;gap:6px} .sw{width:26px;height:26px;border-radius:7px;border:1px solid var(--border)}
+      .grid2{display:grid;gap:18px;grid-template-columns:1fr} @media(min-width:992px){.grid2{grid-template-columns:1fr 1fr}}
+      .cfg-row{display:flex;flex-direction:column;margin:8px 0} .cfg-row label{font-size:.9rem;color:var(--muted);margin-bottom:6px}
+      .cfg-row input{height:40px;border-radius:8px;padding:8px 10px}
+      #toastContainer{position:fixed;right:20px;bottom:92px;display:flex;flex-direction:column;gap:10px;z-index:10000}
+      .toast{opacity:0;transform:translateY(8px);transition:all .18s ease;border-radius:10px;padding:10px 12px}
+      .toast.show{opacity:1;transform:translateY(0)} .toast .close{margin-left:10px;cursor:pointer}
+    `;
+    document.head.appendChild(s);
+  }
+
+  function themeOptionHTML(key, t){
+    const v = t.vars, sw = (c)=>`<span class="sw" style="background:${c}"></span>`;
+    return `
+      <div class="theme-option" data-theme="${key}" role="button" tabindex="0" aria-label="Trocar para ${t.name}">
+        <div class="theme-name">${t.name}</div>
+        <div class="swatches">${sw(v.primary)} ${sw(v.accent)} ${sw(v.surface)} ${sw(v.text)} ${sw(v.border)}</div>
+      </div>
+    `;
+  }
+
+  function ensureConfigModal(){
+    if ($('#cfgModal')) return;
+
+    // overlay + modal
+    const overlay = document.createElement('div'); overlay.id = 'cfgOverlay';
+    const modal   = document.createElement('div'); modal.id   = 'cfgModal';
+    modal.innerHTML = `
+      <div class="modal-header">
+        <h3 style="margin:0">Configurações</h3>
+        <button id="cfgClose">Fechar</button>
+      </div>
+      <div class="modal-body">
+        <div class="grid2">
+          <section>
+            <h4 style="margin:.2rem 0 .3rem">Aparência</h4>
+            <p>Escolha uma das <strong>3 paletas</strong>. Aplica na hora e salva no dispositivo.</p>
+            <div class="theme-grid">
+              ${Object.entries(THEMES).map(([k,t])=>themeOptionHTML(k,t)).join('')}
+            </div>
+          </section>
+          <section>
+            <h4 style="margin:.2rem 0 .3rem">Segurança</h4>
+            <div class="cfg-row"><label for="cfgPassCurrent">Senha atual (vazio se nunca definiu)</label><input type="password" id="cfgPassCurrent" autocomplete="current-password" placeholder="••••••••"></div>
+            <div class="cfg-row"><label for="cfgPassNew">Nova senha</label><input type="password" id="cfgPassNew" autocomplete="new-password" placeholder="mínimo 6 caracteres"></div>
+            <div class="cfg-row"><label for="cfgPassNew2">Confirmar nova senha</label><input type="password" id="cfgPassNew2" autocomplete="new-password" placeholder="repita a nova senha"></div>
+            <button class="btn" id="btnSavePassword">Salvar nova senha</button>
+          </section>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    document.body.appendChild(modal);
+
+    // FAB
+    const fab = document.createElement('button');
+    fab.id = 'cfgFab';
+    fab.title = 'Configurações (Ctrl+,)';
+    fab.setAttribute('aria-label', 'Abrir Configurações');
+    fab.innerHTML = '⚙️';
+    document.body.appendChild(fab);
+
+    // toast container
+    if (!$('#toastContainer')) {
+      const tc = document.createElement('div'); tc.id='toastContainer'; document.body.appendChild(tc);
+    }
+
+    // eventos
+    const open = () => { overlay.style.display='block'; modal.style.display='block'; fab.style.display='none'; };
+    const close = () => { overlay.style.display='none'; modal.style.display='none'; fab.style.display='grid'; };
+
+    overlay.addEventListener('click', close);
+    $('#cfgClose').addEventListener('click', close);
+    $('#cfgFab').addEventListener('click', open);
+    document.addEventListener('keydown', (e)=>{
+      if ((e.ctrlKey || e.metaKey) && e.key === ',') { e.preventDefault(); open(); }
+      if (e.key === 'Escape') close();
+    });
+
+    // tema eventos
+    $$('.theme-option', modal).forEach(el=>{
+      el.addEventListener('click', ()=>applyTheme(el.dataset.theme));
+      el.addEventListener('keydown', (e)=>{ if (e.key==='Enter' || e.key===' ') { e.preventDefault(); applyTheme(el.dataset.theme); }});
+    });
+
+    // marcar tema atual
+    const current = localStorage.getItem(KEY_THEME) || 'aurora';
+    $$('.theme-option').forEach(el => el.classList.toggle('active', el.dataset.theme === current));
+
+    // senha eventos
+    $('#btnSavePassword').addEventListener('click', async ()=>{
+      const cur = $('#cfgPassCurrent')?.value || '';
+      const n1  = $('#cfgPassNew')?.value || '';
+      const n2  = $('#cfgPassNew2')?.value || '';
+
+      if (!n1 || n1.length < 6) return notify('A nova senha deve ter ao menos 6 caracteres.','warn');
+      if (n1 !== n2) return notify('A confirmação não confere.','warn');
+
+      const ok = await verifyPassword(cur);
+      if (!ok) return notify('Senha atual incorreta.','error');
+
+      await saveNewPassword(n1);
+      $('#cfgPassCurrent').value = ''; $('#cfgPassNew').value=''; $('#cfgPassNew2').value='';
+      notify('Senha alterada com sucesso.','success');
+    });
+
+    // integração opcional com menu existente
+    const menu = $('#menu');
+    if (menu && !menu.querySelector('[data-open-config]')) {
+      const li = document.createElement('li');
+      li.setAttribute('data-open-config','true');
+      li.style.cursor = 'pointer';
+      li.innerHTML = '⚙️ Configurações';
+      li.addEventListener('click', open);
+      menu.appendChild(li);
+    }
+  }
+
+  /* ===== Boot robusto ===== */
+  function boot(){
+    ensureThemeStyle();     // prepara tag <style> dos temas
+    initThemeAtStartup();   // aplica tema salvo imediatamente
+    ensureBaseStyles();     // CSS do modal/FAB/toast
+    ensureConfigModal();    // injeta modal + FAB + eventos
+  }
+
+  // roda agora ou quando o DOM estiver pronto (cobre os dois cenários)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once:true });
+  } else {
+    boot();
+  }
+})();
+
+
+})();
+
+/* ========= CONSTANTES/UTILS ========= */
+    const VAR_REGEX = /\{\s*([a-zA-Z0-9_.|]+)\s*\}/g; // <-- corrigido
+    const LS_KEY = "ATRIUM_TEMPLATES_V1";
+    const LS_LAYOUT = "ATRIUM_LAYOUT_V1";
+    const uid = () => String(Date.now()) + "_" + Math.random().toString(36).slice(2,8);
+    const escapeHTML = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    function resolvePath(obj, path){ try{ return path.split('.').reduce((a,k)=> (a && a[k]!=null ? a[k] : undefined), obj); }catch{ return undefined; } }
+    function applyPipes(value, pipe){
+      if(value==null) return '';
+      const s = String(value);
+      switch(pipe){
+        case 'upper': return s.toUpperCase();
+        case 'lower': return s.toLowerCase();
+        case 'title': return s.replace(/\w\S*/g, w=> w[0].toUpperCase()+w.slice(1).toLowerCase());
+        case 'money': return Number(s).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+        case 'date':  return new Date(s).toLocaleDateString('pt-BR');
+        default: return s;
+      }
+    }
+    function replaceVariables(html, data){
+      const today = new Date().toLocaleDateString('pt-BR');
+      return html.replace(VAR_REGEX, (_, inner)=>{
+        const [path, pipe] = String(inner).split('|');
+        const val = path==='hoje' ? today : resolvePath(data, path);
+        return applyPipes(val, pipe);
+      });
+    }
+    function extractVariables(html){
+      const set = new Set(); let m;
+      while((m = VAR_REGEX.exec(html))){ set.add(String(m[1]).split('|')[0]); }
+      return Array.from(set).sort();
+    }
+
+    /* ========= MOCKS ========= */
+    const FUNCIONARIOS = [
+      { id:"1", nome:"Gustavo Henrique Grigorio Silva", cpf:"123.456.789-00", cargo:"Analista de RH", salario:5500.75, admissao:"2024-03-18", email:"gustavo.silva@imperio.com.br", telefone:"+55 (11) 99999-0000",
+        endereco:{logradouro:"Av. Paulista, 1000",cidade:"São Paulo",estado:"SP",cep:"01310-000"},
+        ferias:{periodo_aquisitivo:"2024-03-18 a 2025-03-17",inicio:"2025-12-01",fim:"2025-12-30"} },
+      { id:"2", nome:"Ana Ribeiro", cpf:"987.654.321-00", cargo:"Desenvolvedora Front-end", salario:7800, admissao:"2023-08-02", email:"ana.ribeiro@imperio.com.br", telefone:"+55 (11) 98888-7777",
+        endereco:{logradouro:"Rua das Flores, 200",cidade:"Campinas",estado:"SP",cep:"13000-000"} }
+    ];
+    const BUILTIN_TEMPLATES = [
+      { id:"builtin_contrato", nome:"Contrato de Trabalho – Padrão", html: `
+          <h2 style="text-align:center">CONTRATO DE TRABALHO</h2>
+          <p>Empregador: <strong>Atrium Tecnologia LTDA</strong></p>
+          <p>Empregado: <strong>{nome}</strong>, CPF {cpf}, residente em {endereco.logradouro}, {endereco.cidade}/{endereco.estado}.</p>
+          <p>O empregado exercerá a função de <strong>{cargo}</strong>, com salário mensal de {salario|money}, a partir de {admissao|date}.</p>
+          <p>E-mail: {email} — Telefone: {telefone}</p>
+          <p>Este contrato entra em vigor na data de {hoje}.</p>
+      `, builtin:true },
+      { id:"builtin_ferias", nome:"Aviso de Férias", html: `
+          <h2 style="text-align:center">AVISO DE FÉRIAS</h2>
+          <p>Colaborador(a): <strong>{nome}</strong> — CPF {cpf}</p>
+          <p>Período aquisitivo: {ferias.periodo_aquisitivo}</p>
+          <p>Período de gozo: {ferias.inicio|date} a {ferias.fim|date}</p>
+          <p>Local: {endereco.cidade} — Data: {hoje}</p>
+      `, builtin:true }
+    ];
+
+    /* ========= STORAGE ========= */
+    const loadUserTemplates = () => { try{ return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); }catch{ return []; } };
+    const saveUserTemplates = list => localStorage.setItem(LS_KEY, JSON.stringify(list));
+    const getAllTemplates = () => [...BUILTIN_TEMPLATES, ...loadUserTemplates()];
+
+    /* ========= ELEMENTOS ========= */
+    const btnTemplates = document.getElementById('btn-templates');
+    const btnOpen  = document.getElementById('btn-open');
+    const wizard   = document.getElementById('wizard');
+    const wizardModal = document.getElementById('wizardModal');
+    const step1    = document.getElementById('step1');
+    const step2    = document.getElementById('step2');
+    const btnClose = document.getElementById('btn-close');
+    const btnBack  = document.getElementById('btn-back');
+    const btnNext  = document.getElementById('btn-next');
+    const btnConcluir = document.getElementById('btn-concluir');
+
+    const templateSel = document.getElementById('template');
+    const funcSel  = document.getElementById('func');
+    const funcWrap = document.getElementById('func-wrap');
+
+    const editor  = document.getElementById('editor');
+       const preview = document.getElementById('preview');
+    const varsBox = document.getElementById('vars');
+    const chkPrev = document.getElementById('chk-preview');
+    const btnClear= document.getElementById('btn-clear');
+    const printArea = document.getElementById('print-area');
+
+    // Templates modal
+    const tplModal     = document.getElementById('tplModal');
+    const btnCloseTpl  = document.getElementById('btn-close-tpl');
+    const tplListView  = document.getElementById('tplListView');
+    const tplEditView  = document.getElementById('tplEditView');
+    const tplList      = document.getElementById('tplList');
+    const btnNewTpl    = document.getElementById('btn-new-tpl');
+    const btnBackList  = document.getElementById('btn-back-list');
+    const btnSaveTpl   = document.getElementById('btn-save-tpl');
+    const tplName      = document.getElementById('tplName');
+    const tplEditor    = document.getElementById('tplEditor');
+    const docxTpl      = document.getElementById('docxTpl');
+    const docxTplBtn   = document.getElementById('docxTplBtn');
+    const docxTplInfo  = document.getElementById('docxTplInfo');
+    const tplVars      = document.getElementById('tplVars');
+    const btnClearTpl  = document.getElementById('btn-clear-tpl');
+
+    /* ======= NOVOS ELEMENTOS (Layout) ======= */
+    const lyFontFamily  = document.getElementById('ly-font-family');
+    const lyFontSize    = document.getElementById('ly-font-size');
+    const lyLineHeight  = document.getElementById('ly-line-height');
+    const lyPSpacing    = document.getElementById('ly-p-spacing');
+    const lyH1 = document.getElementById('ly-h1');
+    const lyH2 = document.getElementById('ly-h2');
+    const lyH3 = document.getElementById('ly-h3');
+    const lyPageFormat  = document.getElementById('ly-page-format');
+    const lyOrientation = document.getElementById('ly-orientation');
+    const lyMT = document.getElementById('ly-mt');
+    const lyMR = document.getElementById('ly-mr');
+    const lyMB = document.getElementById('ly-mb');
+    const lyML = document.getElementById('ly-ml');
+    const lyLogoEnabled = document.getElementById('ly-logo-enabled');
+    const lyLogoSize    = document.getElementById('ly-logo-size');
+    const lyLogoAlign   = document.getElementById('ly-logo-align');
+    const lyLogoSpace   = document.getElementById('ly-logo-space');
+    const lyLogoFile    = document.getElementById('ly-logo-file');
+    const lyLogoFileBtn = document.getElementById('ly-logo-file-btn');
+    const lyLogoFileInfo= document.getElementById('ly-logo-file-info');
+    const lySave        = document.getElementById('ly-save');
+    const lyReset       = document.getElementById('ly-reset');
+    const lyLogoResizeFirst = document.getElementById('ly-logo-resize-first');
+
+    // Estado
+    let currentTemplate = getAllTemplates()[0];
+    let currentFuncionario = FUNCIONARIOS[0];
+    let editingTemplateId = null;
+
+    /* ========= LAYOUT ========= */
+    const DEFAULT_LAYOUT = {
+      fontFamily: 'Arial, Helvetica, sans-serif',
+      fontSize: 11,
+      lineHeight: 1.4,
+      paragraphSpacing: 8,
+      h1: 1.6, h2: 1.3, h3: 1.15,
+      pageFormat: 'a4',       // a4 | letter
+      orientation: 'p',       // p | l
+      marginTop: 20,          // mm
+      marginRight: 15,
+      marginBottom: 20,
+      marginLeft: 15,
+      logoEnabled: false,
+      logoData: '',           // dataURL
+      logoSize: 120,          // px
+      logoAlign: 'center',    // left|center|right
+      logoSpace: 12,          // px
+      logoResizeFirst: true   // aplicar tamanho do logo à primeira imagem do conteúdo
+    };
+    let LAYOUT = loadLayout() || { ...DEFAULT_LAYOUT };
+
+    function loadLayout(){
+      try{
+        const raw = localStorage.getItem(LS_LAYOUT);
+        if(!raw) return null;
+        const parsed = JSON.parse(raw);
+        return { ...DEFAULT_LAYOUT, ...parsed };
+      }catch{ return null; }
+    }
+    function saveLayout(){
+      localStorage.setItem(LS_LAYOUT, JSON.stringify(LAYOUT));
+      alert('Configurações de layout salvas como padrão!');
+    }
+    function mmToPt(mm){ return mm * (72/25.4); }
+    function ptToPx(pt){ return pt * (96/72); }
+
+    const PAGE_SIZES_PT = {
+      a4:     { w: 595.28, h: 841.89 },
+      letter: { w: 612.00, h: 792.00 }
+    };
+    function getPageSizePt(layout){
+      const base = PAGE_SIZES_PT[layout.pageFormat] || PAGE_SIZES_PT.a4;
+      return (layout.orientation==='l')
+        ? { w: base.h, h: base.w }
+        : { w: base.w, h: base.h };
+    }
+
+    function populateLayoutUI(){
+      lyFontFamily.value  = LAYOUT.fontFamily;
+      lyFontSize.value    = LAYOUT.fontSize;
+      lyLineHeight.value  = LAYOUT.lineHeight;
+      lyPSpacing.value    = LAYOUT.paragraphSpacing;
+      lyH1.value = LAYOUT.h1; lyH2.value = LAYOUT.h2; lyH3.value = LAYOUT.h3;
+      lyPageFormat.value  = LAYOUT.pageFormat;
+      lyOrientation.value = LAYOUT.orientation;
+      lyMT.value = LAYOUT.marginTop;
+      lyMR.value = LAYOUT.marginRight;
+      lyMB.value = LAYOUT.marginBottom;
+      lyML.value = LAYOUT.marginLeft;
+      lyLogoEnabled.checked = LAYOUT.logoEnabled;
+      lyLogoSize.value    = LAYOUT.logoSize;
+      lyLogoAlign.value   = LAYOUT.logoAlign;
+      lyLogoSpace.value   = LAYOUT.logoSpace;
+      lyLogoFileInfo.textContent = LAYOUT.logoData ? 'Imagem carregada' : 'Nenhum arquivo selecionado';
+      lyLogoResizeFirst.checked = LAYOUT.logoResizeFirst;
+    }
+    function readLayoutFromUI(){
+      LAYOUT.fontFamily = lyFontFamily.value || DEFAULT_LAYOUT.fontFamily;
+      LAYOUT.fontSize   = Math.max(8, Math.min(20, Number(lyFontSize.value)||DEFAULT_LAYOUT.fontSize));
+      LAYOUT.lineHeight = Math.max(1, Math.min(2, Number(lyLineHeight.value)||DEFAULT_LAYOUT.lineHeight));
+      LAYOUT.paragraphSpacing = Math.max(0, Math.min(40, Number(lyPSpacing.value)||DEFAULT_LAYOUT.paragraphSpacing));
+      LAYOUT.h1 = Number(lyH1.value)||DEFAULT_LAYOUT.h1;
+      LAYOUT.h2 = Number(lyH2.value)||DEFAULT_LAYOUT.h2;
+      LAYOUT.h3 = Number(lyH3.value)||DEFAULT_LAYOUT.h3;
+      LAYOUT.pageFormat = lyPageFormat.value;
+      LAYOUT.orientation= lyOrientation.value;
+      LAYOUT.marginTop = Number(lyMT.value)||DEFAULT_LAYOUT.marginTop;
+      LAYOUT.marginRight=Number(lyMR.value)||DEFAULT_LAYOUT.marginRight;
+      LAYOUT.marginBottom=Number(lyMB.value)||DEFAULT_LAYOUT.marginBottom;
+      LAYOUT.marginLeft= Number(lyML.value)||DEFAULT_LAYOUT.marginLeft;
+      LAYOUT.logoEnabled = !!lyLogoEnabled.checked;
+      LAYOUT.logoSize = Math.max(24, Math.min(600, Number(lyLogoSize.value)||DEFAULT_LAYOUT.logoSize));
+      LAYOUT.logoAlign = lyLogoAlign.value;
+      LAYOUT.logoSpace = Math.max(0, Math.min(80, Number(lyLogoSpace.value)||DEFAULT_LAYOUT.logoSpace));
+      LAYOUT.logoResizeFirst = !!lyLogoResizeFirst.checked;
+    }
+
+    function adjustContentImages(innerHTML){
+      if(!LAYOUT.logoResizeFirst) return innerHTML;
+      const temp = document.createElement('div');
+      temp.innerHTML = innerHTML;
+      const img = temp.querySelector('img');
+      if(img){
+        // remove larguras antigas do DOCX
+        img.removeAttribute('width');
+        img.removeAttribute('height');
+        // aplica novo tamanho e alinhamento a partir do layout
+        img.style.width = 'var(--doc-logo-size)';
+        img.style.height = 'auto';
+        img.style.display = 'block';
+        img.style.marginBottom = 'var(--doc-logo-space)';
+        // alinhamento
+        if(LAYOUT.logoAlign === 'center'){
+          img.style.marginLeft = 'auto'; img.style.marginRight = 'auto';
+        }else if(LAYOUT.logoAlign === 'right'){
+          img.style.marginLeft = 'auto'; img.style.marginRight = '0';
+        }else{
+          img.style.marginLeft = '0'; img.style.marginRight = 'auto';
+        }
+      }
+      return temp.innerHTML;
+    }
+
+    function buildDocHTML(innerHTML){
+      // opcionalmente ajusta a primeira imagem como "logo importado"
+      const processedHTML = adjustContentImages(innerHTML);
+
+      const styleVars = `
+        --doc-font-size:${LAYOUT.fontSize}px;
+        --doc-line-height:${LAYOUT.lineHeight};
+        --doc-paragraph-spacing:${LAYOUT.paragraphSpacing}px;
+        --doc-font-family:${LAYOUT.fontFamily};
+        --doc-h1-scale:${LAYOUT.h1};
+        --doc-h2-scale:${LAYOUT.h2};
+        --doc-h3-scale:${LAYOUT.h3};
+        --doc-logo-size:${LAYOUT.logoSize}px;
+        --doc-logo-space:${LAYOUT.logoSpace}px;
+      `;
+      const logoHTML = (LAYOUT.logoEnabled && LAYOUT.logoData)
+        ? `<div class="doc-logo" style="text-align:${LAYOUT.logoAlign}"><img src="${LAYOUT.logoData}" alt="Logo"></div>`
+        : '';
+      return `<div class="doc-root" style="${styleVars}">${logoHTML}${processedHTML}</div>`;
+    }
+
+    function dataURLFromFile(file){
+      return new Promise((resolve, reject)=>{
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+    }
+
+    /* ========= INIT SELECTS ========= */
+    function refreshTemplateSelect(){
+      const allBuiltins = [...BUILTIN_TEMPLATES];
+      const allUser     = loadUserTemplates();
+
+      templateSel.innerHTML = "";
+
+      // padrões
+      allBuiltins.forEach(t => {
+        const o = document.createElement('option');
+        o.value = t.id; o.textContent = t.nome;
+        templateSel.appendChild(o);
+      });
+
+      // personalizados
+      if (allUser.length){
+        const og = document.createElement('optgroup');
+        og.label = '— Personalizados —';
+        allUser.forEach(t => {
+          const o = document.createElement('option');
+          o.value = t.id; o.textContent = t.nome;
+          og.appendChild(o);
+        });
+        templateSel.appendChild(og);
+      }
+
+      // seleção atual
+      const all = [...allBuiltins, ...allUser];
+      const exists = all.find(t=>t.id===currentTemplate?.id);
+      templateSel.value = exists ? currentTemplate.id : (all[0] && all[0].id);
+      if(!exists) currentTemplate = all[0];
+    }
+    function populateFuncionarios(){
+      funcSel.innerHTML = "";
+      FUNCIONARIOS.forEach(f => {
+        const o = document.createElement('option'); o.value=f.id; o.textContent=f.nome; funcSel.appendChild(o);
+      });
+      funcSel.value = currentFuncionario.id;
+    }
+
+    /* ========= VARS / PREVIEW ========= */
+    const getHTML = () => editor.innerHTML;
+    function updateVarsList(){
+      const vars = extractVariables(getHTML());
+      varsBox.innerHTML = vars.length
+        ? vars.map(v => `<span class="pill" data-var="${v}">{${v}}</span>`).join('')
+        : `<small class="muted">Nenhuma variável encontrada. Use chaves, ex.: <code>{nome}</code>.</small>`;
+      varsBox.querySelectorAll('[data-var]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+          insertAtCaret(editor, `{${el.dataset.var}}`);
+          editor.focus(); updateVarsList(); updatePreview();
+        });
+      });
+    }
+
+    function updatePreview(){
+      const data = (getVinculo()==='sim') ? currentFuncionario : {};
+      const finalHTML = replaceVariables(getHTML(), data);
+      const docHTML = buildDocHTML(finalHTML);
+
+      const page = getPageSizePt(LAYOUT);
+      const pageWidthPx = ptToPx(page.w);
+      const padTopPx = ptToPx(mmToPt(LAYOUT.marginTop));
+      const padRightPx= ptToPx(mmToPt(LAYOUT.marginRight));
+      const padBottomPx=ptToPx(mmToPt(LAYOUT.marginBottom));
+      const padLeftPx = ptToPx(mmToPt(LAYOUT.marginLeft));
+
+      preview.innerHTML = `
+        <div class="preview-page"
+             style="width:${pageWidthPx}px; padding:${padTopPx}px ${padRightPx}px ${padBottomPx}px ${padLeftPx}px;">
+          ${chkPrev.checked ? docHTML : buildDocHTML(getHTML())}
+        </div>`;
+    }
+
+    function insertAtCaret(container, text){
+      const sel = window.getSelection();
+      if(!sel || sel.rangeCount===0){ container.appendChild(document.createTextNode(text)); return; }
+      const range = sel.getRangeAt(0);
+      if(!container.contains(range.commonAncestorContainer)){ container.appendChild(document.createTextNode(text)); return; }
+      range.deleteContents(); range.insertNode(document.createTextNode(text)); range.collapse(false);
+      sel.removeAllRanges(); sel.addRange(range);
+    }
+
+    /* ========= WIZARD OPEN / NAV ========= */
+    btnOpen.addEventListener('click', () => { wizard.style.display='flex'; goStep(1); });
+    btnClose.addEventListener('click', () => wizard.style.display='none');
+    wizard.addEventListener('click', (e)=>{ if(e.target===wizard) wizard.style.display='none'; });
+    btnBack.addEventListener('click', ()=> goStep(1));
+    btnNext.addEventListener('click', ()=>{ if(isStep(1)) goStep(2); });
+    btnConcluir.addEventListener('click', exportPDF);
+
+    templateSel.addEventListener('change', (e)=>{
+      const id = e.target.value;
+      const all = getAllTemplates();
+      currentTemplate = all.find(t=>t.id===id) || all[0];
+      editor.innerHTML = currentTemplate.html;
+      updateVarsList(); updatePreview();
+    });
+    funcSel.addEventListener('change', (e)=>{
+      currentFuncionario = FUNCIONARIOS.find(f=>f.id===e.target.value) || FUNCIONARIOS[0];
+      updatePreview();
+    });
+    function getVinculo(){ return (document.querySelector('input[name="vinc"]:checked')||{}).value || 'sim'; }
+
+    document.querySelectorAll('.tb-btn[data-cmd]').forEach(btn=>{
+      btn.addEventListener('click', ()=> document.execCommand(btn.dataset.cmd, false, null));
+    });
+    btnClear.addEventListener('click', ()=>{
+      const text = editor.innerText || '';
+      const cleaned = text.replace(/\s{2,}/g,' ').replace(/\n{3,}/g,'\n\n');
+      editor.innerHTML = '<p>' + cleaned.split('\n').map(p=>p.trim()).filter(Boolean).map(escapeHTML).join('</p><p>') + '</p>';
+      updatePreview();
+    });
+    chkPrev.addEventListener('change', updatePreview);
+
+    /* ========= PDF COM QUEBRA DE PÁGINA ========= */
+    async function exportPDF(){
+      try{
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          unit:'pt',
+          format: LAYOUT.pageFormat,
+          orientation: LAYOUT.orientation==='l' ? 'landscape' : 'portrait',
+          compress:true
+        });
+
+        const pageW = pdf.internal.pageSize.getWidth();
+        const pageH = pdf.internal.pageSize.getHeight();
+
+        // Margens em pontos a partir de mm
+        const marginTop = mmToPt(LAYOUT.marginTop);
+        const marginRight = mmToPt(LAYOUT.marginRight);
+        const marginBottom = mmToPt(LAYOUT.marginBottom);
+        const marginLeft = mmToPt(LAYOUT.marginLeft);
+
+        const usableW = pageW - marginLeft - marginRight;
+        const usableH = pageH - marginTop - marginBottom;
+
+        const data = (getVinculo()==='sim') ? currentFuncionario : {};
+        const finalHTML = replaceVariables(getHTML(), data);
+        const docHTML = buildDocHTML(finalHTML);
+
+        const wrapper = document.getElementById('print-area');
+        wrapper.innerHTML = `<div id="print-root" style="width:${usableW}px; font-family:Arial, Helvetica, sans-serif;">${docHTML}</div>`;
+
+        const scale = 2; // qualidade
+        const canvas = await html2canvas(document.getElementById('print-root'), {
+          backgroundColor:'#ffffff', scale, useCORS:true, logging:false
+        });
+
+        // px por ponto na largura usada
+        const pxPerPt = canvas.width / usableW;
+        const pageHeightPx = usableH * pxPerPt;
+
+        let sY = 0, pageIndex = 0;
+        while (sY < canvas.height) {
+          const sliceHeight = Math.min(pageHeightPx, canvas.height - sY);
+
+          const pageCanvas = document.createElement('canvas');
+          pageCanvas.width  = canvas.width;
+          pageCanvas.height = sliceHeight;
+          const ctx = pageCanvas.getContext('2d');
+          ctx.drawImage(canvas, 0, sY, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+
+          const imgData = pageCanvas.toDataURL('image/png');
+          const sliceHpt = sliceHeight / pxPerPt;
+
+          if (pageIndex > 0) pdf.addPage();
+          pdf.addImage(imgData, 'PNG', marginLeft, marginTop, usableW, sliceHpt);
+
+          sY += sliceHeight;
+          pageIndex++;
+        }
+
+        pdf.save('documento_atrium.pdf');
+        alert('PDF gerado e baixado!');
+      }catch(err){
+        console.error(err); alert('Falha ao gerar PDF. Veja o console.');
+      }
+    }
+
+    /* ========= MODAL TEMPLATES (CRUD localStorage) ========= */
+    const openTplList = () => { tplModal.style.display='flex'; tplListView.style.display=''; tplEditView.style.display='none'; renderTplList(); };
+    const closeTpl = () => tplModal.style.display='none';
+    btnTemplates.addEventListener('click', openTplList);
+    btnCloseTpl.addEventListener('click', closeTpl);
+    document.getElementById('tplModal').addEventListener('click', (e)=>{ if(e.target.id==='tplModal') closeTpl(); });
+
+    btnNewTpl.addEventListener('click', ()=> openTplEditor());
+    btnBackList.addEventListener('click', openTplList);
+
+    function renderTplList(){
+      const all = getAllTemplates();
+      tplList.innerHTML = all.map(t => {
+        const isBuiltin = !!t.builtin;
+        const actions = isBuiltin
+          ? `<button class="btn tiny-btn" data-act="use" data-id="${t.id}">Usar</button>
+             <button class="btn secondary tiny-btn" data-act="dup" data-id="${t.id}">Duplicar</button>`
+          : `<button class="btn tiny-btn" data-act="use" data-id="${t.id}">Usar</button>
+             <button class="btn secondary tiny-btn" data-act="edit" data-id="${t.id}">Editar</button>
+             <button class="btn secondary tiny-btn" data-act="dup" data-id="${t.id}">Duplicar</button>
+             <button class="btn secondary tiny-btn" data-act="del" data-id="${t.id}">Excluir</button>`;
+        return `<div class="item">
+                  <div>
+                    <div class="name">${t.nome}${isBuiltin ? ' <span class="tiny">(padrão)</span>' : ''}</div>
+                    <div class="tiny">${extractVariables(t.html).map(v=>`{${v}}`).join(' • ') || '— sem variáveis —'}</div>
+                  </div>
+                  <div style="display:flex;gap:6px">${actions}</div>
+                </div>`;
+      }).join('');
+
+      tplList.querySelectorAll('[data-act]').forEach(btn=>{
+        const id = btn.dataset.id; const act = btn.dataset.act;
+        btn.addEventListener('click', ()=>{
+          const all = getAllTemplates();
+          const tpl = all.find(x=>x.id===id);
+          if(!tpl) return;
+          if(act==='use'){
+            currentTemplate = tpl; refreshTemplateSelect(); templateSel.value = tpl.id;
+            editor.innerHTML = tpl.html; updateVarsList(); updatePreview();
+            tplModal.style.display='none'; wizard.style.display='flex'; goStep(1);
+          } else if(act==='edit'){
+            openTplEditor(tpl);
+          } else if(act==='dup'){
+            const user = loadUserTemplates();
+            const copy = { id: uid(), nome: tpl.nome + " (cópia)", html: tpl.html };
+            saveUserTemplates([...user, copy]); renderTplList(); refreshTemplateSelect(); alert('Template duplicado.');
+          } else if(act==='del'){
+            if(!confirm('Excluir este template?')) return;
+            const user = loadUserTemplates().filter(x=>x.id!==id);
+            saveUserTemplates(user); renderTplList(); refreshTemplateSelect();
+          }
+        });
+      });
+    }
+
+    function openTplEditor(template = null){
+      editingTemplateId = template?.id ?? null;
+      tplListView.style.display='none';
+      tplEditView.style.display='';
+      tplName.value = template?.nome ?? "";
+      tplEditor.innerHTML = template?.html ?? "<p>Digite/cole seu conteúdo aqui…</p>";
+      updateTplVars();
+      docxTpl.value = ""; docxTplInfo.textContent = "Nenhum arquivo selecionado";
+    }
+
+    // importar docx (estilizado)
+    docxTplBtn.addEventListener('click', ()=> docxTpl.click());
+    docxTpl.addEventListener('change', async (e)=>{
+      const file = e.target.files[0];
+      docxTplInfo.textContent = file ? file.name : "Nenhum arquivo selecionado";
+      if(!file) return;
+      if(!/\.docx$/i.test(file.name)){ alert('Selecione um arquivo .docx'); return; }
+      try{
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.convertToHtml({ arrayBuffer });
+        tplEditor.innerHTML = result.value || '<p>(Documento sem conteúdo)</p>';
+        updateTplVars();
+      }catch(err){ console.error(err); alert('Falha ao importar o .docx'); }
+    });
+
+    function updateTplVars(){
+      const vars = extractVariables(tplEditor.innerHTML);
+      tplVars.innerHTML = vars.length
+        ? vars.map(v => `<span class="pill" data-var="${v}">{${v}}</span>`).join('')
+        : `<small class="muted">Nenhuma variável detectada. Você pode digitar variáveis usando {chaves}.</small>`;
+      tplVars.querySelectorAll('[data-var]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+          insertAtCaret(tplEditor, `{${el.dataset.var}}`);
+          tplEditor.focus(); updateTplVars();
+        });
+      });
+    }
+    document.getElementById('btn-clear-tpl').addEventListener('click', ()=>{
+      const text = tplEditor.innerText || '';
+      const cleaned = text.replace(/\s{2,}/g,' ').replace(/\n{3,}/g,'\n\n');
+      tplEditor.innerHTML = '<p>' + cleaned.split('\n').map(p=>p.trim()).filter(Boolean).map(escapeHTML).join('</p><p>') + '</p>';
+      updateTplVars();
+    });
+
+    // salvar template
+    btnSaveTpl.addEventListener('click', ()=>{
+      const nome = (tplName.value || "").trim();
+      if(!nome){ alert('Dê um nome ao template.'); return; }
+      const html = tplEditor.innerHTML;
+      const user = loadUserTemplates();
+
+      if(editingTemplateId){
+        const idx = user.findIndex(t=>t.id===editingTemplateId);
+        if(idx>=0) user[idx] = { ...user[idx], nome, html };
+        else user.push({ id: editingTemplateId, nome, html });
+        saveUserTemplates(user); alert('Template atualizado!');
+      }else{
+        user.push({ id: uid(), nome, html }); saveUserTemplates(user); alert('Template criado!');
+      }
+      refreshTemplateSelect(); openTplList();
+    });
+
+    /* ========= RESIZE DO WIZARD ========= */
+    (function enableWizardResize(){
+      const modal = wizardModal;
+      const resE  = document.getElementById('wizardResizeE');
+      const resSE = document.getElementById('wizardResizeSE');
+
+      const limits = {
+        minW: 680, minH: 480,
+        maxW: Math.min(window.innerWidth*0.98, 1600),
+        maxH: Math.min(window.innerHeight*0.95, 1200)
+      };
+      const clamp = (n,min,max) => Math.max(min, Math.min(max, n));
+
+      let startX=0, startY=0, startW=0, startH=0, mode=null;
+
+      function onMove(e){
+        if(!mode) return;
+        if(mode==='e' || mode==='se'){
+          const nw = clamp(startW + (e.clientX - startX), limits.minW, limits.maxW);
+          modal.style.width = nw + "px";
+        }
+        if(mode==='se'){
+          const nh = clamp(startH + (e.clientY - startY), limits.minH, limits.maxH);
+          modal.style.height = nh + "px";
+          modal.style.maxHeight = "95vh";
+        }
+      }
+      function stop(){ mode=null; document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', stop); }
+      function start(e, m){
+        mode = m; startX = e.clientX; startY = e.clientY;
+        const r = modal.getBoundingClientRect();
+        startW = r.width; startH = r.height;
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', stop);
+      }
+      resE.addEventListener('mousedown', e=> start(e,'e'));
+      resSE.addEventListener('mousedown', e=> start(e,'se'));
+      window.addEventListener('resize', ()=>{
+        limits.maxW = Math.min(window.innerWidth*0.98, 1600);
+        limits.maxH = Math.min(window.innerHeight*0.95, 1200);
+      });
+    })();
+
+    /* ========= LISTENERS LAYOUT ========= */
+    [
+      lyFontFamily, lyFontSize, lyLineHeight, lyPSpacing, lyH1, lyH2, lyH3,
+      lyPageFormat, lyOrientation, lyMT, lyMR, lyMB, lyML,
+      lyLogoEnabled, lyLogoSize, lyLogoAlign, lyLogoSpace, lyLogoResizeFirst
+    ].forEach(el=>{
+      if(!el) return;
+      el.addEventListener('input', ()=>{ readLayoutFromUI(); updatePreview(); });
+      el.addEventListener('change', ()=>{ readLayoutFromUI(); updatePreview(); });
+    });
+
+    lyLogoFileBtn.addEventListener('click', ()=> lyLogoFile.click());
+    lyLogoFile.addEventListener('change', async (e)=>{
+      const file = e.target.files?.[0];
+      lyLogoFileInfo.textContent = file ? file.name : 'Nenhum arquivo selecionado';
+      if(!file) return;
+      try{
+        LAYOUT.logoData = await dataURLFromFile(file);
+        updatePreview();
+      }catch(err){ console.error(err); alert('Falha ao carregar a imagem do logo'); }
+    });
+
+    lySave.addEventListener('click', ()=> { readLayoutFromUI(); saveLayout(); });
+    lyReset.addEventListener('click', ()=>{
+      LAYOUT = { ...DEFAULT_LAYOUT };
+      populateLayoutUI();
+      updatePreview();
+    });
+
+    /* ========= INICIALIZAÇÃO ========= */
+    refreshTemplateSelect();
+    populateFuncionarios();
+    editor.innerHTML = currentTemplate.html;
+
+    populateLayoutUI();          // carrega UI com layout salvo/padrão
+    updateVarsList(); updatePreview();
+
+    // navegação do wizard
+    function isStep(n){ return (n===1 && step1.style.display!=='none') || (n===2 && step2.style.display!=='none'); }
+    function goStep(n){
+      if(n===1){
+        step1.style.display=''; step2.style.display='none';
+        btnNext.style.display=''; btnConcluir.style.display='none';
+        wizardModal.style.height = ''; // volta auto quando retorna ao passo 1
+      } else {
+        step1.style.display='none'; step2.style.display='';
+        btnNext.style.display='none'; btnConcluir.style.display='';
+      }
+    }
+
+    (function ensureFitPontoTableToViewport(){
+      if (typeof window !== 'undefined' && typeof window.fitPontoTableToViewport !== 'function') {
+        window.fitPontoTableToViewport = function(){
+          /* no-op: existe só para impedir erro ao voltar ao Cartão de Ponto */
+        };
+      }
+    })();
+
+/* ===== Wiring do módulo Documentos & Assinaturas ===== */
+(function wireDocsButtons(){
+  const root = document.getElementById('docs-sign-root');
+  if(!root) return;
+
+  const $  = (sel) => root.querySelector(sel);
+  const $$ = (sel) => Array.from(root.querySelectorAll(sel));
+
+  // Botões principais
+  const btnOpen = $('#btn-open');
+  const btnTpl  = $('#btn-templates');
+
+  // Modais
+  const wizard   = $('#wizard');
+  const tplModal = $('#tplModal');
+
+  // Wizard: passos e controles
+  const step1 = $('#step1');
+  const step2 = $('#step2');
+  const btnBack     = $('#btn-back');
+  const btnClose    = $('#btn-close');
+  const btnNext     = $('#btn-next');
+  const btnConcluir = $('#btn-concluir');
+
+  // Templates: views e controles
+  const btnCloseTpl  = $('#btn-close-tpl');
+  const btnNewTpl    = $('#btn-new-tpl');
+  const btnBackList  = $('#btn-back-list');
+  const btnSaveTpl   = $('#btn-save-tpl');
+  const tplListView  = $('#tplListView');
+  const tplEditView  = $('#tplEditView');
+  const tplList      = $('#tplList');
+  const tplName      = $('#tplName');
+  const tplEditor    = $('#tplEditor');
+  const docxTpl      = $('#docxTpl');
+  const docxTplBtn   = $('#docxTplBtn');
+  const docxTplInfo  = $('#docxTplInfo');
+  const btnClearTpl  = $('#btn-clear-tpl');
+  const tplVarsBox   = $('#tplVars');
+
+
+  // Helpers locais
+  const open  = (el)=>{ el?.classList.add('show'); el?.setAttribute('aria-hidden','false'); };
+  const close = (el)=>{ el?.classList.remove('show'); el?.setAttribute('aria-hidden','true'); };
+
+  // ===== Botões principais =====
+  btnOpen?.addEventListener('click', ()=> open(wizard));
+  btnTpl ?.addEventListener('click', ()=> { renderTplList(); open(tplModal); });
+
+  // Fecha modais por clique fora
+  [wizard, tplModal].forEach(bd=>{
+    bd?.addEventListener('click', (e)=>{ if(e.target===bd) close(bd); });
+  });
+
+  // ===== Fluxo do Wizard =====
+  function goStep1(){
+    if(step1) step1.style.display='grid';
+    if(step2) step2.style.display='none';
+    if(btnNext) btnNext.style.display='';
+    if(btnConcluir) btnConcluir.style.display='none';
+  }
+
+  function goStep2(){
+    if(step1) step1.style.display='none';
+    if(step2) step2.style.display='block';
+    if(btnNext) btnNext.style.display='none';
+    if(btnConcluir) btnConcluir.style.display='';
+  }
+  goStep1();
+
+  btnNext    ?.addEventListener('click', goStep2);
+  btnBack    ?.addEventListener('click', goStep1);
+  btnClose   ?.addEventListener('click', ()=> close(wizard));
+  btnConcluir?.addEventListener('click', ()=>{
+    close(wizard);
+    try { (typeof notify==='function' ? notify('Documento gerado.', 'success') : window.alert('Documento gerado.')); } catch {}
+  });
+
+  // ===== Gerenciador de Templates =====
+  let editingId = null; // null => criando; string => editando
+
+  function getAllUserTemplates(){
+    // Compatível com suas APIs: getTemplates/setTemplates (novo) ou loadUserTemplates/saveUserTemplates (antigo)
+    if (typeof getTemplates === 'function') return getTemplates();
+    if (typeof getAllTemplates === 'function') return getAllTemplates(); // inclui builtins
+    return [];
+  }
+
+    function setAllUserTemplates(list){
+    if (typeof setTemplates === 'function') setTemplates(list);
+    else if (typeof saveUserTemplates === 'function') saveUserTemplates(list);
+  }
+
+  function escape(s){ try{ return (typeof escapeHTML==='function') ? escapeHTML(String(s)) : String(s); }catch{ return String(s); } }
+
+  function renderTplList(){
+    const list = getAllUserTemplates();
+    if(!tplList) return;
+    if(!Array.isArray(list) || list.length===0){
+      tplList.innerHTML = '<div class="muted">Nenhum template salvo.</div>';
+      return;
+    }
+    tplList.innerHTML = list.map(t => `
+      <div class="panel" data-id="${t.id}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;border:1px solid rgba(0,0,0,.12);border-radius:10px;">
+        <div><strong>${escape(t.name || t.nome || '(sem nome)')}</strong></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-light" data-action="edit">Editar</button>
+          <button class="btn btn-light" data-action="dup">Duplicar</button>
+          <button class="btn btn-ghost" data-action="del">Excluir</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Detecção simples de variáveis {chave} no conteúdo
+  function detectVars(html){
+    const text = (html || '').replace(/<[^>]+>/g,' ');
+    const vars = Array.from(new Set((text.match(/\{[^}]+\}/g) || [])));
+    return vars;
+  }
+  function renderTplVarsPreview(){
+    if(!tplVarsBox) return;
+    const vars = detectVars(tplEditor?.innerHTML || '');
+    tplVarsBox.innerHTML = vars.length
+      ? vars.map(v=>`<code style="margin-right:6px">${escape(v)}</code>`).join('')
+      : '<small class="muted">Nenhuma variável detectada.</small>';
+  }
+
+ function showList(){
+    editingId = null;
+    if (tplEditView) tplEditView.style.display='none';
+    if (tplListView) tplListView.style.display='block';
+  }
+  function showEdit(id=null){
+    editingId = id;
+    if (tplName)   tplName.value = '';
+    if (tplEditor) tplEditor.innerHTML = '';
+    if(id){
+      const list = getAllUserTemplates();
+      const it = list.find(x=>x.id===id);
+      if(it){
+        if (tplName)   tplName.value = it.name || it.nome || '';
+        if (tplEditor) tplEditor.innerHTML = it.content || it.html || '';
+      }
+    }
+    renderTplVarsPreview();
+    if (tplListView) tplListView.style.display='none';
+    if (tplEditView) tplEditView.style.display='block';
+  }
+
+  btnCloseTpl?.addEventListener('click', ()=> close(tplModal));
+  btnNewTpl  ?.addEventListener('click', ()=> showEdit(null));
+  btnBackList?.addEventListener('click', showList);
+
+  // Upload .docx (apenas exibe nome; o parsing já existe no seu outro fluxo)
+  docxTplBtn?.addEventListener('click', ()=> docxTpl?.click());
+  docxTpl   ?.addEventListener('change', (e)=>{
+    const f = e.target.files?.[0];
+    if(docxTplInfo) docxTplInfo.textContent = f ? f.name : 'Nenhum arquivo selecionado';
+  });
+
+  // Limpar formatação básica
+  btnClearTpl?.addEventListener('click', ()=>{
+    try { document.execCommand('removeFormat', false, null); } catch {}
+    renderTplVarsPreview();
+  });
+
+  // Atualiza preview de variáveis enquanto digita
+  tplEditor?.addEventListener('input', renderTplVarsPreview);
+
+  // Salvar template
+  btnSaveTpl?.addEventListener('click', ()=>{
+    const name = (tplName?.value || '').trim();
+    const content = String(tplEditor?.innerHTML || '').trim();
+    if(!name || !content){
+      try{ (typeof notify==='function' ? notify('Preencha nome e conteúdo.', 'warn') : window.alert('Preencha nome e conteúdo.')); }catch{}
+      return;
+    }
+    const list = getAllUserTemplates().map(t => ({...t}));
+    if(editingId){
+      const idx = list.findIndex(t=>t.id===editingId);
+      if(idx>=0){ list[idx].name = name; list[idx].content = content; list[idx].html = content; }
+      else list.push({ id: editingId, name, content });
+    }else{
+      let id = (typeof slugify === 'function') ? slugify(name) : ('tpl_'+Date.now());
+      let base = id, n=1;
+      while(list.some(t=>t.id===id)){ id = base+'-'+(++n); }
+      list.push({ id, name, content });
+    }
+    setAllUserTemplates(list);
+    try{ (typeof notify==='function' ? notify('Template salvo!', 'success') : 0); }catch{}
+    showList(); renderTplList();
+  });
+
+  // Ações na lista (editar/duplicar/excluir)
+  tplList?.addEventListener('click', (e)=>{
+    const row = e.target.closest('[data-id]');
+    if(!row) return;
+    const id = row.getAttribute('data-id');
+    const act = e.target.closest('[data-action]')?.getAttribute('data-action');
+
+    const list = getAllUserTemplates().map(t => ({...t}));
+    const it = list.find(t=>t.id===id);
+    if(!it) return;
+
+    if(act==='edit'){ showEdit(id); return; }
+
+// [FIX] Handler de cliques na lista de templates (completo)
+tmplList.addEventListener('click', (ev) => {
+  const li = ev.target.closest('li[data-id]');
+  if (!li) return;
+
+  const id = li.dataset.id;
+  const act = ev.target.closest('[data-act]')?.dataset.act;
+  if (!act) return;
+
+  if (act === 'dup') {
+        const src = templates.find(t => t.id === id);
+        if (!src) return notify('Template não encontrado.');
+        const copy = { ...src, id: uid('tpl_'), title: `${src.title} (cópia)` };
+        templates.push(copy);
+        persistTemplates?.(templates);
+        renderTemplateList?.(templates);
+        notify('Template duplicado.');
+      } else if (act === 'del') {
+        if (!confirm('Excluir este template?')) return;
+        const idx = templates.findIndex(t => t.id === id);
+        if (idx >= 0) {
+          templates.splice(idx, 1);
+          persistTemplates?.(templates);
+          renderTemplateList?.(templates);
+          notify('Template excluído.');
+        }
+      } else if (act === 'edit') {
+        const item = templates.find(t => t.id === id);
+        if (!item) return notify('Template não encontrado.');
+        openTemplateEditor?.(item);
+      }
+    }); // <- fecha corretamente o listener
+
+    if(act==='del'){
+      if(!confirm(`Excluir o template “${it.name || it.nome || '(sem nome)'}”?`)) return;
+      const novo = list.filter(t=>t.id!==id);
+      setAllUserTemplates(novo);
+      renderTplList();
+      try{ (typeof notify==='function' ? notify('Template excluído.', 'success') : 0); }catch{}
+      return;
+    }
+  });
 })();
 </script>
 
+
 <!-- Pré-carregar logo para o PDF -->
 <img id="pdfLogoPreload" src="Assets/img/logo_new.png" alt="" style="display:none"/>
+
 </body>
 </html>

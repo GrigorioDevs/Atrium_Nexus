@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assinar Documento Word</title>
+
+  <!-- Dependências (UMD) -->
+  <script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0e141b;
+      color: #e8f0f7;
+      margin: 0;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #151c24;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    h1 { color: #00e0ff; text-align: center; }
+
+    input[type="file"] {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      color: #e8f0f7;
+      padding: 10px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    /* Área renderizada do DOCX -> HTML */
+    #output {
+      background: #fff;
+      color: #000;
+      border-radius: 8px;
+      padding: 20px;
+      min-height: 300px;
+      overflow-y: auto;
+    }
+
+    #signature-pad {
+      background: #fff;
+      border: 2px solid #00e0ff;
+      border-radius: 6px;
+      width: 100%;
+      height: 200px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    button {
+      background: linear-gradient(90deg, #00e0ff, #ff2fb9);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: opacity .2s ease;
+    }
+
+    button:hover { opacity: .85; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📄 Importar e Assinar Documento Word</h1>
+
+    <input type="file" id="upload" accept=".docx" />
+    <div id="output">O conteúdo do Word será exibido aqui...</div>
+
+    <h3>✍️ Assinatura</h3>
+    <canvas id="signature-pad"></canvas>
+    <div class="buttons">
+      <button id="clear-signature">Limpar</button>
+      <button id="generate-pdf">Gerar PDF Assinado</button>
+    </div>
+  </div>
+
+  <script>
+    const upload = document.getElementById("upload");
+    const output = document.getElementById("output");
+    const canvas = document.getElementById("signature-pad");
+    const signaturePad = new SignaturePad(canvas, { backgroundColor: "white" });
+
+    // Controle para saber se já carregou um DOCX
+    let hasDocLoaded = false;
+
+    // Ajusta o tamanho do canvas de assinatura para alta densidade
+    function resizeCanvas() {
+      const ratio = Math.max(window.devicePixelRatio || 1, 1);
+      canvas.width = canvas.offsetWidth * ratio;
+      canvas.height = canvas.offsetHeight * ratio;
+      canvas.getContext("2d").scale(ratio, ratio);
+      signaturePad.clear();
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    // Converter o Word em HTML (Mammoth)
+    upload.addEventListener("change", function() {
+      const file = this.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const arrayBuffer = e.target.result;
+        mammoth.convertToHtml({ arrayBuffer })
+          .then(result => {
+            output.innerHTML = result.value || "<p>Documento sem conteúdo.</p>";
+            hasDocLoaded = true;
+          })
+          .catch(err => {
+            output.innerHTML = `<p style="color:red;">Erro: ${err.message}</p>`;
+            hasDocLoaded = false;
+          });
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    // Limpar assinatura
+    document.getElementById("clear-signature").onclick = () => signaturePad.clear();
+
+    // Gerar e baixar o PDF automaticamente
+    document.getElementById("generate-pdf").onclick = async () => {
+      try {
+        if (!hasDocLoaded) {
+          alert("Por favor, importe um documento Word primeiro!");
+          return;
+        }
+        if (signaturePad.isEmpty()) {
+          alert("Por favor, adicione sua assinatura antes de gerar o PDF!");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ unit: "pt", format: "a4", compress: true });
+
+        const pageWidth = pdf.internal.pageSize.getWidth();   // 595.28 pt (A4 retrato)
+        const pageHeight = pdf.internal.pageSize.getHeight(); // 841.89 pt
+
+        // Captura DIRETA do elemento renderizado (nada de clone fora do DOM)
+        const contentCanvas = await html2canvas(output, {
+          scale: 2,                 // melhor qualidade
+          backgroundColor: "#ffffff",
+          useCORS: true,            // evita taint com imagens remotas
+          logging: false,
+          allowTaint: true
+        });
+
+        const imgData = contentCanvas.toDataURL("image/png");
+        const margin = 40;
+        const imgWidth = pageWidth - margin * 2;
+        const imgHeight = (contentCanvas.height * imgWidth) / contentCanvas.width;
+
+        // Desenha a primeira página
+        pdf.addImage(imgData, "PNG", margin, margin, imgWidth, imgHeight);
+
+        // Paginação: se o conteúdo for maior que a página, adiciona as demais páginas
+        let heightLeft = imgHeight - (pageHeight - margin * 2);
+        let position = margin - heightLeft;
+
+        while (heightLeft > 0) {
+          pdf.addPage();
+          pdf.addImage(imgData, "PNG", margin, position, imgWidth, imgHeight);
+          heightLeft -= (pageHeight - margin * 2);
+          position = margin - heightLeft;
+        }
+
+        // Página (ou área) para assinatura:
+        const signImg = signaturePad.toDataURL("image/png");
+
+        if (imgHeight + 160 <= pageHeight - margin) {
+          // Cabe na primeira página (abaixo do conteúdo)
+          const signY = Math.min(pageHeight - margin - 80, imgHeight + margin + 60);
+          pdf.setFont("helvetica", "normal");
+          pdf.setFontSize(12);
+          pdf.text("Assinatura:", margin, signY - 10);
+          pdf.addImage(signImg, "PNG", margin + 80, signY - 40, 200, 80);
+        } else {
+          // Cria uma página final para a assinatura
+          pdf.addPage();
+          pdf.setFont("helvetica", "normal");
+          pdf.setFontSize(12);
+          pdf.text("Assinatura:", margin, 100);
+          pdf.addImage(signImg, "PNG", margin + 80, 70, 200, 80);
+        }
+
+        // Baixar PDF
+        pdf.save("documento_assinado.pdf");
+      } catch (err) {
+        console.error(err);
+        alert("Falha ao gerar o PDF. Verifique o console do navegador para detalhes.");
+      }
+    };
+  </script>
+</body>
+</html>

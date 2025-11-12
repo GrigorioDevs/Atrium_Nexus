@@ -1,0 +1,6 @@
+/* Splash de carregamento */
+#splash{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#0B1622; z-index:2000; transition:opacity .4s ease; }
+#splash.hide{ opacity:0; pointer-events:none }
+.splash-card{ display:flex; flex-direction:column; align-items:center; gap:10px }
+.splash-logo{ width:120px; height:120px; border-radius:24px; object-fit:cover; border:1px solid rgba(255,255,255,.25); background: radial-gradient(80% 80% at 20% 20%, var(--c1), transparent), radial-gradient(80% 80% at 80% 80%, var(--c2), transparent); }
+.splash-title{ font-weight:900; letter-spacing:.4px; color:#E7EEF6 }

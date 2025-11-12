@@ -1,0 +1,6 @@
+/* Mapa */
+#map{ width:100%; height:380px; border-radius:12px; border:1px solid var(--border); position:relative }
+.map-skeleton{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:800; color:#eaf6ff; background: linear-gradient(135deg,#0E1B2A,#091521); animation: mapPulse 1.1s ease-in-out infinite alternate; z-index:1; }
+@keyframes mapPulse{ from{opacity:.85} to{opacity:.55} }
+.leaflet-control-container{ z-index:900 }
+@media (max-width:960px){ .leaflet-top.leaflet-left{ left:auto; right:8px; top:70px } }

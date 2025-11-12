@@ -1,0 +1,64 @@
+label{ font-weight:700; font-size:13px; margin:6px 0 6px; display:block }
+input[type="text"],input[type="date"],input[type="time"],input[type="number"],select,textarea{
+width:100%; padding:10px 12px; border:1px solid rgba(0,224,255,.20);
+border-radius:10px; background:var(--surface); color:var(--text); font-size:14px;
+outline:none; appearance:none; -webkit-appearance:none; caret-color: var(--c1);
+transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+input[type="checkbox"], input[type="radio"]{ accent-color: var(--c1); }
+input:focus, select:focus, textarea:focus{
+border-color: rgba(0,224,255,.45);
+box-shadow: 0 0 0 3px rgba(0,224,255,.15), inset 0 0 0 1px rgba(255,255,255,.06);
+background:#0b1a27;
+}
+::placeholder{ color:#93a7ba; opacity:.9 }
+textarea{ min-height:110px; resize:vertical }
+
+
+/* Inputs de arquivo (IDs existentes no projeto) */
+#docUpload,
+#fotoUpload,
+#cadDocumento,
+#sigImport,
+#tplImport,
+#cadFoto,
+#genDocFile,
+#impDocFile{
+width:100%; padding:10px 12px; border:1px solid rgba(0,224,255,.20);
+border-radius:10px; background:var(--surface); color:var(--text); font-size:14px; outline:none; transition:0.3s;
+}
+#docUpload:focus,
+#fotoUpload:focus,
+#cadDocumento:focus,
+#sigImport:focus,
+#tplImport:focus,
+#cadFoto:focus,
+#genDocFile:focus,
+#impDocFile:focus{
+border-color: rgba(0,224,255,.45);
+box-shadow: 0 0 0 3px rgba(0,224,255,.15), inset 0 0 0 1px rgba(255,255,255,.06);
+background:#0b1a27;
+}
+#docUpload::file-selector-button,
+#fotoUpload::file-selector-button,
+#cadDocumento::file-selector-button,
+#sigImport::file-selector-button,
+#tplImport::file-selector-button,
+#cadFoto::file-selector-button,
+#genDocFile::file-selector-button,
+#impDocFile::file-selector-button{
+margin-right:10px; padding:8px 12px; border:1px solid rgba(255,255,255,.25); border-radius:8px;
+background:linear-gradient(135deg, var(--c1), var(--c2)); color:#00121E; font-weight:800; cursor:pointer; transition:filter .15s ease, transform .15s ease;
+}
+#docUpload::file-selector-button:hover,
+#fotoUpload::file-selector-button:hover,
+#cadDocumento::file-selector-button:hover,
+#sigImport::file-selector-button:hover,
+#tplImport::file-selector-button:hover,
+#cadFoto::file-selector-button:hover,
+#genDocFile::file-selector-button:hover,
+#impDocFile::file-selector-button:hover{ filter:brightness(1.08); }
+#docUpload::file-selector-button:active,
+#impDocFile::file-selector-button:active{ transform:scale(.98); }

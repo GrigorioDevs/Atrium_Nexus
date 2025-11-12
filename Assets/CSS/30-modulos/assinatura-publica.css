@@ -1,0 +1,5 @@
+/* Telas públicas de assinatura */
+.public-sign{ position:fixed; inset:0; background:var(--bg); color:var(--text); z-index:2200; overflow:auto; display:none; }
+.public-sign .wrap{ max-width:920px; margin:16px auto; padding:12px; }
+.public-sign .card{ margin:0 auto; }
+.public-sign .doc-box{ padding:12px; border-radius:12px; border:1px solid var(--border); background:var(--surface); white-space:pre-wrap; line-height:1.35; }

@@ -1,0 +1,16 @@
+/* KPIs/Filtros/ajudas */
+.filters{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px }
+.filters .chip{ padding:8px 12px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:var(--surface); font-weight:700 }
+.kpis{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:10px }
+.kpi{ flex:1; min-width:160px; background:var(--surface); border:1px solid rgba(255,255,255,.08); padding:12px; border-radius:14px }
+.kpi .title{ font-size:12px; color:var(--muted) }
+.kpi .value{ font-size:20px; font-weight:800 }
+.muted-hint{ font-size:12px; color:var(--muted); margin-top:6px }
+
+
+/* Tabela Ponto e ajuste iPhone 14 */
+@media (max-width:430px){
+#tPonto{ font-size:12px; }
+.table th,.table td{ padding:6px 4px; }
+.table.fit-mobile{ transform-origin: top left; }
+}

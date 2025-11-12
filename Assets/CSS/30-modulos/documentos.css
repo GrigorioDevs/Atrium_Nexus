@@ -1,0 +1,73 @@
+/* ===== Documentos & Assinaturas ===== */
+#docs-sign-root{ --docs-scope: 1; }  /* marcador neutro */
+
+/* Cartão central do gerador e CTAs */
+#docs-sign-root .card.center{ max-width:680px; margin:16px auto; background:transparent !important; border:none !important; box-shadow:none !important; }
+#docs-sign-root .cta-row{ display:flex; justify-content:center; align-items:center; gap:12px; padding:36px 12px; }
+#docs-sign-root .btn-lg{ font-size:18px; padding:16px 28px; }
+#docs-sign-root .btn.secondary{ background:var(--surface); color:#d6e6f3; border:1px solid rgba(255,255,255,.18); }
+
+
+/* Backdrop/Modal próprios do módulo (isolados do .modal global) */
+#docs-sign-root .backdrop{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); align-items:center; justify-content:center; z-index:1300; }
+#docs-sign-root .backdrop.show{ display:flex; }
+#docs-sign-root .modal{ position:relative; display:block; background:var(--panel); border-radius:14px; border:1px solid var(--border); box-shadow:0 18px 40px rgba(0,0,0,.5); width:min(1100px,96vw); max-height:90vh; overflow:auto; }
+#docs-sign-root .modal-h{ padding:12px 16px; border-bottom:1px solid rgba(255,255,255,.08); font-weight:800; }
+#docs-sign-root .modal-b{ padding:14px 16px; }
+#docs-sign-root .modal-f{ padding:12px 16px; border-top:1px solid rgba(255,255,255,.08); display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+
+
+/* Grids/Painéis do Wizard/Templates */
+#docs-sign-root .grid{ display:grid; gap:10px; }
+#docs-sign-root .grid-2{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+@media (max-width:960px){ #docs-sign-root .grid-2{ grid-template-columns:1fr; } }
+#docs-sign-root .cols{ display:grid; grid-template-columns:300px 1fr; gap:12px; }
+@media (max-width:960px){ #docs-sign-root .cols{ grid-template-columns:1fr; } }
+#docs-sign-root .panel{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px; }
+
+
+/* Inputs “dark” do módulo */
+#docs-sign-root .select-dark,
+#docs-sign-root .input-dark{
+width:100%; padding:10px 12px; border:1px solid rgba(0,224,255,.20);
+border-radius:10px; background:var(--surface); color:var(--text); font-size:14px; outline:none;
+transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+#docs-sign-root .select-dark:focus,
+#docs-sign-root .input-dark:focus{ border-color:rgba(0,224,255,.45); box-shadow:0 0 0 3px rgba(0,224,255,.15), inset 0 0 0 1px rgba(255,255,255,.06); background:#0b1a27; }
+
+
+/* Radios inline */
+#docs-sign-root .radio-inline{ display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+#docs-sign-root .radio-inline label{ display:inline-flex; gap:8px; align-items:center; font-weight:700; }
+#docs-sign-root .radio-inline input[type="radio"]{ accent-color: var(--c1); }
+
+
+/* Toolbar/Editor/Preview */
+#docs-sign-root .toolbar{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+#docs-sign-root .tb-btn{ padding:8px 10px; border:1px solid rgba(255,255,255,.18); background:var(--surface); color:#d6e6f3; border-radius:8px; cursor:pointer; }
+#docs-sign-root .tb-btn:hover{ filter:brightness(1.08); }
+#docs-sign-root .editor{ min-height:240px; padding:12px; background:var(--surface); border:1px solid rgba(255,255,255,.18); border-radius:12px; overflow:auto; }
+#docs-sign-root .preview{ margin-top:10px; min-height:160px; padding:12px; background:var(--surface); border:1px dashed rgba(255,255,255,.18); border-radius:12px; overflow:auto; }
+
+
+/* File input “bonitinho” */
+#docs-sign-root .file-input{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+#docs-sign-root .input-like{ display:inline-flex; align-items:center; justify-content:space-between; gap:8px; width:100%; max-width:280px; padding:10px 12px; border:1px solid rgba(255,255,255,.18); background:var(--surface); color:#d6e6f3; border-radius:10px; cursor:pointer; }
+#docs-sign-root .file-name{ font-size:12px; color:var(--muted); }
+#docs-sign-root .tiny{ font-size:12px; color:var(--muted); }
+
+
+/* Grips de resize */
+#docs-sign-root .resizer-e{ position:absolute; right:-4px; top:0; width:8px; height:100%; cursor:ew-resize; }
+#docs-sign-root .resizer-se{ position:absolute; right:-6px; bottom:-6px; width:12px; height:12px; cursor:nwse-resize; }
+
+
+/* Listagem simples de templates */
+#docs-sign-root .list{ display:grid; gap:8px; }
+#docs-sign-root .list > *{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px; }
+
+
+/* ================= Documentos — HERO ================= */
+#docs-sign-root.docs-shell{ height: 100%; padding: 16px 20px; }
+@media (max-width:960px){ .imp-docs-form{ grid-template-columns:1fr } }
