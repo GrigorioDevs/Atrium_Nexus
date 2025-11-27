@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Atrium.RH")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+62632eb7cd98d0da46b02f8f5e4e7c66d8376b02")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+47166d2f98120ed337c661d8889092acca1a4444")]
 [assembly: System.Reflection.AssemblyProductAttribute("Atrium.RH")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Atrium.RH")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

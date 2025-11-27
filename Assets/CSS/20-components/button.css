@@ -32,3 +32,38 @@ transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
 
 /* Auxiliares de CTA */
 .btn-cta{ min-width: clamp(220px, 32vw, 320px); }
+
+
+/* Container da CTA de documentos: centraliza o conteúdo */
+.docs-cta-card {
+  display: flex;
+  justify-content: center;   /* centraliza horizontalmente */
+  align-items: center;       /* centraliza verticalmente */
+  min-height: 220px;         /* altura mínima para dar “respiro” */
+  text-align: center;
+}
+
+
+.btn_doc {
+  background: linear-gradient(90deg,var(--accent1),var(--accent2));
+  color:#fff;
+  border:0;
+  cursor:pointer;
+  transition:opacity .2s;
+
+  /* tamanho/forma do botão */
+  padding: 16px 32px;        /* mais altura e largura */
+  font-size: 18px;           /* fonte maior */
+  font-weight: 600;          /* igual ao seu .btn original */
+  border-radius: 12px;       /* cantos um pouco mais arredondados */
+
+  font-family: inherit;      /* 👈 usa a mesma fonte do pai (body) */
+}
+
+.btn_doc:hover {
+  opacity: .9;
+}
+
+.btn_doc.secondary {
+  background: rgba(255,255,255,.08);
+}

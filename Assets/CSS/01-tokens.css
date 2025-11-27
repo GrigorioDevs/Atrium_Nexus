@@ -9,12 +9,20 @@
 --surface:#0a1520; /* NOVO: usado por docs-cta-card, inputs dark */
 --border: rgba(255,255,255,.12); /* NOVO: usado por chips, cards e grids */
 --white:#fff;
---text:#E7EEF6;
 --muted:#9fb1c3;
 --ok:#10b981;
 --warn:#f59e0b;
 --err:#ef4444;
 --ui:'Poppins', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
+--card:#151c24;
+--text:#e8f0f7;
+--accent1:#00e0ff;
+--accent2:#ff2fb9;
+--radius:14px;
+--control-h:44px;
+--field-bg:#0f151d;        /* base inputs */
+--field-border:#2a3642;
+--field-border-focus:#00e0ff;
 
 
 --scroll-thumb: rgba(0,224,255,.45);

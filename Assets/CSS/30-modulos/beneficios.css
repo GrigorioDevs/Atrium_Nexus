@@ -1,20 +1,185 @@
 /* Switches VR/VT */
-.benefit-toggles{ display:flex; gap:16px; flex-wrap:wrap; align-items:center; margin:6px 0 10px }
-.benefit-toggles label{ display:inline-flex; align-items:center; gap:10px; font-weight:800 }
-#cadOptVR,#cadOptVT{ appearance:none; width:46px; height:26px; border-radius:999px; background:#132433; border:1px solid rgba(0,224,255,.22); position:relative; cursor:pointer; transition:.18s ease; }
-#cadOptVR::after,#cadOptVT::after{ content:''; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:linear-gradient(135deg, var(--c1), var(--c2)); transform:translateX(0); transition:transform .18s ease; }
-#cadOptVR:checked,#cadOptVT:checked{ background:rgba(0,224,255,.25); border-color:rgba(0,224,255,.45) }
-#cadOptVR:checked::after,#cadOptVT:checked::after{ transform:translateX(20px) }
+.benefit-toggles {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 6px 0 10px;
+}
 
+.benefit-toggles label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+}
+
+#cadOptVR,
+#cadOptVT {
+  appearance: none;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: #132433;
+  border: 1px solid rgba(0, 224, 255, 0.22);
+  position: relative;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+#cadOptVR::after,
+#cadOptVT::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--c1), var(--c2));
+  transform: translateX(0);
+  transition: transform 0.18s ease;
+}
+
+#cadOptVR:checked,
+#cadOptVT:checked {
+  background: rgba(0, 224, 255, 0.25);
+  border-color: rgba(0, 224, 255, 0.45);
+}
+
+#cadOptVR:checked::after,
+#cadOptVT:checked::after {
+  transform: translateX(20px);
+}
 
 /* Helpers VR/VT */
-.vt-help,.vr-help{ font-size:12px; color:var(--muted) }
-.vt-on{ filter:none; opacity:1 }
-.vt-off{ filter:grayscale(.85); opacity:.55 }
-.vt-cell-left{ text-align:left }
-.t-right{ text-align:right }
-.t-center{ text-align:center }
-.vr-cell-left{ text-align:left }
-.vr-meta{ font-size:12px; color:var(--muted) }
-.vr-money{ font-weight:800 }
-.export-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+.vt-help,
+.vr-help {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.vt-on { filter: none; opacity: 1; }
+.vt-off { filter: grayscale(0.85); opacity: 0.55; }
+
+.vt-cell-left { text-align: left; }
+.t-right { text-align: right; }
+.t-center { text-align: center; }
+.vr-cell-left { text-align: left; }
+
+.vr-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.vr-money {
+  font-weight: 800;
+}
+
+.export-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+/* =========================================================
+   RESPONSIVIDADE BENEFÍCIOS (VT / VR)
+   ========================================================= */
+
+/* Tablets e telas médias (até ~1024px) */
+@media (max-width: 1024px) {
+  .benefit-toggles {
+    gap: 12px;
+  }
+
+  .vt-help,
+  .vr-help {
+    max-width: 100%;
+  }
+
+  .export-actions {
+    justify-content: flex-start;
+  }
+}
+
+/* Celulares (até ~768px) */
+@media (max-width: 768px) {
+  .benefit-toggles {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .benefit-toggles label {
+    font-size: 14px;
+  }
+
+  /* switches um pouco menores em telas pequenas */
+  #cadOptVR,
+  #cadOptVT {
+    width: 40px;
+    height: 22px;
+  }
+
+  #cadOptVR::after,
+  #cadOptVT::after {
+    width: 18px;
+    height: 18px;
+    top: 2px;
+    left: 2px;
+  }
+
+  #cadOptVR:checked::after,
+  #cadOptVT:checked::after {
+    transform: translateX(18px);
+  }
+
+  .vt-help,
+  .vr-help {
+    font-size: 11px;
+  }
+
+  .export-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .export-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Celulares pequenos (ex.: iPhone 6s retrato ~375px) */
+@media (max-width: 480px) {
+  .benefit-toggles {
+    width: 100%;
+  }
+
+  .benefit-toggles label {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .vt-help,
+  .vr-help {
+    font-size: 10.5px;
+  }
+
+  .export-actions {
+    gap: 6px;
+  }
+}
+
+/* Telas muito grandes (monitores / TVs) */
+@media (min-width: 1440px) {
+  .export-actions {
+    max-width: 700px;
+  }
+
+  .vt-help,
+  .vr-help {
+    max-width: 700px;
+  }
+}

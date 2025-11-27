@@ -1,0 +1,148 @@
+/* === Sub-abas de Documentos (Gerar / Assinar) === */
+.docs-card-body {
+  padding: 12px;
+  height: calc(100% - 48px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* evita overflow estranho em containers flex */
+}
+
+.docs-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.docs-tab-btn {
+  border-radius: 999px;
+  font-size: 13px;
+  padding: 6px 14px;
+}
+
+.docs-tab-btn.active {
+  background: var(--accent1, #00e0ff);
+  color: #ffffff;
+}
+
+/* Pane de conteúdo de cada sub-aba */
+.docs-pane {
+  display: none;
+  padding: 12px;
+  height: 100%;
+  overflow: auto;
+}
+
+.docs-pane.active {
+  display: block;
+}
+
+/* === Layout Clicksign === */
+.docs-clicksign-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.docs-clicksign-header h3 {
+  margin: 0 0 4px;
+}
+
+.docs-clicksign-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.docs-clicksign-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+   ========================================================= */
+
+/* Tablets e telas médias (até ~1024px) */
+@media (max-width: 1024px) {
+  .docs-card-body {
+    padding: 10px;
+    height: auto;          /* deixa crescer conforme o conteúdo */
+  }
+
+  .docs-pane {
+    padding: 10px;
+  }
+
+  .docs-clicksign-grid {
+    gap: 10px;
+  }
+}
+
+/* Celulares (até ~768px, retrato/paisagem) */
+@media (max-width: 768px) {
+  .docs-card-body {
+    padding: 8px;
+  }
+
+  .docs-tabs {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+
+  .docs-tab-btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .docs-pane {
+    padding: 8px 6px 12px;
+    height: auto;          /* não força 100% da altura no mobile */
+  }
+
+  /* grid vira 1 coluna em telas menores */
+  .docs-clicksign-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .docs-clicksign-panel {
+    gap: 8px;
+  }
+}
+
+/* Celulares pequenos (ex.: iPhone 6s em retrato ~375px) */
+@media (max-width: 480px) {
+  .docs-tabs {
+    padding: 4px 6px;
+    gap: 4px;
+    overflow-x: auto;      /* rolagem horizontal caso não caiba */
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .docs-tab-btn {
+    flex: 0 0 auto;        /* não encolher demais; permite scroll horizontal */
+  }
+
+  .docs-clicksign-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .docs-clicksign-shell {
+    gap: 10px;
+  }
+}
+
+/* Telas muito grandes (monitores / TVs) */
+@media (min-width: 1440px) {
+  .docs-clicksign-shell {
+    max-width: 1200px;     /* limita a largura pra não ficar esticado demais */
+    margin: 0 auto;
+  }
+
+  .docs-pane {
+    padding: 16px 24px;
+  }
+}

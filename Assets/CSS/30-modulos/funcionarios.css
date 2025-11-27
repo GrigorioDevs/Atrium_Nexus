@@ -82,3 +82,133 @@ border:1px solid rgba(255,255,255,.2)
 
 /* Wrapper de cadastro antigo (abre em modal) */
 .gestao-cadastro-wrap{ display:none !important; }
+
+
+/* ====== Explorador de arquivos do funcionário ====== */
+
+.emp-file-explorer{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  /* ocupa a área do modal, mas respeita a altura */
+  min-height:260px;
+  max-height:60vh;
+}
+
+.emp-file-explorer .fe-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.fe-path{
+  font-size:13px;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.fe-path .fe-bc{
+  cursor:pointer;
+  color:var(--c1);
+}
+.fe-path .fe-bc.current{
+  font-weight:600;
+  color:#fff;
+}
+.fe-path .fe-bc + .fe-bc::before{
+  content:" / ";
+  color:var(--muted);
+}
+
+.fe-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+/* caixa principal (esquerda árvore, direita lista) */
+.fe-body{
+  display:flex;
+  min-height:220px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.06);
+  background:rgba(15,23,42,.7);
+  overflow:hidden;
+}
+
+/* árvore de pastas (lado esquerdo) */
+.fe-tree{
+  width:220px;
+  max-width:260px;
+  padding:8px;
+  border-right:1px solid rgba(255,255,255,.06);
+  font-size:13px;
+  overflow:auto;
+}
+
+.fe-tree ul{
+  list-style:none;
+  margin:0;
+  padding-left:14px;
+}
+
+.fe-tree-root{
+  display:block;
+}
+
+.fe-tree-folder{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 6px;
+  border-radius:6px;
+  cursor:pointer;
+  color:#e5f0ff;
+}
+
+.fe-tree-folder:hover{
+  background:rgba(255,255,255,.06);
+}
+
+.fe-tree-folder.active{
+  background:rgba(255,255,255,.12);
+}
+
+.fe-icon{
+  width:18px;
+  text-align:center;
+}
+
+/* lista (lado direito) */
+.fe-list-wrap{
+  flex:1;
+  overflow:auto;
+}
+
+.fe-list tbody tr{
+  cursor:pointer;
+}
+
+.fe-list tbody tr.selected{
+  background:rgba(255,255,255,.08);
+}
+
+.fe-list td:first-child{
+  text-align:left;
+}
+
+.fe-list .fe-empty td{
+  text-align:center;
+  color:#9fb1c3;
+}
+
+/* botão de upload “label” */
+.fe-upload-label{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}

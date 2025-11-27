@@ -160,7 +160,7 @@ button:active{transform:scale(.98)}
 <body>
 
 <div class="login-container">
-  <img src="Assets/img/logo_new.png" alt="Logo" class="logo-image" onerror="this.onerror=null;this.src='Assets/img/logo.png'">
+  <img src="assets/img/logo_new.png" alt="Logo" class="logo-image" onerror="this.onerror=null;this.src='assets/img/logo.png'">
   <span class="logo-text">RCR Engenharia</span>
   <p class="version">Acesso ao sistema</p>
 
@@ -233,7 +233,7 @@ radios.forEach(r=>{
 
 /* Navegação */
 function abrirCadastro(){ window.location.href='register.html'; }
-function abrirEsqueciSenha(){ window.location.href='forgot-password.html'; }
+function abrirEsqueciSenha(){ window.location.href='forgot_password.html'; }
 
 /* Login com condição CPF ou Usuário */
 document.getElementById('loginForm').addEventListener('submit', async function(e){
@@ -260,7 +260,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
       ? { cpf: login, senha: senha }
       : { login: login, senha: senha };
 
-    const response = await fetch("http://localhost:5127/api/usuario/login", {
+    const response = await fetch("http://localhost:5253/api/usuario/login", {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify(body)

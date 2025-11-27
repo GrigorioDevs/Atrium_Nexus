@@ -2,72 +2,757 @@
 #docs-sign-root{ --docs-scope: 1; }  /* marcador neutro */
 
 /* Cartão central do gerador e CTAs */
-#docs-sign-root .card.center{ max-width:680px; margin:16px auto; background:transparent !important; border:none !important; box-shadow:none !important; }
-#docs-sign-root .cta-row{ display:flex; justify-content:center; align-items:center; gap:12px; padding:36px 12px; }
-#docs-sign-root .btn-lg{ font-size:18px; padding:16px 28px; }
-#docs-sign-root .btn.secondary{ background:var(--surface); color:#d6e6f3; border:1px solid rgba(255,255,255,.18); }
+#docs-sign-root .card.center{
+  max-width:680px;
+  margin:16px auto;
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+}
+#docs-sign-root .cta-row{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:12px;
+  padding:36px 12px;
+}
+#docs-sign-root .btn-lg{
+  font-size:18px;
+  padding:16px 28px;
+}
+#docs-sign-root .btn.secondary{
+  background:var(--surface);
+  color:#d6e6f3;
+  border:1px solid rgba(255,255,255,.18);
+}
 
 
-/* Backdrop/Modal próprios do módulo (isolados do .modal global) */
-#docs-sign-root .backdrop{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); align-items:center; justify-content:center; z-index:1300; }
-#docs-sign-root .backdrop.show{ display:flex; }
-#docs-sign-root .modal{ position:relative; display:block; background:var(--panel); border-radius:14px; border:1px solid var(--border); box-shadow:0 18px 40px rgba(0,0,0,.5); width:min(1100px,96vw); max-height:90vh; overflow:auto; }
-#docs-sign-root .modal-h{ padding:12px 16px; border-bottom:1px solid rgba(255,255,255,.08); font-weight:800; }
-#docs-sign-root .modal-b{ padding:14px 16px; }
-#docs-sign-root .modal-f{ padding:12px 16px; border-top:1px solid rgba(255,255,255,.08); display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+/* Backdrop/Modal próprios do módulo (escopo docs-sign-root) */
+#docs-sign-root .backdrop{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  align-items:center;
+  justify-content:center;
+  z-index:1300;
+}
+#docs-sign-root .backdrop.show{
+  display:flex;
+}
+#docs-sign-root .modal{
+  position:relative;
+  display:block;
+  background:var(--panel);
+  border-radius:14px;
+  border:1px solid var(--border);
+  box-shadow:0 18px 40px rgba(0,0,0,.5);
+  width:min(1100px,96vw);
+  max-height:90vh;
+  overflow:auto;
+}
+#docs-sign-root .modal-h{
+  padding:12px 16px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  font-weight:800;
+}
+#docs-sign-root .modal-b{
+  padding:14px 16px;
+}
+#docs-sign-root .modal-f{
+  padding:12px 16px;
+  border-top:1px solid rgba(255,255,255,.08);
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+}
 
 
 /* Grids/Painéis do Wizard/Templates */
-#docs-sign-root .grid{ display:grid; gap:10px; }
-#docs-sign-root .grid-2{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-@media (max-width:960px){ #docs-sign-root .grid-2{ grid-template-columns:1fr; } }
-#docs-sign-root .cols{ display:grid; grid-template-columns:300px 1fr; gap:12px; }
-@media (max-width:960px){ #docs-sign-root .cols{ grid-template-columns:1fr; } }
-#docs-sign-root .panel{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px; }
+#docs-sign-root .grid{
+  display:grid;
+  gap:10px;
+}
+#docs-sign-root .grid-2{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+@media (max-width:960px){
+  #docs-sign-root .grid-2{
+    grid-template-columns:1fr;
+  }
+}
+#docs-sign-root .cols{
+  display:grid;
+  grid-template-columns:300px 1fr;
+  gap:12px;
+}
+@media (max-width:960px){
+  #docs-sign-root .cols{
+    grid-template-columns:1fr;
+  }
+}
+#docs-sign-root .panel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px;
+}
 
 
-/* Inputs “dark” do módulo */
+/* Inputs “dark” do módulo (escopo docs-root genérico) */
 #docs-sign-root .select-dark,
 #docs-sign-root .input-dark{
-width:100%; padding:10px 12px; border:1px solid rgba(0,224,255,.20);
-border-radius:10px; background:var(--surface); color:var(--text); font-size:14px; outline:none;
-transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  width:100%;
+  padding:10px 12px;
+  border:1px solid rgba(0,224,255,.20);
+  border-radius:10px;
+  background:var(--surface);
+  color:var(--text);
+  font-size:14px;
+  outline:none;
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
 }
 #docs-sign-root .select-dark:focus,
-#docs-sign-root .input-dark:focus{ border-color:rgba(0,224,255,.45); box-shadow:0 0 0 3px rgba(0,224,255,.15), inset 0 0 0 1px rgba(255,255,255,.06); background:#0b1a27; }
+#docs-sign-root .input-dark:focus{
+  border-color:rgba(0,224,255,.45);
+  box-shadow:0 0 0 3px rgba(0,224,255,.15), inset 0 0 0 1px rgba(255,255,255,.06);
+  background:#0b1a27;
+}
 
 
-/* Radios inline */
-#docs-sign-root .radio-inline{ display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
-#docs-sign-root .radio-inline label{ display:inline-flex; gap:8px; align-items:center; font-weight:700; }
-#docs-sign-root .radio-inline input[type="radio"]{ accent-color: var(--c1); }
+/* Radios inline (genérico no docs-root) */
+#docs-sign-root .radio-inline{
+  display:flex;
+  gap:16px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+#docs-sign-root .radio-inline label{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  font-weight:700;
+}
+#docs-sign-root .radio-inline input[type="radio"]{
+  accent-color: var(--c1);
+}
 
 
-/* Toolbar/Editor/Preview */
-#docs-sign-root .toolbar{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
-#docs-sign-root .tb-btn{ padding:8px 10px; border:1px solid rgba(255,255,255,.18); background:var(--surface); color:#d6e6f3; border-radius:8px; cursor:pointer; }
-#docs-sign-root .tb-btn:hover{ filter:brightness(1.08); }
-#docs-sign-root .editor{ min-height:240px; padding:12px; background:var(--surface); border:1px solid rgba(255,255,255,.18); border-radius:12px; overflow:auto; }
-#docs-sign-root .preview{ margin-top:10px; min-height:160px; padding:12px; background:var(--surface); border:1px dashed rgba(255,255,255,.18); border-radius:12px; overflow:auto; }
+/* Toolbar/Editor/Preview genérico em docs-root */
+#docs-sign-root .toolbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:8px;
+}
+#docs-sign-root .tb-btn{
+  padding:8px 10px;
+  border:1px solid rgba(255,255,255,.18);
+  background:var(--surface);
+  color:#d6e6f3;
+  border-radius:8px;
+  cursor:pointer;
+}
+#docs-sign-root .tb-btn:hover{
+  filter:brightness(1.08);
+}
+#docs-sign-root .editor{
+  min-height:240px;
+  padding:12px;
+  background:var(--surface);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:12px;
+  overflow:auto;
+}
+#docs-sign-root .preview{
+  margin-top:10px;
+  min-height:160px;
+  padding:12px;
+  background:var(--surface);
+  border:1px dashed rgba(255,255,255,.18);
+  border-radius:12px;
+  overflow:auto;
+}
 
 
-/* File input “bonitinho” */
-#docs-sign-root .file-input{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-#docs-sign-root .input-like{ display:inline-flex; align-items:center; justify-content:space-between; gap:8px; width:100%; max-width:280px; padding:10px 12px; border:1px solid rgba(255,255,255,.18); background:var(--surface); color:#d6e6f3; border-radius:10px; cursor:pointer; }
-#docs-sign-root .file-name{ font-size:12px; color:var(--muted); }
-#docs-sign-root .tiny{ font-size:12px; color:var(--muted); }
+/* File input bonitinho (genérico) */
+#docs-sign-root .file-input{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+#docs-sign-root .input-like{
+  display:inline-flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  width:100%;
+  max-width:280px;
+  padding:10px 12px;
+  border:1px solid rgba(255,255,255,.18);
+  background:var(--surface);
+  color:#d6e6f3;
+  border-radius:10px;
+  cursor:pointer;
+}
+#docs-sign-root .file-name{
+  font-size:12px;
+  color:var(--muted);
+}
+#docs-sign-root .tiny{
+  font-size:12px;
+  color:var(--muted);
+}
 
 
-/* Grips de resize */
-#docs-sign-root .resizer-e{ position:absolute; right:-4px; top:0; width:8px; height:100%; cursor:ew-resize; }
-#docs-sign-root .resizer-se{ position:absolute; right:-6px; bottom:-6px; width:12px; height:12px; cursor:nwse-resize; }
+/* Grips de resize (genérico no docs-root) */
+#docs-sign-root .resizer-e{
+  position:absolute;
+  right:-4px;
+  top:0;
+  width:8px;
+  height:100%;
+  cursor:ew-resize;
+}
+#docs-sign-root .resizer-se{
+  position:absolute;
+  right:-6px;
+  bottom:-6px;
+  width:12px;
+  height:12px;
+  cursor:nwse-resize;
+}
 
 
-/* Listagem simples de templates */
-#docs-sign-root .list{ display:grid; gap:8px; }
-#docs-sign-root .list > *{ background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px; }
+/* Listagem simples de templates no docs-root */
+#docs-sign-root .list{
+  display:grid;
+  gap:8px;
+}
+#docs-sign-root .list > *{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px;
+}
 
+/***************************************************
+ * DOCUMENTOS & ASSINATURAS
+ * Wizard + Tela de Templates (btn "Templates")
+ * Escopo mais específico: #wizard e #tplModal
+ ***************************************************/
 
-/* ================= Documentos — HERO ================= */
-#docs-sign-root.docs-shell{ height: 100%; padding: 16px 20px; }
-@media (max-width:960px){ .imp-docs-form{ grid-template-columns:1fr } }
+/* Paleta específica do módulo (você pode ajustar para seus tokens) */
+:root {
+  --docs-bg: #0e141b;
+  --docs-card: #151c24;
+  --docs-text: #e8f0f7;
+  --docs-muted: #a2afbf;
+  --docs-accent1: #00e0ff;
+  --docs-accent2: #ff2fb9;
+
+  --docs-radius: 14px;
+  --docs-control-h: 44px;
+
+  --docs-field-bg: #0f151d;
+  --docs-field-border: #2a3642;
+  --docs-field-border-focus: #00e0ff;
+}
+
+/* BACKDROP dos modais do módulo (wizard + templates) */
+#wizard.backdrop,
+#tplModal.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  display: none;             /* trocado pra flex no JS */
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 50;
+}
+
+/* Card principal do modal (wizard + templates) */
+#wizard .modal,
+#tplModal .modal {
+  position: relative;
+  background: #0f151d;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--docs-radius);
+  width: min(1000px, 95vw);
+  max-width: 98vw;
+  height: auto;
+  max-height: 92vh;
+  overflow: hidden;          /* conteúdo rola em .modal-b */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cabeçalho, corpo e rodapé do modal */
+#wizard .modal-h,
+#tplModal .modal-h {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  font-weight: 700;
+  color: var(--docs-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+#wizard .modal-b,
+#tplModal .modal-b {
+  padding: 20px;
+  overflow: auto;
+  background: var(--docs-bg);
+  color: var(--docs-text);
+
+  /* AJUSTE: corpo do modal vira área de scroll flexível
+     para não “cortar” a coluna esquerda de layout */
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#wizard .modal-f,
+#tplModal .modal-f {
+  padding: 14px 20px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: #0a1016;
+}
+
+/* GRID / COLUNAS usadas no wizard e em templates */
+#wizard .grid,
+#tplModal .grid {
+  display: grid;
+  gap: 14px;
+}
+
+#wizard .grid-2,
+#tplModal .grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 860px) {
+  #wizard .grid-2,
+  #tplModal .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Layout lateral (configs x editor) */
+#wizard .cols,
+#tplModal .cols {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 320px 1fr;
+}
+
+@media (max-width: 1000px) {
+  #wizard .cols,
+  #tplModal .cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* "Row" interna só para esses modais */
+#wizard .row,
+#tplModal .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Painelzinho escuro usado várias vezes */
+#wizard .panel,
+#tplModal .panel {
+  background: #0f151d;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+#wizard .panel h4,
+#tplModal .panel h4 {
+  margin: 6px 0 8px;
+  font-size: 14px;
+  color: var(--docs-muted);
+}
+
+/* Texto auxiliar / pequeno */
+#wizard .muted,
+#tplModal .muted {
+  color: var(--docs-muted);
+}
+
+#wizard .tiny,
+#tplModal .tiny {
+  font-size: 12px;
+  color: var(--docs-muted);
+}
+
+/* Botões "pílula" de variáveis ({nome}, {cpf} etc.) */
+#wizard .pill,
+#tplModal .pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  margin: 4px 6px 0 0;
+}
+
+/* ================== CAMPOS ESPECIAIS (inputs / selects) ================== */
+
+/* Input escuro padrão do módulo (numérico, texto etc.) */
+#wizard .input-dark,
+#tplModal .input-dark {
+  width: 100%;
+  height: var(--docs-control-h);
+  line-height: var(--docs-control-h);
+  padding: 0 12px;
+  background: #0b1a1f;
+  color: var(--docs-text);
+  border: 1px solid #133043;
+  border-radius: 12px;
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+
+#wizard .input-dark:focus,
+#tplModal .input-dark:focus {
+  border-color: var(--docs-field-border-focus);
+  box-shadow: 0 0 0 3px rgba(0,224,255,.15);
+  background: #0d1f2b;
+}
+
+#wizard .input-dark::placeholder,
+#tplModal .input-dark::placeholder {
+  color: #9fb0bd;
+  opacity: 1;
+}
+
+/* Select escuro (template, fonte, etc.) */
+#wizard .select-dark,
+#tplModal .select-dark {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 90%;
+  height: var(--docs-control-h);
+  line-height: var(--docs-control-h);
+  padding: 0 40px 0 12px;
+  background: #0b1a1f;
+  color: var(--docs-text);
+  border: 1px solid #133043;
+  border-radius: 12px;
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+  transition: border-color .2s, box-shadow .2s, background .2s;
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+<path fill='none' stroke='%23a2afbf' stroke-width='2' d='M7 9l5 5 5-5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+#wizard .select-dark:focus,
+#tplModal .select-dark:focus {
+  border-color: var(--docs-field-border-focus);
+  box-shadow: 0 0 0 3px rgba(0,224,255,.15);
+  background: #0d1f2b;
+}
+
+#wizard .select-dark option,
+#tplModal .select-dark option {
+  background-color: #0f202b;
+  color: var(--docs-text);
+}
+
+#wizard .select-dark option:checked,
+#tplModal .select-dark option:checked {
+  background-color: #7a7f87;
+  color: #ffffff;
+}
+
+#wizard .select-dark optgroup,
+#tplModal .select-dark optgroup {
+  color: #a2afbf;
+  font-style: italic;
+}
+
+/* Radios inline (Sim/Não, check de preview etc.) */
+#wizard .radio-inline,
+#tplModal .radio-inline {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* AJUSTE: remove qualquer fundo/“quadrado azul” dos labels
+   do grupo "Vincular funcionário" e demais radios do wizard */
+#wizard .radio-inline label,
+#tplModal .radio-inline label {
+  margin: 0;
+  color: var(--docs-text);
+  background: transparent !important;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* AJUSTE: radios com accent do módulo, sem highlight estranho */
+#wizard .radio-inline input[type="radio"],
+#tplModal .radio-inline input[type="radio"] {
+  accent-color: var(--docs-accent1);
+  background: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+/* Input arquivo estilizado (logo, docx) */
+#wizard .file-input,
+#tplModal .file-input {
+  width: 100%;
+}
+
+#wizard .input-like,
+#tplModal .input-like {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  width: 100%;
+  height: var(--docs-control-h);
+  padding: 0 12px;
+  border-radius: 10px;
+  background: var(--docs-field-bg);
+  border: 1px solid var(--docs-field-border);
+  color: var(--docs-text);
+}
+
+#wizard .input-like:focus,
+#tplModal .input-like:focus {
+  border-color: var(--docs-field-border-focus);
+  box-shadow: 0 0 0 3px rgba(0,224,255,.15);
+}
+
+#wizard .file-name,
+#tplModal .file-name {
+  margin-top: 6px;
+}
+
+/* ================== TOOLBAR + EDITOR + PREVIEW ================== */
+
+#wizard .toolbar,
+#tplModal .toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+#wizard .tb-btn,
+#tplModal .tb-btn {
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* Editor HTML do documento/template */
+#wizard .editor,
+#tplModal .editor {
+  background: #ffffff;
+  color: #000000;
+  border-radius: 8px;
+  min-height: 420px;
+  padding: 14px;
+  outline: none;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Preview à direita (modo geração de documento) */
+#wizard .preview,
+#tplModal .preview {
+  background: #ffffff;
+  color: #000000;
+  border-radius: 8px;
+  min-height: 420px;
+  padding: 16px;
+  border: 1px dashed #d0d7de;
+  overflow: auto;
+  margin-top: 12px;
+}
+
+/* Página de preview (margens simuladas) */
+#wizard .preview-page,
+#tplModal .preview-page {
+  background: #ffffff;
+  color: #000000;
+  margin: 0 auto;
+  box-shadow: 0 0 0 0 rgba(0,0,0,0.1);
+}
+
+/* ================== LISTA DE TEMPLATES (TELA "TEMPLATES") ================== */
+
+#tplModal .list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Cada linha da lista de templates */
+#tplModal .item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  gap: 10px;
+}
+
+#tplModal .item .name {
+  font-weight: 600;
+  color: var(--docs-text);
+}
+
+/* Botão pequeno dentro da lista (Usar / Editar / Duplicar / Excluir) */
+#tplModal .tiny-btn {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+/* Rodapé info do modal de templates */
+#tplModal .modal-f small {
+  color: var(--docs-muted);
+}
+
+/* Área oculta de impressão (não interfere em nada visual) */
+#print-area {
+  position: fixed;
+  left: -99999px;
+  top: -99999px;
+  width: 794px;
+  background: #ffffff;
+  color: #000000;
+  padding: 20px;
+}
+
+/* Conteúdo do documento em si (dentro da página de preview / print) */
+.doc-root {
+  font-size: var(--doc-font-size, 11px);
+  line-height: var(--doc-line-height, 1.4);
+  font-family: var(--doc-font-family, Arial, Helvetica, sans-serif);
+  color: #000;
+}
+
+.doc-root p {
+  margin: 0 0 var(--doc-paragraph-spacing, 8px);
+}
+
+.doc-root h1,
+.doc-root h2,
+.doc-root h3 {
+  margin: 0 0 var(--doc-paragraph-spacing, 8px);
+}
+
+.doc-root h1 {
+  font-size: calc(var(--doc-font-size, 11px) * var(--doc-h1-scale, 1.6));
+}
+
+.doc-root h2 {
+  font-size: calc(var(--doc-font-size, 11px) * var(--doc-h2-scale, 1.3));
+}
+
+.doc-root h3 {
+  font-size: calc(var(--doc-font-size, 11px) * var(--doc-h3-scale, 1.15));
+}
+
+.doc-root ul,
+.doc-root ol {
+  margin: 0 0 var(--doc-paragraph-spacing, 8px) 0;
+  padding-left: 22px;
+}
+
+.doc-root table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 var(--doc-paragraph-spacing, 8px);
+}
+
+.doc-root th,
+.doc-root td {
+  border: 1px solid #ddd;
+  padding: 6px;
+  text-align: left;
+}
+
+/* Logo opcional do documento */
+.doc-logo {
+  margin-bottom: var(--doc-logo-space, 12px);
+  text-align: center;
+}
+
+.doc-logo img {
+  display: inline-block;
+  width: var(--doc-logo-size, 120px);
+  height: auto;
+}
+
+/* O card-body da aba Documentos vira o retângulo de referência */
+#tabDocs .card-body {
+  position: relative;
+}
+
+/* A raiz do módulo de docs ocupa toda a altura disponível */
+#docs-sign-root.docs-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px 20px;
+}
+
+/* Rodapé colado no canto inferior direito do card */
+.docs-footer {
+  position: absolute;
+  right: 24px;
+  bottom: -220px;
+  font-size: 12px;
+  color: #a2afbf;
+}
+
+/* Gradiente só no texto interno */
+.docs-footer .grad {
+  background: linear-gradient(90deg, var(--accent1, #00e0ff), var(--accent2, #ff2fb9));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Formulário documentos importantes responsivo */
+@media (max-width:960px){
+  .imp-docs-form{ grid-template-columns:1fr }
+}
+

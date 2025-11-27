@@ -3,6 +3,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
@@ -13,6 +20,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 
 var summaries = new[]
 {
@@ -33,9 +41,43 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
+app.MapPost("/api/usuario/login", (LoginRequest req) =>
+{
+    var byUsuario = !string.IsNullOrWhiteSpace(req.Login);
+    var byCpf = !string.IsNullOrWhiteSpace(req.Cpf);
+
+    if (byUsuario && req.Login!.Equals("gustavo", StringComparison.OrdinalIgnoreCase) && req.Senha == "123")
+    {
+        var usuario = new
+        {
+            id = 1,
+            nome = "Gustavo",
+            login = "gustavo",
+            role = "Colaborador"
+        };
+        return Results.Ok(usuario);
+    }
+
+    if (byCpf && req.Senha == "123")
+    {
+        var usuario = new
+        {
+            id = 2,
+            nome = "Usuário CPF",
+            cpf = req.Cpf,
+            role = "Colaborador"
+        };
+        return Results.Ok(usuario);
+    }
+
+    return Results.Unauthorized();
+});
+
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+record LoginRequest(string? Cpf, string? Login, string Senha);

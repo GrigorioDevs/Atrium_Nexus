@@ -1,2 +1,49 @@
 /* Espaço para correções pontuais/rápidas, sem alterar os arquivos de origem. */
 /* Evite manter regras definitivas aqui. Use como hotfix e depois promova ao arquivo correto. */
+
+/* Corrige comportamento dos submenus */
+.menu li.has-submenu > .row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 8px 14px;
+  font-weight: 600;
+  color: var(--text);
+  border-radius: 8px;
+  transition: background .2s;
+}
+
+.menu li.has-submenu > .row-head:hover {
+  background: rgba(255,255,255,.05);
+}
+
+/* Esconde os submenus por padrão */
+.menu li.has-submenu ul.submenu {
+  display: none;
+  padding-left: 10px;
+  margin: 4px 0;
+}
+
+/* Mostra quando o pai tiver .open */
+.menu li.has-submenu.open ul.submenu {
+  display: block;
+}
+
+/* Ajuste dos itens dentro do submenu */
+.menu li.has-submenu ul.submenu li {
+  padding: 6px 20px;
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.menu li.has-submenu ul.submenu li:hover {
+  background: rgba(255,255,255,.08);
+}
+
+.menu li.has-submenu ul.submenu li.active {
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  color: #fff;
+}
