@@ -196,14 +196,46 @@
     const s = document.createElement('style');
     s.id = 'cfgBaseStyles';
     s.textContent = `
-      #cfgFab{
-        position:fixed;right:24px;bottom:24px;width:56px;height:56px;border-radius:9999px;
-        border:none;cursor:pointer;z-index:9999;display:grid;place-items:center;
-        background:var(--primary);color:#fff;font-size:22px;
-        box-shadow:0 10px 25px rgba(0,0,0,.25)
-      }
-      #cfgFab:active{transform:scale(.98)}
-      #cfgOverlay{
+    /* =============================
+      FAB CONFIGURAÇÕES
+      Fundo preto + borda degradê (anel) — SEM pseudo-elemento
+      ============================= */
+    #cfgFab{
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+
+      /* espessura do anel */
+      border: 3px solid transparent;
+
+      /* 2 camadas:
+        - 1ª: preto no miolo (padding-box)
+        - 2ª: degradê no anel (border-box) */
+      background:
+        linear-gradient(#000, #000) padding-box,
+        linear-gradient(135deg, #00e0ff, #7c7cff, #ff2fb9) border-box;
+
+      cursor: pointer;
+      z-index: 9999;
+
+      display: grid;
+      place-items: center;
+
+      color: #fff;
+      font-size: 26px;
+      line-height: 1;
+
+      box-shadow: 0 12px 28px rgba(0,0,0,.5);
+    }
+
+    #cfgFab:hover{ filter: brightness(1.08); }
+    #cfgFab:active{ transform: scale(0.96); }
+
+    #cfgOverlay{
         position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:9998
       }
       #cfgModal{

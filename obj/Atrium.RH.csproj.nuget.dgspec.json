@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\SistemaWeb\\System\\Atrium\\Atrium-rh\\Atrium.RH.csproj": {}
+    "C:\\SistemaWeb\\System\\Atrium_Nexus\\Atrium_Nexus\\Atrium.RH.csproj": {}
   },
   "projects": {
-    "C:\\SistemaWeb\\System\\Atrium\\Atrium-rh\\Atrium.RH.csproj": {
+    "C:\\SistemaWeb\\System\\Atrium_Nexus\\Atrium_Nexus\\Atrium.RH.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\SistemaWeb\\System\\Atrium\\Atrium-rh\\Atrium.RH.csproj",
+        "projectUniqueName": "C:\\SistemaWeb\\System\\Atrium_Nexus\\Atrium_Nexus\\Atrium.RH.csproj",
         "projectName": "Atrium.RH",
-        "projectPath": "C:\\SistemaWeb\\System\\Atrium\\Atrium-rh\\Atrium.RH.csproj",
+        "projectPath": "C:\\SistemaWeb\\System\\Atrium_Nexus\\Atrium_Nexus\\Atrium.RH.csproj",
         "packagesPath": "C:\\Users\\gusta\\.nuget\\packages\\",
-        "outputPath": "C:\\SistemaWeb\\System\\Atrium\\Atrium-rh\\obj\\",
+        "outputPath": "C:\\SistemaWeb\\System\\Atrium_Nexus\\Atrium_Nexus\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\gusta\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -70,7 +70,7 @@
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.6.2, )"
+              "version": "[6.5.0, )"
             }
           },
           "imports": [

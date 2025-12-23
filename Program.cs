@@ -1,5 +1,6 @@
 using Atrium.RH.Data;
 using Atrium.RH.Services;
+using Atrium.RH.Services.Storage;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -38,7 +39,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Atrium.RH | API",
         Version = "v1",
-        Description = "API do sistema RCR Engenharia — RH"
+        Description = "API do sistema — RH"
     });
 
     // Header que você usou para simular permissão de Admin
@@ -54,34 +55,28 @@ builder.Services.AddSwaggerGen(c =>
 // ======================================================
 // 3) CORS (para seu front chamar a API)
 // ======================================================
-// Se você abre o front com Live Server, normalmente é :5500.
-// Se você abrir o HTML como file://, vai dar problema de CORS.
+// Como seu front está vindo de origin 'null' (file://), aqui eu libero geral
+// para ambiente de desenvolvimento. Depois, em produção, você pode restringir.
 const string CorsPolicy = "DefaultCors";
-
-var allowedOrigins = new[]
-{
-    "http://localhost:5500",
-    "http://127.0.0.1:5500",
-    "http://localhost:5173",  // se usar Vite
-    "http://127.0.0.1:5173"
-};
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(CorsPolicy, policy =>
-        policy.WithOrigins(allowedOrigins)
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-        // Se você NÃO usa cookie/autenticação por sessão, deixe SEM AllowCredentials.
-        // .AllowCredentials()
+        policy
+            .AllowAnyOrigin()   // aceita qualquer origem (inclui 'null')
+            .AllowAnyHeader()
+            .AllowAnyMethod()
     );
 });
 
 // ======================================================
 // 4) DbContext (SQL Server)
 // ======================================================
-var connectionString =
-    "Server=STORMZERAGG;Database=atrium_rh;User Id=system;Password=123;TrustServerCertificate=True;";
+// ✅ ATUALIZAÇÃO: pegar a connection string do appsettings.json (padrão e mais seguro)
+// No appsettings.json use:
+// "ConnectionStrings": { "Default": "Server=...;Database=...;User Id=...;Password=...;TrustServerCertificate=True;" }
+var connectionString = builder.Configuration.GetConnectionString("Default")
+    ?? throw new InvalidOperationException("ConnectionStrings:Default não configurada no appsettings.json");
 
 builder.Services.AddDbContext<AtriumRhDbContext>(opt =>
 {
@@ -93,10 +88,19 @@ builder.Services.AddDbContext<AtriumRhDbContext>(opt =>
 // 5) Services (DI)
 // ======================================================
 builder.Services.AddScoped<UsuariosService>();
-builder.Services.AddScoped<AuthService>(); // se você criou
+builder.Services.AddScoped<AuthService>();
 
 // ======================================================
-// 6) HealthChecks
+// 6) Storage (Upload local de documentos)
+// ======================================================
+// ✅ ATUALIZAÇÃO: habilita o módulo de upload/download usando pasta local (storage/)
+// No appsettings.json use:
+// "Storage": { "RootPath": "storage" }
+builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection("Storage"));
+builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
+
+// ======================================================
+// 7) HealthChecks
 // ======================================================
 builder.Services.AddHealthChecks();
 
@@ -116,15 +120,18 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// ⚠️ No DEV isso costuma atrapalhar quando você chama http://localhost:5253 pelo front.
-// Se quiser manter HTTPS, beleza — mas pra evitar dor de cabeça, deixo assim:
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
+// ✅ ATUALIZAÇÃO: normalmente é OK usar sempre (inclusive DEV)
+// Se você estiver rodando só http e isso te atrapalhar, pode voltar a condicionar.
+app.UseHttpsRedirection();
 
 app.UseRouting();
+
+// CORS ANTES dos controllers
 app.UseCors(CorsPolicy);
+
+// Se tiver auth mais pra frente, entra aqui:
+// app.UseAuthentication();
+// app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/health");

@@ -1,41 +1,240 @@
+/* =========================================================
+   CADASTRO DE USUÁRIO — CSS COMPLETO (RADICAL + PATCH)
+   - Visual neon/glass
+   - Select menor + opções estilizadas
+   - Botões à esquerda
+   - Responsivo
+   ========================================================= */
+
 /* =====================
    Cadastro de Usuário (Admin)
 ===================== */
 
 .only-admin { display: none; }
 
-.user-form-grid{
+/* ===== Card (somente na aba de cadastro) ===== */
+#tabCadastroUsuario .card{
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  background:
+    radial-gradient(900px 420px at 10% -10%, rgba(0,224,255,.22), transparent 60%),
+    radial-gradient(700px 380px at 100% 0%, rgba(255,47,185,.20), transparent 55%),
+    rgba(8, 12, 22, .85);
+  box-shadow: 0 18px 60px rgba(0,0,0,.55);
+}
+
+#tabCadastroUsuario .card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background: linear-gradient(135deg, rgba(0,224,255,.9), rgba(124,124,255,.55), rgba(255,47,185,.9));
+  opacity:.28;
+  filter: blur(18px);
+  pointer-events:none;
+}
+
+#tabCadastroUsuario .card-header{
+  position: relative;
+  z-index: 1;
+  font-weight: 900;
+  letter-spacing: .2px;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(90deg, rgba(0,224,255,.10), rgba(255,47,185,.08));
+}
+
+#tabCadastroUsuario .card-body{
+  position: relative;
+  z-index: 1;
+  padding: 16px 18px 18px;
+}
+
+/* ===== Grid ===== */
+#tabCadastroUsuario .user-form-grid{
   display:grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 14px;
   align-items: start;
 }
 
-.user-form-actions{
-  margin-top: 14px;
-  justify-content: flex-end;
-  gap: 10px;
+/* Labels */
+#tabCadastroUsuario .user-form-grid .col label{
+  display:block;
+  margin: 0 0 7px;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(231,238,246,.92);
+  letter-spacing: .25px;
+  text-transform: uppercase;
 }
 
-#usrStatus{
+#tabCadastroUsuario .tiny.muted{
+  display:block;
+  margin-top: 7px;
+  font-size: 12px;
+  color: rgba(162, 175, 191, .92);
+}
+
+/* ===== Inputs e Select (glass + neon) ===== */
+#tabCadastroUsuario .input-dark,
+#tabCadastroUsuario .select-dark{
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
   border: 1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.06);
-  border-radius: 12px;
-  padding: 10px 12px;
+  color: #e7eef6;
+  background: rgba(12, 18, 30, .55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  font-size: 14px;
+  outline: none;
+  transition: transform .10s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+  box-sizing: border-box;
 }
 
-#usrStatus.success{ border-color: rgba(46, 204, 113, .35); }
-#usrStatus.error{ border-color: rgba(231, 76, 60, .35); }
-#usrStatus.info{ border-color: rgba(52, 152, 219, .35); }
+#tabCadastroUsuario .input-dark::placeholder{
+  color: rgba(162, 175, 191, .85);
+}
 
-@media (max-width: 820px){
-  .user-form-grid{
+#tabCadastroUsuario .input-dark:hover,
+#tabCadastroUsuario .select-dark:hover{
+  border-color: rgba(0,224,255,.22);
+}
+
+#tabCadastroUsuario .input-dark:focus,
+#tabCadastroUsuario .select-dark:focus{
+  border-color: transparent;
+  box-shadow:
+    0 0 0 2px rgba(0,224,255,.22),
+    0 0 0 6px rgba(0,224,255,.10),
+    0 18px 50px rgba(0,0,0,.45);
+  background: rgba(10, 20, 35, .72);
+  transform: translateY(-1px);
+}
+
+/* ===== Select “premium” ===== */
+#tabCadastroUsuario .select-dark{
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  padding-right: 46px;
+  cursor: pointer;
+
+  background-image:
+    linear-gradient(90deg, rgba(0,224,255,.22), rgba(255,47,185,.18)),
+    url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+<path fill='none' stroke='%23e7eef6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M7 9l5 5 5-5'/>\
+</svg>");
+  background-repeat: no-repeat, no-repeat;
+  background-position: 0 0, right 14px center;
+  background-size: 100% 100%, 16px;
+}
+
+/* ===== Perfil de acesso (menor) ===== */
+#tabCadastroUsuario #usrPerfil.select-dark{
+  height: 40px;
+  padding: 0 42px 0 12px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+/* (Opcional) o bloco do perfil não fica gigantesco em telas grandes */
+#tabCadastroUsuario .user-form-grid .col[style*="grid-column:1/-1;"]{
+  max-width: 420px;
+}
+
+/* ===== Sub-opções do select (limitação do browser) ===== */
+#tabCadastroUsuario #usrPerfil.select-dark option{
+  background: #0f202b;
+  color: #e7eef6;
+  padding: 10px 12px;      /* nem todos browsers aplicam */
+  font-weight: 700;        /* nem todos browsers aplicam */
+}
+#tabCadastroUsuario #usrPerfil.select-dark option:checked{
+  background: #111a2a;
+  color: #00e0ff;
+}
+
+/* ===== Actions (botões à esquerda) ===== */
+#tabCadastroUsuario .user-form-actions{
+  display:flex;
+  gap: 10px;
+  justify-content:flex-start;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+#tabCadastroUsuario .user-form-actions .btn{
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  transition: transform .10s ease, filter .18s ease, box-shadow .18s ease;
+}
+
+#tabCadastroUsuario .user-form-actions .btn:active{
+  transform: scale(.98);
+}
+
+/* Limpar (glass) */
+#tabCadastroUsuario .btn.btn-light{
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  color: rgba(231,238,246,.95);
+  box-shadow: 0 10px 26px rgba(0,0,0,.28);
+}
+
+/* Cadastrar (gradiente) */
+#tabCadastroUsuario .btn.btn-primary{
+  border: 0;
+  color: #061018;
+  background: linear-gradient(135deg, #00e0ff, #7c7cff, #ff2fb9);
+  box-shadow: 0 14px 34px rgba(0,0,0,.38);
+}
+
+#tabCadastroUsuario .btn:hover{
+  filter: brightness(1.06);
+}
+
+/* ===== Status ===== */
+#tabCadastroUsuario #usrStatus{
+  margin-top: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    linear-gradient(90deg, rgba(0,224,255,.10), rgba(255,47,185,.08)),
+    rgba(255,255,255,.04);
+  padding: 12px 14px;
+  color: rgba(231,238,246,.95);
+}
+
+#tabCadastroUsuario #usrStatus.success{ border-color: rgba(46, 204, 113, .40); }
+#tabCadastroUsuario #usrStatus.error{ border-color: rgba(231, 76, 60, .40); }
+#tabCadastroUsuario #usrStatus.info{ border-color: rgba(52, 152, 219, .40); }
+
+/* ===== Responsivo ===== */
+@media (max-width: 920px){
+  #tabCadastroUsuario .user-form-grid{
     grid-template-columns: 1fr;
   }
-  .user-form-actions{
+}
+
+@media (max-width: 820px){
+  /* botões em mobile: 100% */
+  #tabCadastroUsuario .user-form-actions{
     justify-content: stretch;
   }
-  .user-form-actions .btn{
+  #tabCadastroUsuario .user-form-actions .btn{
     width: 100%;
+  }
+
+  /* bloco do perfil volta a ocupar a largura toda */
+  #tabCadastroUsuario .user-form-grid .col[style*="grid-column:1/-1;"]{
+    max-width: 100%;
   }
 }

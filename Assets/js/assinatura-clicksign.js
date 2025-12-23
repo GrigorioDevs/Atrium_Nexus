@@ -68,7 +68,6 @@
   function toast(msg, type = 'info') {
     if (typeof window.showToast === 'function') return window.showToast(msg, type);
     if (typeof window.notify === 'function') return window.notify(msg, type);
-    // fallback simples
     console[(type === 'error' ? 'error' : type === 'warn' ? 'warn' : 'log')](msg);
   }
 
@@ -98,44 +97,34 @@
 
   // >>> AJUSTE AQUI AS ROTAS DO SEU BACKEND <<<
   const API = {
-    // Lista documentos disponíveis para assinatura (gerados no seu sistema)
-    listDocs: '/api/documentos/gerados', // GET -> [{ id, nome, funcionarioId? }]
-    // (Opcional) Detalhe do documento (pra puxar funcionarioId, nome etc.)
-    docById: (id) => `/api/documentos/${encodeURIComponent(id)}`, // GET -> { id, nome, funcionarioId? }
+    listDocs: '/api/documentos/gerados',
+    docById: (id) => `/api/documentos/${encodeURIComponent(id)}`,
 
-    // Lista funcionários
-    listFuncs: '/api/funcionarios', // GET -> [{ id, nome, email, celular }]
+    listFuncs: '/api/funcionarios',
 
-    // Enviar para Clicksign (seu backend chama Clicksign)
-    send: '/api/clicksign/send', // POST
-    // Consultar status (seu backend consulta Clicksign)
-    status: (documentKey) => `/api/clicksign/status/${encodeURIComponent(documentKey)}`, // GET
-    // Baixar pdf assinado (seu backend baixa e devolve PDF)
-    download: (documentKey) => `/api/clicksign/download/${encodeURIComponent(documentKey)}`, // GET (blob/pdf)
+    send: '/api/clicksign/send',
+    status: (documentKey) => `/api/clicksign/status/${encodeURIComponent(documentKey)}`,
+    download: (documentKey) => `/api/clicksign/download/${encodeURIComponent(documentKey)}`,
 
-    // (Opcional) Buscar vínculo já existente no seu banco
     existing: (docId, funcId) =>
-      `/api/clicksign/existing?documentoId=${encodeURIComponent(docId)}&funcionarioId=${encodeURIComponent(funcId)}` // GET -> { documentKey, envelopeKey, signUrl?, status? }
+      `/api/clicksign/existing?documentoId=${encodeURIComponent(docId)}&funcionarioId=${encodeURIComponent(funcId)}`
   };
 
   const el = {
-    // selects
     selDoc: $('csDocSelect'),
     selFunc: $('csFuncSelect'),
 
-    // signer fields
     signerName: $('csSignerName'),
     signerEmail: $('csSignerEmail'),
     signerPhone: $('csSignerPhone'),
 
-    // config
     sendChannel: $('csSendChannel'),
     authMethod: $('csAuthMethod'),
     msg: $('csMsg'),
 
-    // keys / actions
     envelopeKey: $('csEnvelopeKey'),
     docKey: $('csDocKey'),
+
     btnEnviar: $('btnCsEnviar'),
     btnBaixar: $('btnCsBaixar'),
     btnConsultar: $('btnCsConsultar'),
@@ -144,7 +133,6 @@
     status: $('csStatus')
   };
 
-  // Se a aba Clicksign nem existir, não faz nada
   if (!el.selDoc || !el.btnEnviar || !el.status) return;
 
   const state = {
@@ -155,11 +143,49 @@
     lastSignUrl: null
   };
 
+  /* -------- Segment (WhatsApp / Gmail / SMS) -> mantém select escondido -------- */
+  (function bindSendChannelSegment() {
+    const buttons = document.querySelectorAll('.cs-seg-btn');
+    if (!buttons.length || !el.sendChannel) return;
+
+    function setActive(channel) {
+      buttons.forEach(b => {
+        const is = b.getAttribute('data-channel') === channel;
+        b.classList.toggle('active', is);
+        b.setAttribute('aria-pressed', is ? 'true' : 'false');
+      });
+      el.sendChannel.value = channel;
+      el.sendChannel.dispatchEvent(new Event('change'));
+    }
+
+    // inicializa com o valor atual do select (ou whatsapp)
+    setActive(el.sendChannel.value || 'whatsapp');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const channel = btn.getAttribute('data-channel');
+        setActive(channel);
+      });
+    });
+  })();
+
   function setStatus(msg, tipo = 'info', extraHtml = '') {
     if (!el.status) return;
 
+    // classes antigas (se você usa em outro css)
     el.status.classList.remove('error', 'success', 'info', 'warn');
-    el.status.classList.add(tipo);
+
+    // classes novas
+    el.status.classList.remove('cs-status--error', 'cs-status--success', 'cs-status--info', 'cs-status--warn');
+
+    // aplica novas (e mantém compat)
+    const map = {
+      error: ['error', 'cs-status--error'],
+      success: ['success', 'cs-status--success'],
+      warn: ['warn', 'cs-status--warn'],
+      info: ['info', 'cs-status--info']
+    };
+    (map[tipo] || map.info).forEach(c => el.status.classList.add(c));
 
     const base = `<div>${escapeHtml(msg)}</div>`;
     const extra = extraHtml ? `<div style="margin-top:8px">${extraHtml}</div>` : '';
@@ -183,7 +209,6 @@
     if (el.signerEmail) el.signerEmail.value = email || '';
     if (el.signerPhone) el.signerPhone.value = fmtPhoneBR(celular);
 
-    // Se não veio do cadastro, libera edição manual como fallback
     if (el.signerName) el.signerName.readOnly = !!nome;
     if (el.signerEmail) el.signerEmail.readOnly = !!email;
     if (el.signerPhone) el.signerPhone.readOnly = !!celular;
@@ -219,7 +244,6 @@
   }
 
   async function loadDocs() {
-    // Backend (preferencial)
     try {
       const list = await apiFetch(API.listDocs);
       if (Array.isArray(list)) return list;
@@ -228,7 +252,6 @@
       console.warn('Falha listDocs, tentando fallback front:', e);
     }
 
-    // Fallback (se você já tiver lista front)
     if (typeof window.getDocumentosGerados === 'function') {
       try {
         const r = window.getDocumentosGerados();
@@ -239,7 +262,6 @@
   }
 
   async function loadFuncs() {
-    // Backend (preferencial)
     try {
       const list = await apiFetch(API.listFuncs);
       if (Array.isArray(list)) return list;
@@ -248,7 +270,6 @@
       console.warn('Falha listFuncs, tentando fallback front:', e);
     }
 
-    // Fallback (se já existir nos seus módulos)
     const candidates = [
       window.getFuncionariosParaDocs,
       window.getFuncionarios,
@@ -301,7 +322,6 @@
       return;
     }
 
-    // tenta buscar detalhes (p/ auto-vincular funcionarioId se o doc tiver)
     const detail = await loadDocDetail(state.selectedDoc.id);
     const funcionarioId = detail?.funcionarioId ?? state.selectedDoc?.funcionarioId;
 
@@ -319,7 +339,6 @@
 
     if (!state.selectedFunc) {
       setStatus('Selecione um funcionário para preencher os dados do signatário.', 'info');
-      // limpa campos
       if (el.signerName) el.signerName.value = '';
       if (el.signerEmail) el.signerEmail.value = '';
       if (el.signerPhone) el.signerPhone.value = '';
@@ -328,7 +347,6 @@
 
     fillSignerFromFunc(state.selectedFunc);
 
-    // se já existe vínculo no banco/back, preenche chaves
     const doc = getSelectedDoc();
     if (doc) {
       const existing = await loadExisting(doc.id, state.selectedFunc.id || state.selectedFunc.codigo || state.selectedFunc.cpf);
@@ -339,7 +357,7 @@
 
         const extra =
           (existing.signUrl)
-            ? `<div style="display:flex;gap:8px;flex-wrap:wrap;">
+            ? `<div class="cs-inline-actions">
                  <a class="btn btn-light" href="${escapeHtml(existing.signUrl)}" target="_blank" rel="noopener">Abrir link de assinatura</a>
                  <button class="btn btn-light" type="button" id="csCopyLinkBtn">Copiar link</button>
                </div>`
@@ -347,7 +365,6 @@
 
         setStatus(`Vínculo já encontrado. Você pode consultar status ou baixar quando estiver assinado.`, 'info', extra);
 
-        // bind copy link (botão gerado dinamicamente)
         setTimeout(() => {
           const b = $('csCopyLinkBtn');
           if (b && existing.signUrl) {
@@ -392,8 +409,8 @@
       },
 
       // preferências
-      sendChannel: el.sendChannel?.value || 'email',      // email | whatsapp
-      authMethod: el.authMethod?.value || 'email',        // email | whatsapp | sms
+      sendChannel: el.sendChannel?.value || 'email',  // email | whatsapp | gmail | sms
+      authMethod: el.authMethod?.value || 'email',    // email | whatsapp | sms
       message: el.msg?.value?.trim() || ''
     };
 
@@ -403,8 +420,6 @@
 
       const data = await apiPostJSON(API.send, payload);
 
-      // respostas esperadas do seu backend (recomendado):
-      // { documentKey, envelopeKey, signUrl, message, status }
       const documentKey = data?.documentKey || data?.clicksignKey || data?.key || '';
       const envelopeKey = data?.envelopeKey || '';
       const signUrl = data?.signUrl || data?.urlAssinatura || '';
@@ -416,7 +431,7 @@
 
       let extra = '';
       if (signUrl) {
-        extra = `<div style="display:flex;gap:8px;flex-wrap:wrap;">
+        extra = `<div class="cs-inline-actions">
                   <a class="btn btn-light" href="${escapeHtml(signUrl)}" target="_blank" rel="noopener">Abrir link de assinatura</a>
                   <button class="btn btn-light" type="button" id="csCopyLinkBtn">Copiar link</button>
                 </div>`;
@@ -424,7 +439,6 @@
 
       setStatus(data?.message || 'Enviado com sucesso. Aguarde a assinatura e depois baixe o PDF assinado.', 'success', extra);
 
-      // bind copy link
       setTimeout(() => {
         const b = $('csCopyLinkBtn');
         if (b && signUrl) {
@@ -458,8 +472,6 @@
 
       const data = await apiFetch(API.status(key));
 
-      // sugestão de retorno:
-      // { status: 'running|completed|canceled', signers:[{name,email,status}], signUrl?, canDownload:boolean }
       const status = data?.status || data?.state || '—';
       const canDownload = !!(data?.canDownload || data?.signed || data?.completed);
       const signUrl = data?.signUrl || state.lastSignUrl || '';
@@ -484,7 +496,7 @@
         : '';
 
       const linkHtml = signUrl
-        ? `<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+        ? `<div class="cs-inline-actions" style="margin-top:10px">
              <a class="btn btn-light" href="${escapeHtml(signUrl)}" target="_blank" rel="noopener">Abrir link de assinatura</a>
              <button class="btn btn-light" type="button" id="csCopyLinkBtn">Copiar link</button>
            </div>`

@@ -1,0 +1,211 @@
+/* =========================================
+   CRACHÁ DE ACESSO – MODAL + CARTÃO
+   ========================================= */
+
+/* Caixa do modal do crachá (não mexe no overlay global) */
+#modalCracha .modal-content.cracha-modal {
+  width: 100%;
+  max-width: 760px;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  padding: 0 0 8px;
+}
+
+/* ---------- HEADER SUPERIOR (faixa grifada) ---------- */
+
+.cracha-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  margin-bottom: 10px;
+
+  border-radius: 999px;
+  /* mesmo esquema dos inputs: fundo escuro + borda em degradê */
+  background:
+    linear-gradient(#020617, #020617) padding-box,
+    linear-gradient(135deg, #00E0FF, #FF2FB9) border-box;
+  border: 1px solid transparent;
+}
+
+.cracha-header-title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #e5edff;
+}
+
+.cracha-header-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: #9fb1c3;
+}
+
+/* botão X do header */
+.cracha-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, .7);
+  background: rgba(15, 23, 42, .96);
+  color: #e5f0ff;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color .15s ease,
+              background .15s ease,
+              transform .08s ease,
+              box-shadow .15s ease;
+}
+
+.cracha-close i {
+  font-size: 13px;
+}
+
+.cracha-close:hover {
+  border-color: #00e0ff;
+  background: #020617;
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, .35);
+  transform: translateY(-0.5px);
+}
+
+/* ---------- CARTÃO EM SI ---------- */
+
+.cracha-card {
+  display: flex;
+  gap: 16px;
+  padding: 18px 18px 16px;
+  border-radius: 18px;
+
+  /* borda colorida tipo inputs / botão + */
+  background:
+    linear-gradient(#020617, #020617) padding-box,
+    linear-gradient(135deg, #00E0FF, #FF2FB9) border-box;
+  border: 2px solid transparent;
+
+  color: #e4edf7;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* lado esquerdo: foto + nome */
+.cracha-left {
+  min-width: 190px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding-right: 16px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* moldura da foto com degradê tipo ícone + */
+.cracha-foto-wrap {
+  width: 140px;
+  height: 140px;
+  padding: 3px;
+  border-radius: 26px;
+  background: linear-gradient(135deg, #00E0FF, #FF2FB9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cracha-foto-wrap img {
+  width: 100%;
+  height: 100%;
+  border-radius: 22px;
+  object-fit: cover;
+  background: #020617;
+}
+
+/* nome + cpf */
+.cracha-nome {
+  font-weight: 700;
+  font-size: 16px;
+  text-align: center;
+}
+
+.cracha-cpf {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* lado direito: textos */
+.cracha-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cracha-field {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+}
+
+.cracha-field .label {
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: 11px;
+  opacity: 0.7;
+  margin-bottom: 2px;
+}
+
+.cracha-field .value {
+  font-weight: 500;
+}
+
+/* rodapé do cartão */
+.cracha-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.cracha-empresa-sec {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e5edff;
+  opacity: 0.9;
+}
+
+#btnCrachaGerar i {
+  margin-right: 6px;
+}
+
+/* ---------- RESPONSIVO ---------- */
+
+@media (max-width: 640px) {
+  .cracha-card {
+    flex-direction: column;
+    padding: 14px;
+  }
+
+  .cracha-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-right: 0;
+    padding-bottom: 12px;
+    align-items: center;
+  }
+
+  .cracha-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cracha-header {
+    margin-bottom: 8px;
+  }
+}

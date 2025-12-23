@@ -30,6 +30,29 @@
   // remove tudo que não é dígito
   const onlyDigits = (s) => String(s || "").replace(/\D+/g, "");
 
+  // ===== Config API + usuário logado =====
+  const API_BASE = window.API_BASE || "http://localhost:5253";
+
+  function getUsuarioLogado() {
+    try {
+      // se já tiver um getMe() global
+      if (typeof window.getMe === "function") {
+        const me = window.getMe();
+        if (me && me.id) return me;
+      }
+    } catch {}
+
+    // fallback: localStorage.usuario
+    try {
+      const raw = localStorage.getItem("usuario");
+      if (!raw) return null;
+      const me = JSON.parse(raw);
+      if (me && me.id) return me;
+    } catch {}
+
+    return null;
+  }
+
   // Storage keys (front-only)
   const LS_PUNCHES = "PONTO_PUNCHES_V1";
   const LS_AJUSTES = "PONTO_AJUSTES_V1";
@@ -255,56 +278,151 @@
     return writeLS(LS_PUNCHES, Array.isArray(arr) ? arr : []);
   }
 
-  function punchesByDate(ymd) {
+  function punchesByDateLocal(ymd) {
     return getAllPunchesCompat()
       .filter((b) => b && b.date === ymd)
       .sort((a, b) => String(a.time).localeCompare(String(b.time)));
   }
 
-  function nextTypeFor(ymd) {
-    const list = punchesByDate(ymd);
+  function nextTypeForLocal(ymd) {
+    const list = punchesByDateLocal(ymd);
     if (list.length === 0) return "Entrada";
     return list[list.length - 1].type === "Entrada" ? "Saída" : "Entrada";
   }
 
-  function addPunchNow() {
-    const ymd = todayYMD();
-    const next = nextTypeFor(ymd);
-    const list = punchesByDate(ymd);
-    const eCount = list.filter((b) => b.type === "Entrada").length;
-    const sCount = list.filter((b) => b.type === "Saída").length;
+  /* ===== Helper: descobre próximo tipo usando o BACK (vw_cartao_ponto) ===== */
 
-    if (next === "Entrada" && eCount >= 3) return safeNotify("Limite atingido: 3 entradas.", "error");
-    if (next === "Saída" && sCount >= 3) return safeNotify("Limite atingido: 3 saídas.", "error");
+  async function getNextTypeFromBackend(ymd) {
+    const me = getUsuarioLogado();
+    if (!me?.id) return null;
 
-    const lastLatLng = loadLastLatLng();
-    const lat = lastLatLng ? Number(lastLatLng[0]).toFixed(5) : "--";
-    const lon = lastLatLng ? Number(lastLatLng[1]).toFixed(5) : "--";
+    const url =
+      `${API_BASE}/api/ponto/cartao` +
+      `?usuarioId=${encodeURIComponent(me.id)}` +
+      `&inicio=${encodeURIComponent(ymd)}` +
+      `&fim=${encodeURIComponent(ymd)}`;
 
-    const all = getAllPunchesCompat();
-    all.push({
-      date: ymd,
-      time: nowHHMM(),
-      type: next,
-      origin: "Web",
-      note: `GPS ${lat},${lon}`
-    });
-
-    if (!setAllPunchesCompat(all)) return safeNotify("Não foi possível salvar o ponto (armazenamento cheio).", "error");
-
-    safeNotify(`Ponto registrado: ${next} ${nowHHMM()}`, "success");
-
-    // se existir renderização global do cartão
     try {
-      if (typeof window.renderPonto === "function") window.renderPonto();
-    } catch {}
-    // se existir modal do dia no seu sistema
-    try {
-      if (typeof window.openBatimentosDia === "function") window.openBatimentosDia(ymd);
-    } catch {}
+      const resp = await fetch(url);
+      if (!resp.ok) return null;
+      const data = await resp.json();
+      if (!Array.isArray(data) || data.length === 0) {
+        // sem registros = primeira Entrada
+        return "Entrada";
+      }
+      const row = data[0];
+
+      const e1 = row.entrada1 || row.Entrada1;
+      const s1 = row.saida1 || row.Saida1;
+      const e2 = row.entrada2 || row.Entrada2;
+      const s2 = row.saida2 || row.Saida2;
+      const e3 = row.entrada3 || row.Entrada3;
+      const s3 = row.saida3 || row.Saida3;
+
+      if (!e1) return "Entrada";
+      if (!s1) return "Saída";
+      if (!e2) return "Entrada";
+      if (!s2) return "Saída";
+      if (!e3) return "Entrada";
+      if (!s3) return "Saída";
+
+      // já preencheu E1/S1/E2/S2/E3/S3 -> limite do dia
+      return null;
+    } catch (e) {
+      console.error("Falha ao consultar cartão no backend:", e);
+      return null;
+    }
   }
 
-  btnBaterPonto.addEventListener("click", addPunchNow);
+  /* ===================== Bater Ponto (AGORA chama o BACK) ===================== */
+
+  async function addPunchNow() {
+    const me = getUsuarioLogado();
+    if (!me?.id) {
+      safeNotify("Usuário não logado. Faça login novamente.", "error");
+      return;
+    }
+
+    const ymd = todayYMD();
+    let nextType = await getNextTypeFromBackend(ymd);
+
+    // se o back não respondeu, tenta descobrir pelo localStorage (fallback)
+    if (!nextType) {
+      nextType = nextTypeForLocal(ymd);
+    }
+
+    if (!nextType) {
+      return safeNotify("Limite de batidas atingido para hoje.", "error");
+    }
+
+    const nowTime = nowHHMM();
+
+    const lastLatLng = loadLastLatLng();
+    const lat = lastLatLng ? Number(lastLatLng[0]) : null;
+    const lon = lastLatLng ? Number(lastLatLng[1]) : null;
+
+    const hasGps = Number.isFinite(lat) && Number.isFinite(lon);
+    const gpsLabel = hasGps
+      ? `GPS ${lat.toFixed(5)},${lon.toFixed(5)}`
+      : "Sem GPS";
+
+    const payload = {
+      usuarioId: me.id,
+      dataLocal: ymd,
+      hora: nowTime,
+      tipo: nextType === "Entrada" ? 1 : 2, // 1 = entrada, 2 = saída
+      origem: 1, // 1 = normal (você pode mudar a convenção depois)
+      latitude: hasGps ? lat : null,
+      longitude: hasGps ? lon : null,
+      observacao: gpsLabel
+    };
+
+    try {
+      const resp = await fetch(`${API_BASE}/api/ponto/registrar`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!resp.ok) {
+        const errJson = await resp.json().catch(() => null);
+        const msg = errJson?.message || "Erro ao registrar ponto no servidor.";
+        safeNotify(msg, "error");
+        return;
+      }
+
+      safeNotify(`Ponto registrado: ${nextType} ${nowTime}`, "success");
+
+      // mantém um "log" local (compatibilidade com ponto.js / offline)
+      const all = getAllPunchesCompat();
+      all.push({
+        date: ymd,
+        time: nowTime,
+        type: nextType,
+        origin: "Servidor",
+        note: gpsLabel
+      });
+      setAllPunchesCompat(all);
+
+      // se existir renderização global do cartão de ponto
+      try {
+        if (typeof window.renderPonto === "function") window.renderPonto();
+      } catch {}
+
+      // se existir modal de batimentos do dia
+      try {
+        if (typeof window.openBatimentosDia === "function") window.openBatimentosDia(ymd);
+      } catch {}
+    } catch (e) {
+      console.error(e);
+      safeNotify("Falha de conexão ao registrar ponto.", "error");
+    }
+  }
+
+  btnBaterPonto.addEventListener("click", (e) => {
+    e.preventDefault?.();
+    addPunchNow().catch(console.error);
+  });
 
   /* ===================== Modais (abrir/fechar) ===================== */
 
@@ -410,8 +528,7 @@
     const payload = collectAjustePayload();
     if (!payload) return;
 
-    // Se existir um endpoint/função global no futuro, plugável:
-    // window.apiCreateAjustePonto(payload)
+    // hook futuro: se você criar um endpoint tipo POST /api/ponto/ajuste
     try {
       if (typeof window.apiCreateAjustePonto === "function") {
         await window.apiCreateAjustePonto(payload);
@@ -521,12 +638,11 @@
     const payload = collectJustificativaPayload();
     if (!payload) return;
 
-    // Se existir uma função global futura:
-    // window.apiCreateJustificativa(payload)
+    // hook futuro: endpoint tipo POST /api/ponto/justificativa
     try {
       if (typeof window.apiCreateJustificativa === "function") {
         await window.apiCreateJustificativa(payload);
-        safeNotify("Justificativa enviada com sucesso.", "success");
+        safeNotify("Justificativa enviado com sucesso.", "success");
         clearJustificativaForm();
         closeJustificar();
         return;

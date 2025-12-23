@@ -16,6 +16,31 @@
     alert(msg);
   };
 
+  // Status leve (não quebra se você não tiver função/elemento de status no layout)
+  // - Se existir window.setStatus(msg, type), usamos ela.
+  // - Senão tentamos escrever em um elemento comum (#pontoStatus ou #status).
+  // - Se não existir nada, só loga no console.
+  const setStatusSafe = (msg, type = 'info') => {
+    try {
+      if (typeof window.setStatus === 'function') return window.setStatus(msg, type);
+    } catch {}
+
+    const el =
+      document.getElementById('pontoStatus') ||
+      document.getElementById('status') ||
+      document.getElementById('usrStatus');
+
+    if (el) {
+      el.textContent = String(msg || '');
+      el.classList.remove('success', 'error', 'warn', 'info');
+      el.classList.add(type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warn' ? 'warn' : 'info');
+      return;
+    }
+
+    if (type === 'error') console.error(msg);
+    else console.log(msg);
+  };
+
   const escapeHTML = (s) =>
     String(s ?? '')
       .replace(/&/g, '&amp;')
@@ -88,25 +113,29 @@
     return h >= 0 && h <= 23 && m >= 0 && m <= 59;
   };
 
-  // Deve existir no core.js, mas garantimos fallback mínimo
-  const getAllPunchesSafe = () => {
-    try {
-      if (typeof window.getAllPunches === 'function') return window.getAllPunches() || [];
-    } catch {}
-    try {
-      const a = JSON.parse(localStorage.getItem('PUNCHES') || '[]');
-      return Array.isArray(a) ? a : [];
-    } catch {
-      return [];
-    }
-  };
+  /* ========= Configuração da API + usuário logado ========= */
 
-  const setAllPunchesSafe = (arr) => {
+  // Base da API (mesma que você usa no login)
+  const API_BASE = window.API_BASE || "http://localhost:5253";
+
+  // Usuário logado (vem do localStorage.usuario ou getMe())
+  function getUsuarioLogado() {
     try {
-      if (typeof window.setAllPunches === 'function') return window.setAllPunches(arr || []);
+      if (typeof window.getMe === "function") {
+        const me = window.getMe();
+        if (me && me.id) return me;
+      }
     } catch {}
-    localStorage.setItem('PUNCHES', JSON.stringify(arr || []));
-  };
+
+    try {
+      const raw = localStorage.getItem("usuario");
+      if (!raw) return null;
+      const me = JSON.parse(raw);
+      if (me && me.id) return me;
+    } catch {}
+
+    return null;
+  }
 
   /* ===================== Refs principais ===================== */
 
@@ -195,7 +224,7 @@
     setJusts(getJusts().filter((j) => j && j.key !== key));
   }
 
-  /* ===================== Campo de funcionário (front-only) ===================== */
+  /* ===================== Campo de funcionário (front) ===================== */
 
   // Garante que o input + datalist existam, mesmo que não estejam no HTML
   (function ensureEmployeeSearchField() {
@@ -244,9 +273,21 @@
     }
   }
 
-  // Fonte de funcionários para o cartão de ponto (somente front)
+  // Fonte de funcionários para o cartão de ponto
+  // → Agora prioriza o usuário logado (id que existe no banco)
   function getPontoEmployees() {
-    // 1) Se houver uma função global específica, usa ela
+    const me = getUsuarioLogado();
+    if (me && me.nome && me.id) {
+      return [
+        {
+          id: me.id,
+          nome: me.nome,
+          funcao: me.funcao || me.cargo || ''
+        }
+      ];
+    }
+
+    // Fallback: se houver função global específica, usa ela
     if (typeof window.getPontoEmployees === 'function') {
       try {
         const r = window.getPontoEmployees();
@@ -256,26 +297,26 @@
       }
     }
 
-    // 2) Se existir lista no localStorage (módulo Funcionários)
+    // Fallback: se existir lista no localStorage (módulo Funcionários)
     const fromLS = readEmployeesFromLS();
     if (fromLS && fromLS.length) return fromLS;
 
-    // 3) Fallback: usa apenas o colaborador logado
-    if (typeof window.getMe === 'function') {
-      try {
-        const me = window.getMe();
-        if (me && me.nome) {
+    // Fallback final: usa apenas o colaborador logado (se tiver dado parcial)
+    try {
+      if (typeof window.getMe === 'function') {
+        const me2 = window.getMe();
+        if (me2 && me2.nome) {
           return [
             {
-              id: me.id || me.matricula || me.cpf || 'me',
-              nome: me.nome,
-              funcao: me.funcao || me.cargo || ''
+              id: me2.id || me2.matricula || me2.cpf || 'me',
+              nome: me2.nome,
+              funcao: me2.funcao || me2.cargo || ''
             }
           ];
         }
-      } catch (e) {
-        console.error('Erro em getMe():', e);
       }
+    } catch (e) {
+      console.error('Erro em getMe():', e);
     }
 
     return [];
@@ -330,7 +371,7 @@
     // Ao confirmar o texto, define o funcionário atual do cartão
     pontoFuncSearch.addEventListener('change', () => {
       syncSelectedEmployeeFromInputValue();
-      renderPonto();
+      renderPonto().catch(console.error);
     });
   }
 
@@ -347,46 +388,166 @@
   btnPeriodoAtual?.addEventListener('click', (e) => {
     e.preventDefault?.();
     setDefaultPeriod();
-    renderPonto();
+    renderPonto().catch(console.error);
   });
 
   btnAplicarFiltro?.addEventListener('click', (e) => {
     e.preventDefault?.();
-    renderPonto();
+    renderPonto().catch(console.error);
   });
 
   setDefaultPeriod();
 
-  /* ===================== Punch source (por funcionário) ===================== */
+  /* ===================== Fonte de dados (BACK-END) ===================== */
 
-  function getPunchesSource() {
-    const empId = selectedEmployee?.id || 'me';
+  // Cache do cartão de ponto vindo da API
+  let cartaoCache = [];
+  let cartaoRange = { usuarioId: null, inicio: null, fim: null };
 
-    // 1) Extensão futura: buscar por ID via função global
-    if (selectedEmployee && typeof window.getPunchesByEmployeeId === 'function') {
+  // Busca no back-end a vw_cartao_ponto para o funcionário selecionado
+  async function loadCartaoFromBackend(inicioYMD, fimYMD) {
+    const empId = selectedEmployee?.id ?? getUsuarioLogado()?.id;
+    if (!empId) {
+      safeNotify('Usuário não logado/selecionado. Não foi possível carregar o cartão de ponto.', 'error');
+      cartaoCache = [];
+      return;
+    }
+
+    const sameRange =
+      cartaoRange.usuarioId === empId &&
+      cartaoRange.inicio === inicioYMD &&
+      cartaoRange.fim === fimYMD;
+
+    if (sameRange && cartaoCache.length) return;
+
+    // garante API_BASE sem "/" no final
+    const base = String(API_BASE || '').replace(/\/+$/, '');
+
+    const qs =
+      `?usuarioId=${encodeURIComponent(empId)}` +
+      `&inicio=${encodeURIComponent(inicioYMD)}` +
+      `&fim=${encodeURIComponent(fimYMD)}`;
+
+    // ✅ tente aqui as rotas que podem existir no seu back-end
+    const candidates = [
+      `${base}/api/ponto/cartao${qs}`,
+      `${base}/api/Ponto/cartao${qs}`,
+      `${base}/api/ponto/Cartao${qs}`,
+      `${base}/api/Ponto/Cartao${qs}`,
+
+      // exemplos comuns (se você tiver usado outro nome)
+      `${base}/api/cartao-ponto${qs}`,
+      `${base}/api/CartaoPonto${qs}`,
+      `${base}/api/ponto/cartao-ponto${qs}`,
+    ];
+
+    setStatusSafe('Carregando cartão de ponto…', 'info');
+
+    let lastErrMsg = null;
+
+    for (const url of candidates) {
       try {
-        const r = window.getPunchesByEmployeeId(selectedEmployee.id);
-        if (Array.isArray(r)) return r;
+        const resp = await fetch(url, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (resp.status === 404) {
+          // rota não existe — tenta a próxima
+          continue;
+        }
+
+        if (!resp.ok) {
+          const errJson = await resp.json().catch(() => null);
+          lastErrMsg =
+            errJson?.message ||
+            errJson?.error ||
+            `Erro HTTP ${resp.status} ao carregar cartão.`;
+          break;
+        }
+
+        const data = await resp.json().catch(() => null);
+        cartaoCache = Array.isArray(data) ? data : [];
+        cartaoRange = { usuarioId: empId, inicio: inicioYMD, fim: fimYMD };
+
+        console.log('[PONTO] rota OK:', url);
+        setStatusSafe('Cartão carregado.', 'success');
+        return;
       } catch (e) {
-        console.error('Erro em getPunchesByEmployeeId():', e);
+        console.error('[PONTO] erro fetch:', url, e);
+        lastErrMsg = 'Falha de conexão ao buscar cartão de ponto.';
+        // em erro de rede, não adianta testar várias rotas
+        break;
       }
     }
 
-    // 2) Fallback: filtra getAllPunches() pelo empId (se existir)
-    const all = getAllPunchesSafe();
+    cartaoCache = [];
 
-    // Se o batimento não tem empId, consideramos que é do "me"
-    if (empId === 'me') {
-      return all.filter((b) => !b.empId || b.empId === 'me');
+    if (lastErrMsg) {
+      safeNotify(lastErrMsg, 'error');
+      setStatusSafe(lastErrMsg, 'error');
+    } else {
+      const m =
+        'Endpoint do cartão não encontrado (404). Verifique no Swagger qual é a rota correta e ajuste no ponto.js.';
+      safeNotify(m, 'error');
+      setStatusSafe(m, 'error');
     }
-
-    return all.filter((b) => b.empId === empId);
   }
 
+  // Procura a linha da view correspondente a um dia (YYYY-MM-DD)
+  function getCartaoRowByDate(ymd) {
+    const row = cartaoCache.find((r) => {
+      const raw = r.dataLocal || r.data_local;
+      if (!raw) return false;
+      const dia = String(raw).slice(0, 10); // "2025-12-04"
+      return dia === ymd;
+    });
+    return row || null;
+  }
+
+  // Converte uma linha da view em uma lista de batidas no formato antigo
+  function punchesFromCartaoRow(row) {
+    if (!row) return [];
+
+    const arr = [];
+
+    const add = (prop, type) => {
+      const camel = prop;
+      const pascal = camel.charAt(0).toUpperCase() + camel.slice(1);
+      const snake = prop.toLowerCase();
+
+      const v = row[camel] ?? row[pascal] ?? row[snake];
+      if (!v) return;
+
+      const d = new Date(v);
+      if (Number.isNaN(d.getTime())) return;
+
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mm = String(d.getMinutes()).padStart(2, '0');
+      arr.push({
+        type,
+        time: `${hh}:${mm}`,
+        origin: 'Servidor',
+        note: ''
+      });
+    };
+
+    add('entrada1', 'Entrada');
+    add('saida1',   'Saída');
+    add('entrada2', 'Entrada');
+    add('saida2',   'Saída');
+    add('entrada3', 'Entrada');
+    add('saida3',   'Saída');
+
+    // garante ordenado por horário
+    arr.sort((a, b) => String(a.time).localeCompare(String(b.time)));
+    return arr;
+  }
+
+  // Pega as batidas de um dia (agora 100% em cima da view do banco)
   function punchesByDate(ymd) {
-    return getPunchesSource()
-      .filter((b) => b.date === ymd)
-      .sort((a, b) => String(a.time).localeCompare(String(b.time)));
+    const row = getCartaoRowByDate(ymd);
+    return punchesFromCartaoRow(row);
   }
 
   /* ===================== Helpers de cálculo ===================== */
@@ -407,7 +568,7 @@
   }
 
   function statusForDay(list, ymd) {
-    const empId = selectedEmployee?.id || 'me';
+    const empId = selectedEmployee?.id || getUsuarioLogado()?.id || 'me';
     const just = getJustFor(empId, ymd);
 
     if (list.length === 0 && just) return { cls: 'ok', tip: 'Justificado' };
@@ -444,7 +605,7 @@
 
   /* ===================== Renderização do cartão ===================== */
 
-  function renderPonto() {
+  async function renderPonto() {
     if (!tPontoBody) return;
 
     const ini = fromYMDSafe(pInicio?.value || todayYMDSafe());
@@ -455,6 +616,13 @@
       return;
     }
 
+    const inicioYMD = toYMDSafe(ini);
+    const fimYMD = toYMDSafe(fim);
+
+    // 1) carrega do servidor
+    await loadCartaoFromBackend(inicioYMD, fimYMD);
+
+    // 2) usa o cache (cartaoCache) para montar a tabela
     let html = '';
     let totalMins = 0;
     let pend = 0;
@@ -480,7 +648,8 @@
     if (kPend) kPend.textContent = String(pend);
   }
 
-  renderPonto();
+  // render inicial
+  renderPonto().catch(console.error);
 
   /* ===================== Modal de batimentos do dia ===================== */
 
@@ -515,7 +684,7 @@
             .join('')
         : `<tr><td colspan="5" style="color:#9fb1c3">Nenhum batimento para este dia.</td></tr>`;
 
-      const empId = selectedEmployee?.id || 'me';
+      const empId = selectedEmployee?.id || getUsuarioLogado()?.id || 'me';
       const just = getJustFor(empId, ymd);
       if (just && (just.reason || '').trim()) {
         batimentosDiaBody.innerHTML += `
@@ -558,55 +727,15 @@
     if (e.target.value) openBatimentosDia(e.target.value);
   });
 
-  // ✅ CORRIGIDO: agora inclui batimento de verdade (manual), sem depender de navegar pra outra aba
-  incluirPontoDia?.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!selectedEmployee?.id) {
-      safeNotify('Selecione um funcionário primeiro.', 'warn');
-      return;
-    }
-
-    const ymd = batimentosDatePicker?.value || todayYMDSafe();
-    const empId = selectedEmployee.id;
-
-    const list = punchesByDate(ymd);
-    const lastType = list.length ? list[list.length - 1].type : null;
-    const sugerido = lastType === 'Entrada' ? 'Saída' : 'Entrada';
-
-    const time = prompt(`Hora (HH:MM) para ${ymd}:`, nowTimeSafe().slice(0, 5));
-    if (!time) return;
-    if (!isValidHHMM(time)) return safeNotify('Hora inválida. Use HH:MM.', 'warn');
-
-    const keepSuggested = confirm(`Tipo sugerido: ${sugerido}\nOK = usar sugerido | Cancelar = trocar`);
-    const type = keepSuggested ? sugerido : sugerido === 'Entrada' ? 'Saída' : 'Entrada';
-    const note = prompt('Observação (opcional):', '') || '';
-
-    const all = getAllPunchesSafe();
-    all.push({ empId, date: ymd, time, type, origin: 'Manual', note });
-    setAllPunchesSafe(all);
-
-    // se havia justificativa, pode manter (ou remover se preferir)
-    // removeJust(empId, ymd);
-
-    renderPonto();
-    openBatimentosDia(ymd);
-    safeNotify('Batimento incluído.', 'success');
-  });
-
-  // ✅ CORRIGIDO: agora salva justificativa de verdade
+  // Justificar ausência (continua localStorage, só pro visual/relatório)
   justificarAusenciaDia?.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!selectedEmployee?.id) {
-      safeNotify('Selecione um funcionário primeiro.', 'warn');
-      return;
-    }
+    const me = getUsuarioLogado();
+    const empId = selectedEmployee?.id ?? me?.id ?? 'me';
 
     const ymd = batimentosDatePicker?.value || todayYMDSafe();
-    const empId = selectedEmployee.id;
 
     const current = getJustFor(empId, ymd)?.reason || '';
     const reason = prompt(`Justificativa para ${ymd}:`, current);
@@ -615,13 +744,13 @@
     const trimmed = reason.trim();
     if (!trimmed) {
       removeJust(empId, ymd);
-      renderPonto();
+      renderPonto().catch(console.error);
       openBatimentosDia(ymd);
       return safeNotify('Justificativa removida.', 'info');
     }
 
     upsertJust(empId, ymd, trimmed);
-    renderPonto();
+    renderPonto().catch(console.error);
     openBatimentosDia(ymd);
     safeNotify('Ausência justificada.', 'success');
   });
@@ -643,19 +772,15 @@
   btnAjusteManualDia?.addEventListener('click', () => {
     const ymd = ajusteDiaPicker?.value || todayYMDSafe();
     openBatimentosDia(ymd);
-    // abre o modal e deixa você clicar em "Incluir ponto" lá dentro (ou usa o botão do modal)
-    // se quiser disparar direto, descomente:
-    // setTimeout(() => incluirPontoDia?.click(), 50);
   });
 
   btnJustificarDia?.addEventListener('click', () => {
     const ymd = ajusteDiaPicker?.value || todayYMDSafe();
     openBatimentosDia(ymd);
-    // dispara o fluxo do botão do modal
     setTimeout(() => justificarAusenciaDia?.click(), 50);
   });
 
-  /* ===================== Exportar Cartão em PDF (mantido) ===================== */
+  /* ===================== Exportar Cartão em PDF ===================== */
 
   async function imgElToDataURL_FIX(src) {
     return new Promise((resolve) => {
@@ -734,7 +859,7 @@
     doc.setFontSize(11);
     doc.text(`Período: ${pInicio?.value} até ${pFim?.value}`, pageW - mx, 50, { align: 'right' });
 
-    const me = selectedEmployee || (typeof window.getMe === 'function' ? window.getMe() : {}) || {};
+    const me = selectedEmployee || getUsuarioLogado() || (typeof window.getMe === 'function' ? window.getMe() : {}) || {};
     const empresaNome =
       document.querySelector('.brand strong')?.textContent?.trim() || 'RCR ENGENHARIA';
 
@@ -796,7 +921,7 @@
     let totalMins = 0;
     const ini = fromYMDSafe(pInicio?.value || todayYMDSafe());
     const fim = fromYMDSafe(pFim?.value || todayYMDSafe());
-    const empId = selectedEmployee?.id || 'me';
+    const empId = selectedEmployee?.id || getUsuarioLogado()?.id || 'me';
 
     for (let d = new Date(ini); d <= fim; d.setDate(d.getDate() + 1)) {
       const ymd = toYMDSafe(d);
@@ -890,7 +1015,7 @@
     doc.setFont('helvetica', 'normal');
     doc.text(`Horas no período: ${diffHHMMSafe(totalMins)}`, mx + 70, y);
 
-    const me2 = selectedEmployee || (typeof window.getMe === 'function' ? window.getMe() : {}) || {};
+    const me2 = selectedEmployee || getUsuarioLogado() || (typeof window.getMe === 'function' ? window.getMe() : {}) || {};
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.text(me2.nome || me2.nomeCompleto || 'Colaborador(a)', mx, pageH - 24);

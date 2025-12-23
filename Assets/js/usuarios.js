@@ -2,14 +2,19 @@
 (() => {
   'use strict';
 
+  // ---------------- API BASE (evita file:///C:/api/Usuarios) ----------------
+  // Se estiver rodando via http(s), usa o mesmo host.
+  // Se estiver abrindo por file://, usa o backend local.
+  const API_BASE = location.origin.startsWith('http')
+    ? '' // mesma origem (ex: http://localhost:5253)
+    : 'http://localhost:5253';
+
   const $ = (id) => document.getElementById(id);
 
   const el = {
-    // (opcional) item de menu / tab
     menuItem: document.querySelector('li[data-tab="tabCadastroUsuario"]'),
     tab: $('tabCadastroUsuario'),
 
-    // inputs
     login: $('usrLogin'),
     email: $('usrEmail'),
     cpf: $('usrCPF'),
@@ -18,7 +23,6 @@
     senha2: $('usrSenha2'),
     perfil: $('usrPerfil'),
 
-    // botões + status
     btnSalvar: $('btnUsrSalvar'),
     btnLimpar: $('btnUsrLimpar'),
     status: $('usrStatus'),
@@ -58,21 +62,23 @@
     try {
       if (typeof window.getMe === 'function') return window.getMe() || {};
     } catch {}
-    return {};
+    return null; // importante: null quando não existe
   }
 
   function getUserTypeFromMe() {
     const me = getMeSafe();
+    if (!me) return null;
     const type = me.typeUser ?? me.type ?? me.perfil ?? me.roleId;
     const n = Number(type);
     return Number.isFinite(n) ? n : 0;
   }
 
-  
+  // ✅ fallback: se ainda não tem auth/getMe real, não some com a tela
   function isAdminUser() {
-    return getUserTypeFromMe() === 1;
+    const t = getUserTypeFromMe();
+    if (t === null) return true;
+    return t === 1;
   }
-
 
   function applyAdminVisibility() {
     const isAdmin = isAdminUser();
@@ -80,7 +86,7 @@
       n.style.display = isAdmin ? '' : 'none';
     });
 
-    // Se não for admin e a tab estiver ativa, volta pra tabPonto
+    // se não for admin e a tab estiver ativa, volta pra tabPonto
     if (!isAdmin && el.tab?.classList.contains('active')) {
       el.tab.classList.remove('active');
       document.getElementById('tabPonto')?.classList.add('active');
@@ -110,15 +116,12 @@
     return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
   }
 
-  // Mantém cursor mais estável (não perfeito em todos os casos, mas bem melhor)
   function applyMaskKeepingEnd(inputEl, masker) {
     const before = inputEl.value || '';
     const rawBefore = before.replace(/\D/g, '');
     const masked = masker(before);
     inputEl.value = masked;
 
-    // tenta colocar o cursor no "fim lógico" do que foi digitado
-    // (como você usa só input, isso costuma ficar ok)
     const rawAfter = masked.replace(/\D/g, '');
     const delta = rawAfter.length - rawBefore.length;
 
@@ -184,9 +187,34 @@
     setStatus('Preencha os dados e clique em “Cadastrar Usuário”.', 'info');
   }
 
-  // ---------------- POST /api/usuarios ----------------
+  // ---------------- Helpers fetch ----------------
+  async function safeJson(resp) {
+    try {
+      const ct = resp.headers.get('content-type') || '';
+      if (ct.includes('application/json')) return await resp.json();
+      const txt = await resp.text();
+      return txt || null;
+    } catch {
+      return null;
+    }
+  }
+
+  function buildErrorMessage(resp, data) {
+    return (
+      data?.message ||
+      data?.error ||
+      (typeof data === 'string' ? data : null) ||
+      `Falha (HTTP ${resp.status}).`
+    );
+  }
+
+  // ---------------- POST /api/Usuarios ----------------
   async function salvar() {
-    // UX check (a segurança real é no backend)
+    // ⚠️ aviso extra pra quem estiver em file:// (mesmo com API_BASE, CORS pode bloquear)
+    if (!location.origin.startsWith('http')) {
+      toast('Você está abrindo o site via file://. Use Live Server ou sirva o front via http para evitar CORS.', 'warn');
+    }
+
     if (!isAdminUser()) {
       const msg = 'Apenas Admin pode cadastrar usuários.';
       setStatus(msg, 'error');
@@ -203,53 +231,46 @@
     }
 
     // Header X-User-Type (temporário até você ter Auth real)
-    const userTypeHeader = String(getUserTypeFromMe() || 1);
+    const userTypeHeader = String(getUserTypeFromMe() ?? 1);
 
     try {
       setBusy(true);
       setStatus('Cadastrando usuário…', 'info');
 
-      const resp = await fetch('/api/usuarios', {
+      const resp = await fetch(`${API_BASE}/api/Usuarios`, {
         method: 'POST',
         headers: {
+          accept: '*/*',
           'Content-Type': 'application/json',
           'X-User-Type': userTypeHeader,
         },
         body: JSON.stringify({
           login: payload.login,
-          nome: payload.login, // regra atual: nome = login (se você quiser separar, trocamos)
           email: payload.email,
           cpf: payload.cpf,
           telefone: payload.telefone,
           senha: payload.senha,
-          confirmarSenha: payload.senha2, // importante se o DTO validar confirmação
+          confirmarSenha: payload.senha2,
           typeUser: payload.typeUser,
         }),
       });
 
-      let data = null;
-      try {
-        data = await resp.json();
-      } catch {}
+      const data = await safeJson(resp);
 
       if (!resp.ok) {
-        const msg =
-          data?.message ||
-          data?.error ||
-          (typeof data === 'string' ? data : null) ||
-          `Falha ao cadastrar (HTTP ${resp.status}).`;
+        const msg = buildErrorMessage(resp, data);
         setStatus(msg, 'error');
         toast(msg, 'error');
         return;
       }
 
-      setStatus(`Usuário cadastrado com sucesso. ID: ${data?.id ?? '—'}`, 'success');
+      setStatus(`Usuário cadastrado com sucesso.`, 'success');
       toast('Usuário cadastrado!', 'success');
       limpar();
     } catch (e) {
       console.error(e);
-      setStatus('Erro inesperado ao cadastrar. Veja o console.', 'error');
-      toast('Erro ao cadastrar.', 'error');
+      setStatus('Erro ao cadastrar. Verifique o console e CORS.', 'error');
+      toast('Erro ao cadastrar (CORS/Network).', 'error');
     } finally {
       setBusy(false);
     }

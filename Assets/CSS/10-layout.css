@@ -1,74 +1,214 @@
 /* ======================
-   SIDEBAR / MENU (base)
+   BASE DE LAYOUT
 ====================== */
 
-/* Sidebar */
-aside{
-  position:fixed; top:0; left:0;
+html, body{
+  margin:0;
+  padding:0;
   height:100%;
+}
+
+/* ======================
+   SIDEBAR / NAVIGATION
+====================== */
+
+/* Sidebar fixa à esquerda */
+aside{
+  position:fixed;
+  top:0;
+  bottom:0;
+  left:0;
+
   width:var(--nav-width);
+
+  overflow-y:auto;
+  overflow-x:hidden;
+
   background: linear-gradient(160deg, rgba(0,224,255,.14), rgba(255,47,185,.12)), #0A111A;
   border-right: 1px solid rgba(255,255,255,.06);
   color:#fff;
   z-index:1000;
   padding:18px 14px 18px;
-  display:flex; flex-direction:column; gap:14px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
   transition:left .25s ease;
 }
 
-.brand{ display:flex; align-items:center; gap:10px; margin-bottom:4px }
-.brand-logo{
-  width:38px; height:38px; border-radius:9px; object-fit:cover; flex:0 0 auto;
-  background:
-    radial-gradient(80% 80% at 20% 20%, var(--c1), transparent),
-    radial-gradient(80% 80% at 80% 80%, var(--c2), transparent);
-  border:1px solid rgba(255,255,255,.18);
+/* Scrollbar discreto da sidebar (Chrome/Edge/Safari) */
+aside::-webkit-scrollbar{
+  width:6px;
 }
-.brand strong{ font-weight:800; letter-spacing:.4px }
+aside::-webkit-scrollbar-track{
+  background:transparent;
+}
+aside::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.18);
+  border-radius:4px;
+}
+
+/* ======================
+   BRAND / LOGO
+====================== */
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:4px;
+}
+.brand-logo{
+  width:70px;
+  height:70px;
+  border-radius:999px;         /* círculo perfeito */
+  object-fit:cover;
+  flex:0 0 auto;
+
+  /* anel */
+  padding:3px;                 /* espessura do anel */
+  border:2px solid transparent;
+
+  background:
+    linear-gradient(#0b1622,#0b1622) padding-box,                  /* miolo (fundo) */
+    linear-gradient(135deg,var(--c1,#38bdf8),var(--c2,#a855f7)) border-box; /* anel */
+
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  display:block;
+}
+
+.brand .spand{
+  background: linear-gradient(90deg,
+    #ffffff 0%,
+    #ffffff 20%,
+    var(--accent1, #00e0ff) 55%,
+    var(--accent2, #ff2fb9) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+
+
+.brand strong{
+  font-weight:800;
+  letter-spacing:.4px;
+}
+
+/* ======================
+   CARD DO USUÁRIO (SIDEBAR)
+====================== */
 
 .user-card{
   background:rgba(255,255,255,.06);
   border:1px solid rgba(255,255,255,.12);
   border-radius:12px;
-  padding:12px
+  padding:12px;
 }
-.user-card .name{ font-weight:700 }
-.user-card .role{ font-size:12px; opacity:.85 }
+.user-card .name{
+  font-weight:700;
+}
+.user-card .role{
+  font-size:12px;
+  opacity:.85;
+}
 
-.menu{ list-style:none }
+/* ======================
+   MENU PRINCIPAL
+====================== */
+
+.menu{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
 .menu li{
-  display:flex; align-items:center; gap:10px;
-  padding:10px 10px; border-radius:10px; cursor:pointer;
-  font-weight:600; color:#e8f0f7;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 10px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+  color:#e8f0f7;
   transition: background .15s ease, transform .12s ease;
 }
-.menu li:hover{ background:rgba(255,255,255,.08) }
+
+.menu li:hover{
+  background:rgba(255,255,255,.08);
+}
 .menu li.active{
   background:linear-gradient(90deg, rgba(0,224,255,.25), rgba(255,47,185,.25));
-  color:#fff
+  color:#fff;
 }
-.menu li i{ width:20px; text-align:center }
+.menu li i{
+  width:20px;
+  text-align:center;
+}
 
-/* Submenu */
-.menu li.has-submenu{ flex-direction:column; align-items:stretch; position:relative; }
-.menu li.has-submenu .row-head{ display:flex; align-items:center; gap:10px; }
-.menu li.has-submenu .caret{ margin-left:auto; transition:transform .2s ease; }
-.menu li.has-submenu.open .caret{ transform:rotate(180deg) }
+/* ======================
+   SUBMENUS (cards expansíveis)
+====================== */
+
+.menu li.has-submenu{
+  flex-direction:column;
+  align-items:stretch;
+  position:relative;
+  padding:12px 10px;
+}
+
+.menu li.has-submenu .row-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.menu li.has-submenu .caret{
+  margin-left:auto;
+  transition:transform .2s ease;
+}
+.menu li.has-submenu.open .caret{
+  transform:rotate(180deg);
+}
+
 .menu li .submenu{
-  display:none; list-style:none; margin-top:6px; padding-left:28px;
+  display:none;
+  list-style:none;
+  margin-top:8px;
+  padding-left:28px;
   border-left:1px dashed rgba(255,255,255,.18);
 }
-.menu li.open > .submenu{ display:block }
-.menu li .submenu li{ padding:8px 10px; border-radius:8px; margin:4px 0 }
-.menu li .submenu li.active,
-.menu li .submenu li:hover{ background:rgba(255,255,255,.08) }
+.menu li.open > .submenu{
+  display:block;
+}
 
-/* Footer (mobile) */
-.sidebar-mobile-footer{ display:none }
+.menu li .submenu li{
+  padding:8px 10px;
+  border-radius:8px;
+  margin:4px 0;
+}
+.menu li .submenu li.active,
+.menu li .submenu li:hover{
+  background:rgba(255,255,255,.08);
+}
+
+/* ======================
+   FOOTER DA SIDEBAR (MOBILE)
+====================== */
+
+.sidebar-mobile-footer{
+  display:none;
+}
 @media (max-width:960px){
   .sidebar-mobile-footer{
     margin-top:auto;
-    position:sticky; bottom:0;
+    position:sticky;
+    bottom:0;
     background:
       linear-gradient(180deg, rgba(0,0,0,.0), rgba(0,0,0,.25)),
       rgba(255,255,255,.04);
@@ -76,10 +216,15 @@ aside{
     padding:12px 6px 6px;
     display:block;
   }
-  .sidebar-mobile-footer .btn{ width:100% }
+  .sidebar-mobile-footer .btn{
+    width:100%;
+  }
 }
 
-/* Main */
+/* ======================
+   MAIN / CONTEÚDO
+====================== */
+
 main{
   flex:1;
   margin-left:var(--nav-width);
@@ -87,69 +232,85 @@ main{
   transition:margin-left .25s ease, padding-top .25s ease;
 }
 
-/* Topbar */
-.topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px }
-.hello{ font-weight:800; letter-spacing:.2px }
-.right{ display:flex; align-items:center; gap:10px }
+/* ======================
+   TOPBAR
+====================== */
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+.hello{
+  font-weight:800;
+  letter-spacing:.2px;
+}
+.right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  position:relative; /* âncora para o dropdown do usuário */
+}
 .badge{
   background:rgba(255,255,255,.06);
   border:1px solid rgba(255,255,255,.12);
   border-radius:14px;
   padding:6px 10px;
-  font-size:13px
+  font-size:13px;
 }
 
-@media (max-width:640px){ .col{ min-width:100%; } }
-
+/* Form grid em telas menores */
+@media (max-width:640px){
+  .col{
+    min-width:100%;
+  }
+}
 
 /* ======================
-   BOTÃO "+" (SÓ MOBILE)
-   - borda com degradê
-   - fundo cor do sistema
-   - não cobre conteúdo
+   BOTÃO FLUTUANTE "+" (SÓ MOBILE)
 ====================== */
 
-/* Desktop: o botão NÃO existe */
-.menu-toggle{ display:none; }
+.menu-toggle{
+  display:none;
+}
 
-/* Mobile */
 @media (max-width:960px){
   :root{
-    /* cor “do sistema”: tenta pegar token; cai pro seu bg padrão */
     --app-bg: var(--bg, #0A111A);
     --fab: clamp(44px, 12vw, 52px);
     --fab-border: 2px;
   }
 
-  /* reserva espaço no topo do main pra NÃO ficar em cima da topbar */
   main{
     margin-left:0;
     padding-top: calc(18px + var(--fab) + 10px);
   }
 
-  /* Sidebar vira drawer: fechada por padrão */
   aside{
     width: min(var(--nav-width), 86vw);
     left: calc(-1 * min(var(--nav-width), 86vw));
+    top:0;
+    bottom:0;
   }
-  aside.active{ left:0; }
+  aside.active{
+    left:0;
+  }
 
-  /* Overlay */
   body.sidebar-open::before{
     content:"";
     position:fixed;
     inset:0;
     background:rgba(0,0,0,.45);
-    z-index:900; /* abaixo do aside (1000) */
+    z-index:900;
   }
-  body.sidebar-open{ overflow:hidden; }
+  body.sidebar-open{
+    overflow:hidden;
+  }
 
-  /* Botão + */
   .menu-toggle{
     display:inline-flex;
     position:fixed;
-
-    /* safe-area friendly */
     top: max(12px, env(safe-area-inset-top));
     left: max(12px, env(safe-area-inset-left));
 
@@ -158,7 +319,6 @@ main{
     padding:0;
     border-radius:999px;
 
-    /* BORDA com degradê e FUNDO sólido (cor do sistema) */
     border: var(--fab-border) solid transparent;
     background:
       linear-gradient(var(--app-bg), var(--app-bg)) padding-box,
@@ -168,7 +328,6 @@ main{
     align-items:center;
     justify-content:center;
 
-    /* z-index baixo o suficiente pra não brigar com modal/sidebar */
     z-index: 950;
 
     cursor:pointer;
@@ -176,14 +335,13 @@ main{
     transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
   }
 
-  /* transforma o ícone em "+" mesmo que o HTML esteja com fa-bars */
   .menu-toggle i{
     font-size: 22px;
     line-height: 1;
   }
   .menu-toggle i::before{
     content:"+";
-    font-family: inherit; /* não usa FontAwesome aqui */
+    font-family: inherit;
     font-weight: 900;
     display:inline-block;
     transform: translateY(-1px);
@@ -193,19 +351,287 @@ main{
     filter: brightness(1.06);
     box-shadow: 0 12px 28px rgba(0,0,0,.36);
   }
-  .menu-toggle:active{ transform: scale(.96); }
+  .menu-toggle:active{
+    transform: scale(.96);
+  }
 
   .menu-toggle:focus-visible{
     outline: 3px solid rgba(255,255,255,.22);
     outline-offset: 3px;
   }
 
-  /* Quando sidebar estiver aberta, some o botão */
-  body.sidebar-open .menu-toggle{ display:none; }
+  body.sidebar-open .menu-toggle{
+    display:none;
+  }
 }
 
-/* Desktop: quando voltar a ficar grande, garante layout normal */
 @media (min-width:961px){
-  body.sidebar-open::before{ content:none; }
-  body.sidebar-open{ overflow:auto; }
+  body.sidebar-open::before{
+    content:none;
+  }
+  body.sidebar-open{
+    overflow:auto;
+  }
+}
+
+/* ======================
+   USER CHIP (TOPO) + MENU
+====================== */
+
+/* Bolinha do topo com borda em degradê */
+.user-chip{
+  width:36px;
+  height:36px;
+  padding:0;
+  border-radius:999px;
+  border:2px solid transparent;
+  background:
+    linear-gradient(#0b1622,#0b1622) padding-box,
+    linear-gradient(135deg,var(--c1,#00E0FF),var(--c2,#FF2FB9)) border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  color:#e5f0ff;
+  transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;
+  overflow:hidden;
+}
+.user-chip:hover{
+  filter:brightness(1.05);
+  box-shadow:0 12px 28px rgba(0,0,0,.45);
+}
+.user-chip:active{
+  transform:scale(.96);
+}
+
+/* span interno: mostra iniciais ou foto de perfil */
+.user-chip-initials{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
+  border-radius:999px;
+  background:#0b1622;
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:.03em;
+}
+
+/* ======================
+   DROPDOWN DO USUÁRIO
+====================== */
+
+.user-menu{
+  position:absolute;
+  top:calc(100% + 10px);
+  right:0;
+  width:250px;
+  background:rgba(9,15,25,.98);
+  border-radius:18px;
+  padding:12px 12px 10px;
+  border:1px solid rgba(148,163,184,.45);
+  box-shadow:0 18px 45px rgba(0,0,0,.75);
+  z-index:800;
+
+  transform-origin:top right;
+  transform:scale(.92) translateY(-6px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .14s ease, transform .14s ease;
+}
+.user-menu.open{
+  opacity:1;
+  transform:scale(1) translateY(0);
+  pointer-events:auto;
+}
+
+/* cabeçalho do card */
+.user-menu-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+}
+
+/* Avatar do user.info com borda redonda + degradê */
+.user-menu-avatar{
+  position:relative;
+  width:44px;
+  height:44px;
+  border-radius:999px;
+
+  /* anel em degradê */
+  padding:3px;
+  background:
+    linear-gradient(#0b1622,#0b1622) padding-box,
+    linear-gradient(135deg,var(--c1,#00E0FF),var(--c2,#FF2FB9)) border-box;
+  border:2px solid transparent;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  color:#e5f0ff;
+  font-size:18px;
+  font-weight:700;
+  box-shadow:0 10px 24px rgba(0,0,0,.45);
+  overflow:hidden;
+  cursor:pointer;
+
+  /* url da foto vem via variável CSS */
+  --avatar-url: none;
+}
+
+/* foto de perfil dentro do avatar (mantém a borda em degradê) */
+.user-menu-avatar::before{
+  content:"";
+  position:absolute;
+  inset:3px;
+  border-radius:inherit;
+  background:#0b1622;
+  background-image:var(--avatar-url);
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  z-index:0;
+}
+
+/* ícone por cima quando não tem foto */
+.user-menu-avatar i{
+  position:relative;
+  z-index:1;
+}
+.user-menu-avatar.has-photo i{
+  display:none;
+}
+
+/* textos (nome + tipo de usuário) */
+.user-menu-texts{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.user-menu-name{
+  font-weight:700;
+  font-size:14px;
+}
+.user-menu-email{         /* aqui estamos usando para o TIPO de usuário */
+  font-size:12px;
+  color:#9fb1c3;
+}
+
+/* linha divisória */
+.user-menu-divider{
+  margin:8px -12px 6px;
+  border-top:1px solid rgba(148,163,184,.35);
+}
+
+/* item do menu */
+.user-menu-item{
+  width:100%;
+  border:none;
+  background:transparent;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 4px;
+  border-radius:10px;
+  font-size:13px;
+  color:#e5f0ff;
+  cursor:pointer;
+  transition:background .12s ease, color .12s ease;
+}
+.user-menu-item i{
+  width:16px;
+  text-align:center;
+}
+
+
+.user-menu-item.logout i,
+#btnUserLogout i{
+  color:#fb7185;
+}
+
+.user-menu-item:hover{
+  background:rgba(248,113,113,.08);
+}
+
+/* ======================
+   CORRIGIR "VOLTRAR" (sumir quadrado do container)
+====================== */
+
+/* remove o card/retângulo atrás do botão */
+@media (max-width:960px){
+  .sidebar-mobile-footer{
+    background: transparent !important;
+    border-top: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+}
+
+/* estilo do botão voltar (input ou button) */
+#btnVoltar,
+.btn-voltar{
+  width: 100%;
+  height: 44px;
+
+  border-radius: 12px;
+  border: 2px solid transparent;
+
+  background:
+    linear-gradient(#0b1622,#0b1622) padding-box,
+    linear-gradient(135deg,var(--c1,#00E0FF),var(--c2,#FF2FB9)) border-box;
+
+  color: #e8f0f7;
+  font-weight: 700;
+
+  cursor: pointer;
+  outline: none;
+
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* se for <input> evita “borda quadrada” nativa */
+#btnVoltar:focus,
+.btn-voltar:focus{
+  outline: none;
+}
+#btnVoltar:focus-visible,
+.btn-voltar:focus-visible{
+  outline: 3px solid rgba(255,255,255,.22);
+  outline-offset: 3px;
+}
+
+/* ===== Sidebar: menu rola, footer fica fixo no fim ===== */
+aside{
+  display:flex;
+  flex-direction:column;
+  height:100dvh;              /* garante altura total no mobile moderno */
+}
+
+/* menu vira a área rolável */
+aside .menu{
+  flex: 1 1 auto;
+  min-height: 0;              /* ESSENCIAL p/ scroll funcionar no flex */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 10px;       /* respiro antes do botão */
+}
+
+/* footer sempre no fim e nunca sobreposto */
+@media (max-width:960px){
+  .sidebar-mobile-footer{
+    display:block;
+    position: relative;       /* tira sticky */
+    bottom:auto;
+    margin-top: 10px;         /* separa do menu */
+    flex: 0 0 auto;
+  }
 }

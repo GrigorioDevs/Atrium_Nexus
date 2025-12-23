@@ -18,8 +18,10 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto req)
     {
+        Console.WriteLine(">>> ENTROU NO ENDPOINT /api/usuario/login");
+
         var res = await _auth.LoginAsync(req);
         if (res is null) return Unauthorized(new { message = "Credenciais inválidas." });
         return Ok(res);
-    }
+}
 }

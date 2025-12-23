@@ -1,0 +1,33 @@
+CREATE TABLE dbo.funcionario_pasta (
+    id                 INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    funcionario_id     INT NOT NULL,
+    pasta_pai_id       INT NULL,
+
+    ativo              BIT NOT NULL CONSTRAINT DF_func_pasta_ativo DEFAULT (1),
+    criacao            DATETIME2(0) NOT NULL CONSTRAINT DF_func_pasta_criacao DEFAULT (SYSDATETIME()),
+    alteracao          DATETIME2(0) NULL,
+
+    datassincronizacao DATETIME2(0) NULL,
+    datainterface      DATETIME2(0) NULL,
+
+    usuariocriacaoid   INT NOT NULL,
+    usuarioid          INT NULL,
+
+    nome               VARCHAR(120) NOT NULL
+);
+
+ALTER TABLE dbo.funcionario_pasta
+ADD CONSTRAINT FK_func_pasta_funcionario
+FOREIGN KEY (funcionario_id) REFERENCES dbo.funcionario(id);
+
+ALTER TABLE dbo.funcionario_pasta
+ADD CONSTRAINT FK_func_pasta_pai
+FOREIGN KEY (pasta_pai_id) REFERENCES dbo.funcionario_pasta(id);
+
+ALTER TABLE dbo.funcionario_pasta
+ADD CONSTRAINT FK_func_pasta_usuario_criacao
+FOREIGN KEY (usuariocriacaoid) REFERENCES dbo.usuario(Id);
+
+ALTER TABLE dbo.funcionario_pasta
+ADD CONSTRAINT FK_func_pasta_usuario_alteracao
+FOREIGN KEY (usuarioid) REFERENCES dbo.usuario(Id);

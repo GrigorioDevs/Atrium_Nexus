@@ -4,7 +4,7 @@
   height: calc(100% - 48px);
   display: flex;
   flex-direction: column;
-  min-height: 0; /* evita overflow estranho em containers flex */
+  min-height: 0;
 }
 
 .docs-tabs {
@@ -26,7 +26,6 @@
   color: #ffffff;
 }
 
-/* Pane de conteúdo de cada sub-aba */
 .docs-pane {
   display: none;
   padding: 12px;
@@ -38,15 +37,11 @@
   display: block;
 }
 
-/* === Layout Clicksign === */
+/* === Layout Clicksign (base) === */
 .docs-clicksign-shell {
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.docs-clicksign-header h3 {
-  margin: 0 0 4px;
 }
 
 .docs-clicksign-grid {
@@ -58,91 +53,258 @@
 .docs-clicksign-panel {
   display: flex;
   flex-direction: column;
+  gap: 10px;
+}
+
+/* =========================================
+   CLICK SIGN — POLIMENTO VISUAL
+   ========================================= */
+:root {
+  --cs-border: rgba(255, 255, 255, 0.08);
+  --cs-border2: rgba(255, 255, 255, 0.14);
+  --cs-bg: rgba(255, 255, 255, 0.03);
+  --cs-bg2: rgba(255, 255, 255, 0.06);
+  --cs-radius: 14px;
+  --cs-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+}
+
+.docs-clicksign-header {
+  padding: 14px;
+  border: 1px solid var(--cs-border);
+  border-radius: var(--cs-radius);
+  background: linear-gradient(180deg, rgba(0, 224, 255, 0.08), rgba(255, 255, 255, 0.02));
+  box-shadow: var(--cs-shadow);
+}
+
+.cs-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.docs-clicksign-header h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.cs-pill {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 224, 255, 0.22);
+  background: rgba(0, 224, 255, 0.10);
+}
+
+.cs-header-hints {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.cs-hint {
+  border: 1px solid var(--cs-border);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.14);
+  padding: 10px 10px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.docs-clicksign-panel {
+  border: 1px solid var(--cs-border);
+  border-radius: var(--cs-radius);
+  padding: 12px;
+  background: radial-gradient(1200px 260px at 20% 0%, rgba(0, 224, 255, 0.08), transparent 55%),
+              radial-gradient(1200px 260px at 80% 0%, rgba(255, 215, 0, 0.06), transparent 55%),
+              rgba(10, 17, 26, 0.55);
+  box-shadow: var(--cs-shadow);
+}
+
+.cs-step-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+
+.cs-step-head h4 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.cs-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(0, 224, 255, 0.14);
+  border: 1px solid rgba(0, 224, 255, 0.22);
+}
+
+.cs-section {
+  display: flex;
+  flex-direction: column;
   gap: 6px;
 }
+
+.cs-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 2px 0;
+}
+
+.docs-clicksign-panel label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.cs-helper {
+  margin-top: 6px;
+  display: block;
+}
+
+.cs-hidden {
+  display: none !important;
+}
+
+.docs-clicksign-panel .input-dark,
+.docs-clicksign-panel .select-dark,
+.docs-clicksign-panel textarea {
+  border: 1px solid var(--cs-border);
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 12px;
+  padding: 10px 10px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.docs-clicksign-panel .input-dark:focus,
+.docs-clicksign-panel .select-dark:focus,
+.docs-clicksign-panel textarea:focus {
+  border-color: rgba(0, 224, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(0, 224, 255, 0.14);
+}
+
+.cs-textarea {
+  min-height: 110px;
+  padding-top: 10px;
+  line-height: 1.35;
+  resize: vertical;
+}
+
+/* Segment (WhatsApp/Gmail/SMS) */
+.cs-segment {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.cs-seg-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  border: 1px solid var(--cs-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.86);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.05s ease;
+}
+
+.cs-seg-btn:hover {
+  border-color: var(--cs-border2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.cs-seg-btn:active {
+  transform: translateY(1px);
+}
+
+.cs-seg-btn.active {
+  border-color: rgba(0, 224, 255, 0.55);
+  background: rgba(0, 224, 255, 0.12);
+  color: #fff;
+}
+
+.cs-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.cs-note {
+  margin-top: 6px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--cs-border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Status (com variantes) */
+.cs-status {
+  border-radius: 12px;
+  border: 1px solid var(--cs-border);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px 12px;
+}
+
+.cs-status--success { border-color: rgba(36, 255, 161, 0.22); }
+.cs-status--error   { border-color: rgba(255, 86, 86, 0.22); }
+.cs-status--warn    { border-color: rgba(255, 215, 0, 0.22); }
+.cs-status--info    { border-color: rgba(0, 224, 255, 0.22); }
+
+
+.grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.grid .col{ min-width: 0; }
+.grid .col .input-dark,
+.grid .col .select-dark{ width: 100%; box-sizing: border-box; }
+
 
 /* =========================================================
    RESPONSIVIDADE
    ========================================================= */
-
-/* Tablets e telas médias (até ~1024px) */
 @media (max-width: 1024px) {
-  .docs-card-body {
-    padding: 10px;
-    height: auto;          /* deixa crescer conforme o conteúdo */
-  }
-
-  .docs-pane {
-    padding: 10px;
-  }
-
-  .docs-clicksign-grid {
-    gap: 10px;
-  }
+  .docs-card-body { padding: 10px; height: auto; }
+  .docs-pane { padding: 10px; }
+  .docs-clicksign-grid { gap: 10px; }
 }
 
-/* Celulares (até ~768px, retrato/paisagem) */
 @media (max-width: 768px) {
-  .docs-card-body {
-    padding: 8px;
-  }
-
-  .docs-tabs {
-    padding: 6px 8px;
-    gap: 6px;
-  }
-
-  .docs-tab-btn {
-    font-size: 12px;
-    padding: 6px 10px;
-  }
-
-  .docs-pane {
-    padding: 8px 6px 12px;
-    height: auto;          /* não força 100% da altura no mobile */
-  }
-
-  /* grid vira 1 coluna em telas menores */
-  .docs-clicksign-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .docs-clicksign-panel {
-    gap: 8px;
-  }
+  .docs-card-body { padding: 8px; }
+  .docs-tabs { padding: 6px 8px; gap: 6px; }
+  .docs-tab-btn { font-size: 12px; padding: 6px 10px; }
+  .docs-pane { padding: 8px 6px 12px; height: auto; }
+  .docs-clicksign-grid { grid-template-columns: 1fr; }
 }
 
-/* Celulares pequenos (ex.: iPhone 6s em retrato ~375px) */
 @media (max-width: 480px) {
   .docs-tabs {
     padding: 4px 6px;
     gap: 4px;
-    overflow-x: auto;      /* rolagem horizontal caso não caiba */
+    overflow-x: auto;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
   }
-
-  .docs-tab-btn {
-    flex: 0 0 auto;        /* não encolher demais; permite scroll horizontal */
-  }
-
-  .docs-clicksign-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .docs-clicksign-shell {
-    gap: 10px;
-  }
+  .docs-tab-btn { flex: 0 0 auto; }
+  .docs-clicksign-shell { gap: 10px; }
+  .cs-seg-btn { width: 100%; justify-content: center; }
 }
 
-/* Telas muito grandes (monitores / TVs) */
 @media (min-width: 1440px) {
-  .docs-clicksign-shell {
-    max-width: 1200px;     /* limita a largura pra não ficar esticado demais */
-    margin: 0 auto;
-  }
-
-  .docs-pane {
-    padding: 16px 24px;
-  }
+  .docs-clicksign-shell { max-width: 1200px; margin: 0 auto; }
+  .docs-pane { padding: 16px 24px; }
 }

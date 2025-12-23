@@ -1,0 +1,28 @@
+
+CREATE TABLE [dbo].[usuario](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[lociid] [int] NOT NULL,
+	[ativo] [bit] NOT NULL,
+	[criacao] [datetimeoffset](7) NOT NULL,
+	[datasincronizacao] [datetimeoffset](7) NULL,
+	[datainterface] [datetimeoffset](7) NULL,
+	[cpf] [varchar](11) NOT NULL,
+	[nome] [varchar](120) NOT NULL,
+	[email] [varchar](180) NOT NULL,
+	[login] [varchar](80) NOT NULL,
+	[senha] [char](64) NOT NULL,
+	[telefone] [varchar](20) NOT NULL,
+	[type_user] [int] NOT NULL,
+	[user_img] [varchar](300) NULL,
+ CONSTRAINT [PK_usuario] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[usuario] ADD  CONSTRAINT [DF_usuario_lociid]  DEFAULT ((1)) FOR [lociid]
+GO
+
+ALTER TABLE [dbo].[usuario] ADD  CONSTRAINT [DF_usuario_ativo]  DEFAULT ((1)) FOR [ativo]
+GO

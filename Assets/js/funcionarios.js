@@ -2,6 +2,75 @@
 (() => {
   'use strict';
 
+  // ===================== HELPERS DE IMAGEM (GARANTIA) =====================
+  // Alguns trechos do arquivo chamam `imageFileToDataURL(...)` e `defaultAvatarDataURL()`.
+  // Se por algum motivo elas não existirem (ordem/escopo), dá ReferenceError.
+  // Aqui garantimos que elas SEMPRE existam e ainda expomos em `window` para qualquer trecho do app usar.
+
+  function defaultAvatarDataURL() {
+    // 1x1 png transparente (não quebra layout)
+    return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMB/awq8z8AAAAASUVORK5CYII=';
+  }
+
+  async function imageFileToDataURL(file) {
+    return await new Promise((resolve, reject) => {
+      try {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ''));
+        reader.onerror = () => reject(reader.error || new Error('Falha ao ler arquivo'));
+        reader.readAsDataURL(file);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  // disponibiliza global (caso outro script ou outro bloco use)
+  window.defaultAvatarDataURL = window.defaultAvatarDataURL || defaultAvatarDataURL;
+  window.imageFileToDataURL = window.imageFileToDataURL || imageFileToDataURL;
+
+// ===================== HELPERS GLOBAIS (não dependem do DOM) =====================
+const escapeHTML = (s) => String(s ?? '')
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#39;');
+
+// fallback de notify (se seu core.js não estiver carregado)
+const notify = (window.notify && typeof window.notify === 'function')
+  ? window.notify
+  : (msg, type) => {
+      try { console[(type === 'error') ? 'error' : 'log'](msg); } catch {}
+      alert(msg);
+    };
+
+// LocalStorage helpers globais (outros módulos dependem disso)
+const __memStore = { funcionarios: [] };
+
+if (typeof window.getFuncionariosLS !== 'function') {
+  window.getFuncionariosLS = function () {
+    try {
+      return JSON.parse(localStorage.getItem('funcionarios') || '[]');
+    } catch {
+      return __memStore.funcionarios;
+    }
+  };
+}
+
+if (typeof window.setFuncionariosLS !== 'function') {
+  window.setFuncionariosLS = function (arr) {
+    __memStore.funcionarios = Array.isArray(arr) ? arr : [];
+    try {
+      localStorage.setItem('funcionarios', JSON.stringify(__memStore.funcionarios));
+    } catch {
+      // pode estar bloqueado (Tracking Prevention) — mantém em memória
+    }
+  };
+}
+
+// ===================== BOOT (aguarda DOM) =====================
+const boot = () => {
   // Refs de DOM usadas neste módulo
   const $ = (id) => document.getElementById(id);
 
@@ -56,10 +125,19 @@
   const cadVtUnit = $('cadVtUnit');
   const cadVrDaily = $('cadVrDaily');
   const cadDocumento = $('cadDocumento');
+  
   const cadOptVR = $('cadOptVR');
   const cadOptVT = $('cadOptVT');
   const btnSalvarCadastro = $('btnSalvarCadastro');
   const btnLimparCadastro = $('btnLimparCadastro');
+
+  // NOVO – tipo de contrato (CLT/PJ)
+  const cadTipoContratoCLT = $('cadTipoContratoCLT');
+  const cadTipoContratoPJ  = $('cadTipoContratoPJ');
+
+  // NOVO – aba CURSOS do modal do funcionário
+  const funcCursosInput   = $('funcCursosInput');  // textarea de cursos
+  const btnSalvarCursos   = $('btnSalvarCursos');  // botão "Salvar cursos"
 
   // ====== Explorer de arquivos (Documentos do funcionário) ======
   const feTree = $('feTree');
@@ -73,6 +151,23 @@
   const feBtnPaste = $('feBtnPaste');
   const feBtnDownload = $('feBtnDownload'); // botão "Baixar"
   const cadCell = $('cadCell');
+  const cadEmail = document.getElementById('cadEmail');
+
+  // ===================== STORAGE HELPERS (GLOBAL) =====================
+  // Deixe isso carregado ANTES de beneficios-vt.js / beneficios-vr.js / funcionarios.js
+
+  window.getFuncionariosLS = function () {
+    try {
+      return JSON.parse(localStorage.getItem('funcionarios') || '[]');
+    } catch {
+      return [];
+    }
+  };
+
+  window.setFuncionariosLS = function (arr) {
+    localStorage.setItem('funcionarios', JSON.stringify(arr || []));
+  };
+
 
 
   let feCurrentEmpId = null;      // funcionário atual
@@ -271,20 +366,6 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
     if (!onlyDigits(raw)) { cadCell.value = ''; return; }
     const fmt = formatBRPhone(raw);
     cadCell.value = fmt || ''; // se inválido, limpa (ou você pode manter e avisar)
-  });cadCell?.addEventListener('input', (e) => {
-    const el = e.target;
-    const caret = el.selectionStart ?? el.value.length;
-    const digitsBefore = onlyDigits(el.value.slice(0, caret)).length;
-    const masked = maskBRPhoneLive(el.value);
-    applyMaskedWithCaret(el, masked, digitsBefore);
-  });
-
-  // ao sair do campo, “fecha” no formato final ou limpa se inválido
-  cadCell?.addEventListener('blur', () => {
-    const raw = cadCell.value || '';
-    if (!onlyDigits(raw)) { cadCell.value = ''; return; }
-    const fmt = formatBRPhone(raw);
-    cadCell.value = fmt || ''; // se inválido, limpa (ou você pode manter e avisar)
   });
 
   if (!empGrid && !modalFuncionario && !modalCadastroUsuario) {
@@ -320,187 +401,190 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
     }
   ];
 
-  function getFuncionariosLS() {
-    let arr = JSON.parse(localStorage.getItem(LS_KEYS.FUNCS) || 'null');
-    if (!Array.isArray(arr) || arr.length === 0) {
-      arr = funcionariosSeed;
-      localStorage.setItem(LS_KEYS.FUNCS, JSON.stringify(arr));
-    }
-    arr.forEach((f, i) => {
-      if (!f.id) f.id = 'fid_' + i;
-      if (typeof f.celular === 'undefined') f.celular = '';
-      f.celular = formatBRPhone(f.celular) || '';
-      if (typeof f.ativo === 'undefined') f.ativo = true;
-      if (typeof f.cargo === 'undefined') f.cargo = f.funcao || '';
-      if (typeof f.salario !== 'number') f.salario = 0;
-      if (typeof f.optVR === 'undefined') f.optVR = false;
-      if (typeof f.optVT === 'undefined') f.optVT = false;
-    });
-    localStorage.setItem(LS_KEYS.FUNCS, JSON.stringify(arr));
-    return arr;
+// ===================== API (BACK-END) =====================
+// Ajuste a porta conforme seu ASP.NET (ex: http://localhost:5253)
+const API_BASE = 'http://localhost:5253';
+
+/**
+ * ✅ CORREÇÃO 1: apiFetch válido
+ * - Antes estava com ".options" e ".(options.headers...)" (JS inválido) :contentReference[oaicite:3]{index=3}
+ * - Agora usa spread "...options" e merge correto de headers
+ */
+async function apiFetch(path, options = {}) {
+  const url = API_BASE + path;
+
+  const headers = {
+    ...(options.headers || {}),
+    // se você precisar mandar token depois, adicione aqui
+    // Authorization: `Bearer ${token}`,
+  };
+
+  const res = await fetch(url, { ...options, headers });
+
+  // tenta ler JSON mesmo quando dá erro
+  const text = await res.text();
+  let data = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = text || null;
   }
 
-  function setFuncionariosLS(arr) {
-    localStorage.setItem(LS_KEYS.FUNCS, JSON.stringify(arr || []));
+  if (!res.ok) {
+    const msg =
+      (data && data.message) ||
+      (typeof data === 'string' && data) ||
+      'Erro na API';
+    throw new Error(msg);
   }
 
-  function defaultAvatarDataURL() {
-    const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
-        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00E0FF"/><stop offset="1" stop-color="#FF2FB9"/></linearGradient></defs>
-        <rect width="128" height="128" rx="24" fill="url(#g)" opacity="0.25"/>
-        <circle cx="64" cy="50" r="22" fill="#cfe0ef"/>
-        <rect x="24" y="78" width="80" height="34" rx="17" fill="#cfe0ef"/>
-      </svg>`;
-    return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
-  }
+  return data;
+}
 
-  // Título muda dependendo do contexto (Segurança não “promete” que dá pra trocar)
-  function photoOrFallback(url) {
-    const ctx = typeof getEmpContext === 'function' ? getEmpContext() : 'unknown';
-    const canChange = ctx === 'gestao';
-    const titleImg = canChange ? 'Clique para alterar foto' : 'Foto do funcionário';
-    const titleDiv = canChange ? 'Clique para adicionar foto' : 'Foto do funcionário';
+/**
+ * ✅ CORREÇÃO 2: criar a função que estava faltando
+ * - Isso elimina: "apiListFuncionarios is not defined" :contentReference[oaicite:4]{index=4}
+ */
+async function apiListFuncionarios(q = '') {
+  const qs = q ? `?q=${encodeURIComponent(q)}` : '';
+  return apiFetch(`/api/funcionarios${qs}`, { method: 'GET' });
+}
 
-    return url && url.trim()
-      ? `<img class="emp-avatar" src="${url}" alt="Foto" title="${titleImg}">`
-      : `<div class="emp-avatar" title="${titleDiv}"></div>`;
-  }
+/**
+ * ✅ CORREÇÃO 3: resolver foto SEM montar URL errada
+ * - Seu back serve a foto por: GET /api/funcionarios/{id}/foto
+ * - Então o <img> deve apontar para esse endpoint.
+ * - E só tentamos buscar se fotoUrl existir (senão seu back retorna 404).
+ */
+function resolveFotoSrc(f) {
+  // Se você já grava a foto no back, o ideal é SEMPRE usar o endpoint
+  // quando existir FotoUrl no banco.
+  if (f && f.fotoUrl) return `${API_BASE_URL}/api/funcionarios/${f.id}/foto`;
+  if (f && f.FotoUrl) return `${API_BASE_URL}/api/funcionarios/${f.id}/foto`;
 
-  // ==== Helper genérico: converte qualquer File em DataURL ====
-  function fileToDataURL(file) {
-    return new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onload = () => resolve(r.result);
-      r.onerror = reject;
-      r.readAsDataURL(file);
-    });
-  }
+  // fallback antigo (base64/local)
+  if (f && f.foto) return f.foto;
 
-  // ==== Helper específico pra FOTO (reduz JPG/PNG pra caber no localStorage) ====
-  async function imageFileToDataURL(file) {
-    const dataURL = await fileToDataURL(file);
+  return '';
+}
 
-    // se não for imagem, só devolve o que veio
-    if (!file.type || !file.type.startsWith('image/')) return dataURL;
 
-    // SVG costuma ser bem pequeno, não precisa redimensionar
-    if (file.type === 'image/svg+xml') return dataURL;
 
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        const MAX = 512; // tamanho máximo em px (largura/altura)
-        let { width, height } = img;
-        if (width <= MAX && height <= MAX) {
-          return resolve(dataURL); // já está pequeno, usa como está
-        }
+/**
+ * ✅ renderFuncionarios (cards) — agora vem do localStorage (espelho do back)
+ * - usa resolveFotoSrc(f) para montar a foto
+ * - cria .emp-card e .emp-avatar (seu handler de clique depende disso)
+ */
+function renderFuncionarios(q = '') {
+  const grid = document.getElementById('empGrid');
+  if (!grid) return;
 
-        const ratio = Math.min(MAX / width, MAX / height);
-        const newW = Math.round(width * ratio);
-        const newH = Math.round(height * ratio);
+  const all = (typeof window.getFuncionariosLS === 'function')
+    ? window.getFuncionariosLS()
+    : [];
 
-        const canvas = document.createElement('canvas');
-        canvas.width = newW;
-        canvas.height = newH;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, newW, newH);
+  const term = (q || '').trim().toLowerCase();
+  const list = term
+    ? all.filter((f) => String(f.nome || '').toLowerCase().includes(term))
+    : all;
 
-        const outType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
-        const outData = canvas.toDataURL(outType, 0.85); // 85% quality pra jpeg
-        resolve(outData);
-      };
-      img.onerror = () => resolve(dataURL); // se der BO, usa original mesmo
-      img.src = dataURL;
-    });
-  }
+  // ✅ Avatar SEM onerror inline: sempre mesma estrutura
+  const photoOrFallback = (src, name) => {
+    const rawName = String(name || '').trim();
+    const safeName = escapeHTML(rawName || 'Funcionário');
 
-  /* ===================== LISTA / BUSCA ===================== */
+    // 1–2 iniciais
+    const initials = rawName
+      ? rawName.split(/\s+/).slice(0, 2).map(p => (p[0] || '').toUpperCase()).join('')
+      : '?';
 
-  function renderFuncionarios(q = '') {
-    if (!empGrid) return;
-    const all = getFuncionariosLS();
-    const term = q.trim().toLowerCase();
-    const list =
-      term.length > 0
-        ? all.filter((f) => f.nome.toLowerCase().includes(term))
-        : all;
+    const safeSrc = src ? escapeHTML(String(src)) : '';
 
-    empGrid.innerHTML =
-      list
-        .map((f) => {
-          const inactiveClass = f.ativo ? '' : 'inactive';
-          const offBadge = f.ativo ? '' : `<span class="emp-badge-off">INATIVO</span>`;
-          const nameSafe = escapeHTML(f.nome);
-          const roleSafe = escapeHTML(f.funcao);
+    // Sempre renderiza inner; se não tiver src, já põe iniciais
+    return `
+      <div class="emp-avatar ${safeSrc ? '' : 'no-photo'}" aria-label="${safeSrc ? `Foto de ${safeName}` : `Sem foto de ${safeName}`}">
+        <div class="emp-avatar-inner">
+          ${
+            safeSrc
+              ? `<img
+                   src="${safeSrc}"
+                   alt="Foto de ${safeName}"
+                   loading="lazy"
+                   decoding="async"
+                   data-initials="${escapeHTML(initials)}"
+                 />`
+              : `<span class="emp-initial">${escapeHTML(initials)}</span>`
+          }
+        </div>
+      </div>`;
+  };
 
-          const menu = `
-          <div class="emp-menu" data-id="${f.id}" title="Opções" aria-haspopup="menu" aria-expanded="false">
+  grid.innerHTML =
+    (list
+      .map((f) => {
+        const inactiveClass = f.ativo ? '' : 'inactive';
+        const offBadge = f.ativo ? '' : `<span class="emp-badge-off">INATIVO</span>`;
+        const nameSafe = escapeHTML(f.nome);
+        const roleSafe = escapeHTML(f.funcao || '');
+
+        const idSafe = escapeHTML(String(f.id));
+
+        const menu = `
+          <div class="emp-menu" data-id="${idSafe}" title="Opções" aria-haspopup="menu" aria-expanded="false">
             <i class="fa-solid fa-ellipsis-vertical"></i>
           </div>
-          <div class="emp-menu-dropdown" data-menu="${f.id}" role="menu">
+          <div class="emp-menu-dropdown" data-menu="${idSafe}" role="menu">
             ${
               f.ativo
-                ? `<button data-action="desativar" data-id="${f.id}">
+                ? `<button data-action="desativar" data-id="${idSafe}">
                      <i class="fa-regular fa-circle-xmark"></i> Desativar
                    </button>`
-                : `<button data-action="ativar" data-id="${f.id}">
+                : `<button data-action="ativar" data-id="${idSafe}">
                      <i class="fa-regular fa-circle-check"></i> Ativar
                    </button>`
             }
+            <button data-action="cracha" data-id="${idSafe}">
+              <i class="fa-regular fa-id-badge"></i> Crachá de acesso
+            </button>
           </div>`;
 
-          return `
-          <div class="emp-card ${inactiveClass}" data-id="${f.id}">
+        // ✅ IMPORTANTE: resolveFotoSrc precisa retornar URL válida
+        const fotoSrc = resolveFotoSrc(f);
+
+        return `
+          <div class="emp-card ${inactiveClass}" data-id="${idSafe}">
             ${menu}
             ${offBadge}
-            ${photoOrFallback(f.foto)}
+            ${photoOrFallback(fotoSrc, f.nome)}
             <div>
               <div class="emp-name">${nameSafe}</div>
-              <div class="emp-role">${roleSafe} • ${escapeHTML(String(f.idade))} anos</div>
+              <div class="emp-role">${roleSafe}${f.idade ? ` • ${escapeHTML(String(f.idade))} anos` : ''}</div>
             </div>
           </div>`;
-        })
-        .join('') || `<div style="color:#9fb1c3">Nenhum funcionário encontrado.</div>`;
+      })
+      .join('')) || `<div style="color:#9fb1c3">Nenhum funcionário encontrado.</div>`;
+}
+
+
+/**
+ * ✅ CORREÇÃO 4: carregar do back e atualizar seu "espelho" (localStorage)
+ * - Mantém sua tela funcionando mesmo com busca/filtro local.
+ */
+async function carregarFuncionariosDoBack() {
+  try {
+    const data = await apiListFuncionarios(); // GET /api/funcionarios
+    setFuncionariosLS(data);                  // atualiza o "espelho"
+    renderFuncionarios();                     // redesenha os cards
+  } catch (err) {
+    console.error(err);
+    notify('Falha ao carregar funcionários do banco.', 'error');
   }
-  renderFuncionarios();
+}
 
-  function syncSearchInputs(val) {
-    try {
-      if (typeof val !== 'string') val = '';
-      if (funcSearch && funcSearch.value !== val) funcSearch.value = val;
-      if (funcSearchGestao && funcSearchGestao.value !== val)
-        funcSearchGestao.value = val;
-    } catch {}
-  }
+// Chame quando a tela abrir (ou no init)
+carregarFuncionariosDoBack();
 
-  funcSearch?.addEventListener('input', (e) => {
-    syncSearchInputs(e.target.value);
-    renderFuncionarios(e.target.value);
-  });
 
-  funcClear?.addEventListener('click', () => {
-    syncSearchInputs('');
-    renderFuncionarios('');
-  });
-
-  funcSearchBtn?.addEventListener('click', () =>
-    renderFuncionarios(funcSearch?.value || '')
-  );
-
-  funcSearchGestao?.addEventListener('input', (e) => {
-    syncSearchInputs(e.target.value);
-    renderFuncionarios(e.target.value);
-  });
-
-  funcClearGestao?.addEventListener('click', () => {
-    syncSearchInputs('');
-    renderFuncionarios('');
-  });
-
-  funcSearchGestaoBtn?.addEventListener('click', () =>
-    renderFuncionarios(funcSearchGestao?.value || '')
-  );
 
   /* ===================== MODAL FUNCIONÁRIO ===================== */
 
@@ -600,47 +684,83 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
     if (pane) pane.classList.add('active');
   });
 
-  function openFuncionario(empId) {
-    const all = getFuncionariosLS();
-    const f = all.find((x) => x.id === empId);
-    if (!f) return;
-    currentEmpId = f.id;
-    currentEmpContext = getEmpContext(); // guarda se veio de Segurança ou Gestão
+function resolveFotoSrc(f) {
+  // compatível com os 2 mundos: LS (foto base64) e API (fotoUrl)
+  const raw = (f?.foto || f?.fotoUrl || '').trim();
+  if (!raw) return '';
+  if (raw.startsWith('data:')) return raw;               // base64 (LS)
+  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw; // url completa
+  // se vier algo tipo "storage/..." (relativo), prefixa sua API:
+  return `${API_BASE}/${raw.replace(/^\/+/, '')}`;
+}
 
-    if (funcModalNome) funcModalNome.textContent = f.nome;
-    if (funcModalFuncao)
-      funcModalFuncao.textContent = `${f.funcao} • ${f.idade} anos`;
-    if (funcModalAvatar) {
-      funcModalAvatar.src = f.foto || defaultAvatarDataURL();
-      funcModalAvatar.title = 'Clique para alterar a foto';
-      funcModalAvatar.style.cursor = 'pointer';
-    }
+function openFuncionario(empId) {
+  const all = getFuncionariosLS();
 
-    document
-      .querySelectorAll('#modalFuncionario .emp-tab-btn')
-      .forEach((b) => b.classList.remove('active'));
-    document
-      .querySelectorAll('#modalFuncionario .emp-pane')
-      .forEach((p) => p.classList.remove('active'));
-    $('btnTabDocsSimples')?.classList.add('active');
-    $('paneDocsSimples')?.classList.add('active');
+  // ✅ AJUSTE: evita bug number vs string (isso fazia "não abrir")
+  const f = all.find((x) => String(x.id) === String(empId));
+  if (!f) return;
 
-    closeImpDocsMini(true);
+  currentEmpId = f.id;
+  currentEmpContext = getEmpContext();
 
-    // Explorer de arquivos
-    initFileExplorerForEmp(currentEmpId);
+  if (funcModalNome) funcModalNome.textContent = f.nome;
+  if (funcModalFuncao)
+    funcModalFuncao.textContent = `${f.funcao} • ${f.idade} anos`;
 
-    // Documentos importantes
-    renderImpDocsTable();
-
-    modalFuncionario && (modalFuncionario.style.display = 'flex');
+  if (funcModalAvatar) {
+    // ✅ AJUSTE: usa foto OU fotoUrl
+    const src = resolveFotoSrc(f);
+    funcModalAvatar.src = src || defaultAvatarDataURL();
+    funcModalAvatar.title = 'Clique para alterar a foto';
+    funcModalAvatar.style.cursor = 'pointer';
   }
+
+  if (funcCursosInput) funcCursosInput.value = f.cursos || '';
+
+  document
+    .querySelectorAll('#modalFuncionario .emp-tab-btn')
+    .forEach((b) => b.classList.remove('active'));
+  document
+    .querySelectorAll('#modalFuncionario .emp-pane')
+    .forEach((p) => p.classList.remove('active'));
+  $('btnTabDocsSimples')?.classList.add('active');
+  $('paneDocsSimples')?.classList.add('active');
+
+  closeImpDocsMini(true);
+  initFileExplorerForEmp(currentEmpId);
+  renderImpDocsTable();
+
+  modalFuncionario && (modalFuncionario.style.display = 'flex');
+}
+
 
   function closeFuncionario() {
     closeImpDocsMini(true);
     modalFuncionario && (modalFuncionario.style.display = 'none');
   }
   fecharFuncionario?.addEventListener('click', closeFuncionario);
+
+  
+  // ===================== CURSOS DO FUNCIONÁRIO =====================
+  btnSalvarCursos?.addEventListener('click', () => {
+    if (!currentEmpId) {
+      notify?.('Abra um funcionário antes de salvar cursos.', 'warn');
+      return;
+    }
+
+    const texto = (funcCursosInput?.value || '').trim();
+
+    const arr = getFuncionariosLS();
+    const idx = arr.findIndex(f => f.id === currentEmpId);
+    if (idx < 0) return;
+
+    arr[idx].cursos = texto;
+    setFuncionariosLS(arr);
+
+    notify?.('Cursos do funcionário salvos com sucesso.', 'success');
+  });
+
 
   /* ===================== MENU DE AÇÕES / FOTO ===================== */
 
@@ -756,33 +876,53 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
 
     const input = ensureHiddenPhotoInput();
     input.value = '';
+
     input.onchange = async (e) => {
-      const f = e.target.files?.[0];
-      if (!f) return;
+      const file = e.target.files?.[0];
+      if (!file) return;
+
       try {
-        const dataURL = await imageFileToDataURL(f);
+        // ✅ 1) Converte imagem -> DataURL (base64) (func já existe no seu projeto)
+        // OBS: base64 pode ficar pesado; depois eu te mostro a versão "comprimida" via canvas/webp.
+        const dataURL = await imageFileToDataURL(file);
+
+        // ✅ 2) Atualiza no LocalStorage (pra lista e modal refletirem na hora)
         const arr = getFuncionariosLS();
-        const idx = arr.findIndex((x) => x.id === empId);
-        if (idx >= 0) {
-          arr[idx].foto = dataURL;
-          try {
-            setFuncionariosLS(arr);
-          } catch (err) {
-            console.error(err);
-            return notify(
-              'Não foi possível salvar a foto (armazenamento cheio).',
-              'error'
-            );
-          }
-          renderFuncionarios(funcSearch?.value || '');
-          if (currentEmpId === empId && funcModalAvatar)
-            funcModalAvatar.src = dataURL;
-          notify('Foto atualizada.', 'success');
+        const idx = arr.findIndex((x) => String(x.id) === String(empId));
+        if (idx < 0) {
+          notify('Funcionário não encontrado.', 'warn');
+          return;
         }
-      } catch {
+
+        // ✅ 3) Padroniza: salvamos em "foto" (compatível com seu código atual)
+        // Se você quiser migrar pro back de vez: mude para "fotoUrl" depois que tiver endpoint.
+        arr[idx].foto = dataURL;
+
+        try {
+          setFuncionariosLS(arr);
+        } catch (err) {
+          console.error(err);
+          return notify(
+            'Não foi possível salvar a foto (armazenamento cheio).',
+            'error'
+          );
+        }
+
+        // ✅ 4) Re-render da lista
+        renderFuncionarios(funcSearch?.value || '');
+
+        // ✅ 5) Se o modal aberto for o mesmo funcionário, atualiza a imagem também
+        if (currentEmpId && String(currentEmpId) === String(empId) && funcModalAvatar) {
+          funcModalAvatar.src = dataURL;
+        }
+
+        notify('Foto atualizada.', 'success');
+      } catch (err) {
+        console.error(err);
         notify('Não foi possível carregar a imagem.', 'error');
       }
     };
+
     input.click();
   }
 
@@ -836,21 +976,34 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
       return;
     }
 
-    // Ações do dropdown
+  // Ações do dropdown
     if (onAction) {
-      e.stopPropagation();
-      if (ctx === 'seguranca') {
-        notify('Ativar, desativar ou excluir só é permitido na Gestão de Funcionários.', 'warn');
+        e.stopPropagation();
+        if (ctx === 'seguranca') {
+          notify('Ativar, desativar ou excluir só é permitido na Gestão de Funcionários.', 'warn');
+          return;
+        }
+        const act = onAction.getAttribute('data-action');
+        const id = onAction.getAttribute('data-id');
+
+        if (act === 'desativar') setFuncionarioAtivo(id, false);
+        if (act === 'ativar') setFuncionarioAtivo(id, true);
+        if (act === 'excluir') excluirFuncionario(id);
+
+        if (act === 'cracha') {
+          const arr = getFuncionariosLS();
+          const f = arr.find(x => String(x.id) === String(id));
+          if (!f) {
+            notify('Funcionário não encontrado para o crachá.', 'warn');
+          } else if (typeof window.openCrachaFuncionario === 'function') {
+            window.openCrachaFuncionario(f); // <── passa o objeto inteiro
+          }
+        }
+
+        closeAllEmpMenus();
         return;
-      }
-      const act = onAction.getAttribute('data-action');
-      const id = onAction.getAttribute('data-id');
-      if (act === 'desativar') setFuncionarioAtivo(id, false);
-      if (act === 'ativar') setFuncionarioAtivo(id, true);
-      if (act === 'excluir') excluirFuncionario(id);
-      closeAllEmpMenus();
-      return;
     }
+
 
     // Clique no card -> abre modal (permitido em ambos contextos)
     const card = e.target.closest('.emp-card');
@@ -1125,10 +1278,14 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
     if (!feTree) return;
 
     function renderFolder(parentId) {
+      const ctx = getEmpContext();
       const children = list
-        .filter(
-          (it) => it.type === 'folder' && (it.parentId ?? null) === parentId
-        )
+        .filter((it) => {
+          if (it.type !== 'folder' || (it.parentId ?? null) !== parentId) return false;
+          if (ctx === 'gestao') return true; // gestão vê tudo
+          // segurança vê apenas pastas de segurança ou sem contexto
+          return !it.context || it.context === 'seguranca';
+        })
         .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
       if (!children.length) return '';
       return `<ul class="fe-tree-list">
@@ -1177,10 +1334,12 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
     if (!tbody) return;
 
     const parentId = feCurrentFolderId ?? null;
-    const folders = list
-      .filter(
-        (it) => it.type === 'folder' && (it.parentId ?? null) === parentId
-      )
+    const ctx = getEmpContext();
+    const folders = list.filter((it) => {
+      if (it.type !== 'folder' || (it.parentId ?? null) !== parentId) return false;
+      if (ctx === 'gestao') return true;
+      return !it.context || it.context === 'seguranca';
+    })
       .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
     const files = list
       .filter(
@@ -1332,17 +1491,23 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
     if (!name) return;
     name = name.trim();
     if (!name) return;
+
     const parentId = feCurrentFolderId ?? null;
     const list = getEmpDocsFlat(feCurrentEmpId);
+    const ctx = getEmpContext(); // 'gestao' ou 'seguranca'
+
     list.push({
       id: uid('fd'),
       type: 'folder',
       parentId,
-      name
+      name,
+      context: ctx // <── marca quem criou
     });
+
     setEmpDocsFlat(feCurrentEmpId, list);
     feRefresh();
   });
+
 
   // Renomear
   feBtnRename?.addEventListener('click', () => {
@@ -1646,6 +1811,24 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
     }
   }
 
+
+  /*===================== PERMISSÕES DE PASTAS (SEGURANÇA DO TRABALHO) ===================== */
+  function canSeeFolder(folder) {
+  // folder.ownerRole deve ser: 1, 2 ou 3
+  // 1 = Admin | 2 = RH | 3 = Segurança do Trabalho
+
+  const tipoUsuario = Number(localStorage.getItem('tipoUsuario'));
+
+  // Segurança do Trabalho só vê o que é do próprio ST
+  if (tipoUsuario === 3) {
+    return folder.ownerRole === 3;
+  }
+
+  // Admin e RH veem tudo
+  return true;
+}
+
+
   /* ===================== ALERTAS ===================== */
 
   function updateNotifDot() {
@@ -1664,11 +1847,12 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
 
     function addAlertUnique(refKey, payload) {
       if (allAlerts.some((a) => a.refKey === refKey)) return;
+      // CERTO
       allAlerts.push({
         id: uid('al'),
         unread: true,
         createdAt: new Date().toISOString(),
-        ...payload,
+        payload,   // ✅ agora é uma propriedade válida
         refKey
       });
     }
@@ -1822,14 +2006,15 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
       return;
     }
     try {
-      const dataURL = await imageFileToDataURL(f);
+      const dataURL = await (window.imageFileToDataURL || imageFileToDataURL)(file);
       if (cadFotoPreview) cadFotoPreview.src = dataURL;
     } catch {
       notify('Não foi possível carregar a imagem.', 'error');
     }
   });
 
-  btnSalvarCadastro?.addEventListener('click', async () => {
+btnSalvarCadastro?.addEventListener('click', async () => {
+  try {
     const nome = (cadNome?.value || '').trim();
     const funcao = (cadFuncao?.value || '').trim();
     if (!nome || !funcao)
@@ -1837,34 +2022,92 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
 
     const rg = (cadRG?.value || '').trim();
     const cpf = (cadCPF?.value || '').trim();
-    const idade =
-      parseInt((cadIdade?.value || '0').trim(), 10) || 0;
+
+    // ✅ NOVO: ler email e celular
+    const email = (cadEmail?.value || '').trim() || null;
+    const celular = (cadCell?.value || '').trim() || null;
+
+
+    const idade = parseInt((cadIdade?.value || '0').trim(), 10) || 0;
     const cargo = cadCargo ? (cadCargo.value || '').trim() : funcao;
+
     const salario =
-      parseFloat(String(cadSalario?.value || '0').replace(',', '.')) ||
-      0;
+      parseFloat(String(cadSalario?.value || '0').replace(',', '.')) || 0;
 
     const optVR = !!cadOptVR?.checked;
     const optVT = !!cadOptVT?.checked;
 
-    const vtUnitV = parseFloat(
-      String(cadVtUnit?.value || '').replace(',', '.')
-    );
-    const vrDailyV = parseFloat(
-      String(cadVrDaily?.value || '').replace(',', '.')
-    );
+    const vtUnitV = parseFloat(String(cadVtUnit?.value || '').replace(',', '.'));
+    const vrDailyV = parseFloat(String(cadVrDaily?.value || '').replace(',', '.'));
 
-    let foto = '';
-    if (cadFoto?.files?.[0]) {
-      try {
-        foto = await imageFileToDataURL(cadFoto.files[0]);
-      } catch {}
+    // ------------------------------------------------------
+    // ✅ AJUSTE: prepara payload para o BACK (JSON)
+    // Observação: o back precisa ter campos compatíveis com esses nomes (camelCase).
+    // ------------------------------------------------------
+    const tipoContrato =
+      cadTipoContratoCLT?.checked ? 1 :
+      cadTipoContratoPJ?.checked  ? 2 : 0;
+
+    // Date input: "YYYY-MM-DD" -> mandamos com hora (combina com DATETIME2(0))
+    const dataAdmissao = cadAdmissao?.value ? `${cadAdmissao.value}T00:00:00` : null;
+
+    const cpfDigits = cpf.replace(/\D/g, '');
+    const cellDigits = celular ? celular.replace(/\D/g, '') : null;
+
+    const payload = {
+      nome,
+      funcao,                 // se no back estiver "funcao" ok, senão ajuste p/ "cargoFuncao" etc.
+      rg,
+      email,     // ✅ NOVO
+      celular: cellDigits,   // ✅ NOVO
+      cpf: cpfDigits,
+      idade,
+      cargo,
+      salario,
+      recebeVr: optVR,        // ✅ AJUSTE: nomes mais “domínio” (em vez de optVR)
+      recebeVt: optVT,        // ✅ AJUSTE
+      tarifaVt: Number.isFinite(vtUnitV) ? vtUnitV : null,
+      valorDiarioVr: Number.isFinite(vrDailyV) ? vrDailyV : null,
+      tipoContrato,
+      fotoUrl: null,
+      dataAdmissao
+    };
+
+    // ------------------------------------------------------
+    // ✅ AJUSTE: cria no BACK e pega o ID real (int identity)
+    // Antes: id = 'fid_' + Date.now()
+    // Agora: id vem do banco (created.id)
+    // ------------------------------------------------------
+    const created = await apiCreateFuncionario(payload);
+    const id = created.id;
+
+    // ------------------------------------------------------
+    // ✅ (2B) FOTO: envia pro BACK e recebe uma FotoUrl leve
+    // (Em vez de salvar Base64 no localStorage)
+    // ------------------------------------------------------
+  let fotoUrl = null;
+
+  if (cadFoto?.files?.[0]) {
+    try {
+      const resp = await apiUploadFoto(id, cadFoto.files[0]);
+
+      // ✅ fotoUrl deve ser algo que o navegador consiga abrir
+      // ex: "/api/funcionarios/18/foto" ou "http://localhost:5253/api/funcionarios/18/foto"
+      fotoUrl = resp.fotoUrl || null;
+
+    } catch (err) {
+      console.error(err);
+      notify('Funcionário salvo, mas falhou ao enviar foto.', 'warn');
     }
+  }
 
+    // ------------------------------------------------------
+    // ✅ AJUSTE: agora o localStorage vira “espelho” temporário
+    // (você pode remover depois e passar a listar do back)
+    // ------------------------------------------------------
     const arr = getFuncionariosLS();
-    const id = 'fid_' + Date.now();
     arr.push({
-      id,
+      id,           // ✅ ID NUMÉRICO DO BANCO
       nome,
       funcao,
       rg,
@@ -1874,7 +2117,7 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
       salario,
       optVR,
       optVT,
-      foto,
+      fotoUrl,
       ativo: true
     });
 
@@ -1888,6 +2131,9 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
       );
     }
 
+    // ------------------------------------------------------
+    // Mantém seus mapas de VT/VR com o ID novo
+    // ------------------------------------------------------
     try {
       const vrMap = getVRMap();
       vrMap[id] = Object.assign(
@@ -1906,52 +2152,58 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
       setVTMap(vtMap);
     } catch {}
 
-    // documento anexo inicial (opcional)
+    // ------------------------------------------------------
+    // ✅ AJUSTE: documento anexo inicial vai para o BACK (multipart/form-data)
+    // Antes: virava DataURL e ia para o localStorage
+    // Agora: sobe pro endpoint /api/funcionarios/{id}/documentos
+    // ------------------------------------------------------
     if (cadDocumento?.files?.[0]) {
       try {
         const file = cadDocumento.files[0];
-        const dataURL = await fileToDataURL(file);
-        const imp = getImpDocsMap();
-        imp[id] = imp[id] || [];
-        imp[id].push({
-          id: uid('doc'),
-          name: file.name,
-          type: 'Outros',
-          issue: '',
-          due: '',
-          uploadedAt: new Date().toISOString(),
-          size: file.size || 0,
-          dataURL,
-          subscribed: false
-        });
-        setImpDocsMap(imp);
-      } catch {}
+        await apiUploadDocumento(id, file, null);
+      } catch (err) {
+        console.error(err);
+        notify('Funcionário salvo, mas falhou ao enviar documento.', 'warn');
+      }
     }
 
     notify('Funcionário cadastrado!', 'success');
 
+    // Limpa campos
     [
       cadNome,
-      cadFuncao,
-      cadRG,
-      cadCPF,
-      cadIdade,
-      cadCargo,
-      cadSalario,
-      cadAdmissao,
-      cadVtUnit,
-      cadVrDaily
+        cadFuncao,
+        cadRG,
+        cadCPF,
+        cadEmail,   // ✅ add
+        cadCell,    // ✅ add
+        cadIdade,
+        cadCargo,
+        cadSalario,
+        cadAdmissao,
+        cadVtUnit,
+        cadVrDaily
     ].forEach((el) => el && (el.value = ''));
+
     if (cadDocumento) cadDocumento.value = '';
     if (cadFoto) cadFoto.value = '';
     if (cadFotoPreview) cadFotoPreview.src = '';
     if (cadOptVR) cadOptVR.checked = false;
     if (cadOptVT) cadOptVT.checked = false;
 
+    // limpa seleção de tipo de contrato
+    if (cadTipoContratoCLT) cadTipoContratoCLT.checked = false;
+    if (cadTipoContratoPJ)  cadTipoContratoPJ.checked  = false;
+
     renderFuncionarios(funcSearchGestao ? funcSearchGestao.value : '');
     renderVT();
     renderVR();
-  });
+  } catch (err) {
+    console.error(err);
+    notify(err.message || 'Falha ao cadastrar funcionário no servidor.', 'error');
+  }
+});
+
 
   btnLimparCadastro?.addEventListener('click', () => {
     [
@@ -1972,4 +2224,13 @@ function applyMaskedWithCaret(inputEl, maskedValue, digitsBeforeCaret) {
     if (cadOptVR) cadOptVR.checked = false;
     if (cadOptVT) cadOptVT.checked = false;
   });
+
+
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
 })();

@@ -1,0 +1,44 @@
+CREATE TABLE dbo.funcionario (
+    id                 INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    lociid             INT NOT NULL CONSTRAINT DF_funcionario_lociid DEFAULT (1),
+
+    ativo              BIT NOT NULL CONSTRAINT DF_funcionario_ativo DEFAULT (1),
+    criacao            DATETIME2(0) NOT NULL CONSTRAINT DF_funcionario_criacao DEFAULT (SYSDATETIME()),
+    alteracao          DATETIME2(0) NULL,
+
+    datassincronizacao DATETIME2(0) NULL,
+    datainterface      DATETIME2(0) NULL,
+
+    usuariocriacaoid   INT NOT NULL,   -- quem criou
+    usuarioid          INT NULL,       -- quem alterou por último
+
+    nome               VARCHAR(120) NOT NULL,
+    cpf                VARCHAR(11)  NOT NULL,
+    rg                 VARCHAR(20)  NULL,
+    email              VARCHAR(180) NULL,
+    celular            VARCHAR(20)  NULL,
+
+    funcao             VARCHAR(120) NULL,
+    idade              INT NULL,
+    dataadmissao       DATE NULL,
+
+    salario            DECIMAL(18,2) NULL,
+    tarifa_vt          DECIMAL(18,2) NULL,
+    valor_diario_vr    DECIMAL(18,2) NULL,
+
+    recebe_vt          BIT NOT NULL CONSTRAINT DF_funcionario_recebe_vt DEFAULT (0),
+    recebe_vr          BIT NOT NULL CONSTRAINT DF_funcionario_recebe_vr DEFAULT (0),
+
+    tipo_contrato      TINYINT NOT NULL,  -- 1=CLT, 2=PJ
+    foto_url           VARCHAR(300) NULL
+);
+
+ALTER TABLE dbo.funcionario
+ADD CONSTRAINT FK_funcionario_usuario_criacao
+FOREIGN KEY (usuariocriacaoid) REFERENCES dbo.usuario(Id);
+
+ALTER TABLE dbo.funcionario
+ADD CONSTRAINT FK_funcionario_usuario_alteracao
+FOREIGN KEY (usuarioid) REFERENCES dbo.usuario(Id);
+
+CREATE UNIQUE INDEX UX_funcionario_cpf ON dbo.funcionario(cpf);

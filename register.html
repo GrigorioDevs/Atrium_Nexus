@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cadastro de Usuário</title>
+
+<title>Atrium Nexus - Cadastro</title>
+
+<!-- Icon title -->
+<link rel="icon" href="assets/img/logo_atrium.png" type="image/x-icon">
+
 <!-- Fonte Roboto (mesma do home) -->
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -96,6 +101,14 @@ html,body{height:100%;width:100%;background:var(--bg);display:flex;justify-conte
 </div>
 
 <script>
+// Base da API (mesma da tela de login)
+const API_BASE = "http://localhost:5253";
+
+// Helper para deixar só dígitos (cpf, telefone)
+function onlyDigits(v){
+  return String(v || "").replace(/\D/g, "");
+}
+
 /* CPF (máscara simples) */
 document.addEventListener('DOMContentLoaded', function() {
   const cpfInput = document.getElementById('cpf');
@@ -108,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
         .replace(/\.(\d{3})(\d{1,2})$/, '.$1-$2');
       e.target.value = value;
+
       // feedback visual simples
       if (value.length === 14) {
         cpfInput.style.border = '1px solid #10b981';
@@ -120,57 +134,93 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-/* Cadastro com API (mantido) */
+/* Cadastro de usuário via API */
 document.getElementById('formCadastro').addEventListener('submit', async function(e){
   e.preventDefault();
-  const login = document.getElementById('login').value;
-  const email = document.getElementById('email').value;
-  const telefone = document.getElementById('telefone').value;
-  const senha = document.getElementById('senha').value;
-  const senhaConfirma = document.getElementById('senhaConfirma').value;
 
-  if(senha !== senhaConfirma){
+  const loginField  = document.getElementById('login').value.trim();
+  const email       = document.getElementById('email').value.trim();
+  const cpfRaw      = document.getElementById('cpf').value;
+  const telefoneRaw = document.getElementById('telefone').value;
+  const senha       = document.getElementById('senha').value;
+  const senhaConf   = document.getElementById('senhaConfirma').value;
+
+  // Nome e Login: por enquanto usamos o mesmo valor do campo "Nome Login"
+  const nome  = loginField;
+  const login = loginField;
+
+  // Limpa CPF e telefone para só dígitos
+  const cpf      = onlyDigits(cpfRaw);
+  const telefone = onlyDigits(telefoneRaw);
+
+  // Validações básicas
+  if (!nome || !login || !email || !cpf || !telefone || !senha || !senhaConf) {
+    alert("Preencha todos os campos.");
+    return;
+  }
+
+  if (senha !== senhaConf) {
     alert("As senhas não coincidem!");
     return;
   }
+
+  // 1 Admin, 2 Gestão, 3 ST, 4 Funcionário
+  const typeUser = 4; // fixo por enquanto
+
+  // Monta o body exatamente como o UsuarioCadastroDto espera
+  const body = {
+    nome,
+    login,
+    email,
+    cpf,
+    telefone,
+    senha,
+    confirmarSenha: senhaConf,
+    typeUser
+  };
 
   try {
-    const response = await fetch("http://localhost:5127/api/usuario/cadastrar", {
+    // Aqui eu assumo que você vai criar um endpoint POST /api/usuarios
+    const response = await fetch(`${API_BASE}/api/usuarios`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ login, email, senha })
+      body: JSON.stringify(body)
     });
-    const result = await response.json();
-    alert(result.mensagem);
-    if(result.status === "novo"){
+
+    if (response.ok) {
+      let resultado = null;
+      try {
+        resultado = await response.json();
+      } catch {
+        // se não vier JSON, beleza, só segue
+      }
+
+      alert(resultado?.message || "Usuário cadastrado com sucesso!");
       this.reset();
+      // se quiser, depois redireciona pra tela de login:
+      // window.location.href = "index.html";
+      return;
     }
+
+    if (response.status === 400) {
+      const erro = await response.json().catch(() => null);
+      alert(erro?.message || "Dados inválidos. Verifique as informações e tente novamente.");
+      return;
+    }
+
+    if (response.status === 409) {
+      const erro = await response.json().catch(() => null);
+      alert(erro?.message || "Já existe um usuário com esse login ou CPF.");
+      return;
+    }
+
+    alert("Erro no servidor ao cadastrar usuário. Tente novamente.");
   } catch (error) {
-    alert("Erro ao conectar com o servidor.");
+    alert("Erro ao conectar com o servidor: " + error.message);
   }
-});
-
-/* Cadastro local (mantido) */
-document.getElementById('formCadastro').addEventListener('submit', function(e){
-  e.preventDefault();
-  const nome = document.getElementById('login').value;
-  const email = document.getElementById('email').value;
-  const telefone = document.getElementById('telefone').value;
-  const senha = document.getElementById('senha').value;
-  const senhaConfirma = document.getElementById('senhaConfirma').value;
-
-  if(senha !== senhaConfirma){
-    alert("As senhas não coincidem!");
-    return;
-  }
-
-  const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-  usuarios.push({nome,email,senha});
-  localStorage.setItem('usuarios', JSON.stringify(usuarios));
-
-  alert("Usuário cadastrado com sucesso!");
-  this.reset();
 });
 </script>
+
+
 </body>
 </html>

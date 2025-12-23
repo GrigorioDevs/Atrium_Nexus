@@ -2,9 +2,13 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8"/>
+
+  <!-- Icon title -->
+  <link rel="icon" href="assets/img/logo_atrium.png" type="image/x-icon">
+
   <!-- Viewport corrigido: reduz leve zoom inicial e corrige atributo maximum-scale -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>RCR Engenharia — RH</title>
+  <title>Atrium Nexus</title>
 
   <!-- Ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -24,10 +28,9 @@
     }
   </script>
 
-    <!-- Libs front-only -->
+  <!-- Libs front-only -->
   <script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
 
   <!-- Signature Pad -->
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
@@ -59,6 +62,7 @@
   <link rel="stylesheet" href="assets/css/30-modulos/ponto-justificativa.css">
   <link rel="stylesheet" href="Assets/css/30-modulos/assinatura-clicksign.css">
   <link rel="stylesheet" href="assets/css/30-modulos/usuarios.css">
+  <link rel="stylesheet" href="assets/css/30-modulos/cracha.css">
 
   <!-- Outros -->
   <link rel="stylesheet" href="assets/css/40-integracoes.css">
@@ -71,7 +75,7 @@
   <!-- Splash -->
   <div id="splash">
     <div class="splash-card">
-      <img class="splash-logo" src="Assets/img/logo_new.png" alt="RCR" onerror="this.style.display='none'">
+      <img class="splash-logo" src="Assets/img/logo_rcr_transparente.png" alt="RCR" onerror="this.style.display='none'">
       <div class="splash-title">RCR Engenharia</div>
     </div>
   </div>
@@ -87,15 +91,13 @@
     <!-- Sidebar -->
     <aside id="sidebar" aria-label="Menu lateral">
       <div class="brand">
-        <img class="brand-logo" src="assets/img/logo_new.png" alt="RCR" onerror="this.remove()">
-        <strong>RCR Engenharia</strong>
+        <img class="brand-logo" src="assets/img/icone_rcr.png" alt="RCR" onerror="this.remove()">
+        <strong class="spand">RCR Engenharia</strong>
       </div>
-
       <div class="user-card" aria-live="polite">
         <div class="name" id="uNome">Colaborador(a)</div>
         <div class="role" id="uFuncao">Função</div>
       </div>
-
       <ul class="menu" id="menu">
         <!-- Cartão de Ponto com SUBMENU -->
         <li class="has-submenu menu-ponto-root" aria-haspopup="true" aria-expanded="false">
@@ -107,62 +109,84 @@
             <li data-tab="tabPonto" aria-controls="tabPonto" role="menuitem" class="active">
               <i class="fa-regular fa-calendar-days" aria-hidden="true"></i> Cartão de Ponto
             </li>
-            <li data-tab="tabPontoJust" aria-controls="tabPontoJust" role="menuitem">
+            <li data-tab="tabPontoJust" aria-controls="tabPontoJust" role="menuitem" data-roles="1,2">
               <i class="fa-regular fa-clipboard" aria-hidden="true"></i> Pontos Justificados
             </li>
           </ul>
         </li>
-
         <!-- Item normal: Incluir Ponto -->
-        <li data-tab="tabIncluir" aria-controls="tabIncluir">
+        <li data-tab="tabIncluir"
+            aria-controls="tabIncluir"
+            data-roles="1,2,3,4">
           <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Incluir Ponto
         </li>
-
         <!-- ✅ Somente Admin verá (JS controla) -->
-        <li data-tab="tabCadastroUsuario" aria-controls="tabCadastroUsuario" class="only-admin">
+        <li data-tab="tabCadastroUsuario"
+            aria-controls="tabCadastroUsuario"
+            data-roles="1">
           <i class="fa-solid fa-user-plus" aria-hidden="true"></i> Cadastrar Usuário
         </li>
-
         <!-- Item normal: Documentos & Assinaturas -->
-        <li data-tab="tabDocs" aria-controls="tabDocs">
+        <li data-tab="tabDocs"
+            aria-controls="tabDocs"
+            data-roles="1,2">
           <i class="fa-regular fa-file-lines" aria-hidden="true"></i> Documentos & Assinaturas
         </li>
-
         <!-- Funcionários com SUBMENU (igual já estava) -->
-        <li class="has-submenu menu-func-root" aria-haspopup="true" aria-expanded="false">
-          <div class="row-head">
-            <i class="fa-solid fa-users" aria-hidden="true"></i> Funcionários
-            <i class="fa-solid fa-caret-down caret" aria-hidden="true"></i>
-          </div>
-          <ul class="submenu" id="submenuFuncionarios" role="menu">
-            <li data-tab="tabFuncGestao" aria-controls="tabFuncGestao" role="menuitem">
-              <i class="fa-solid fa-clipboard-user" aria-hidden="true"></i> Gestão de Funcionários
-            </li>
-            <li data-tab="tabFuncionarios" aria-controls="tabFuncionarios" role="menuitem">
-              <i class="fa-solid fa-helmet-safety" aria-hidden="true"></i> Segurança do trabalho
-            </li>
-          </ul>
+      <li class="has-submenu menu-func-root"
+          aria-haspopup="true"
+          aria-expanded="false"
+          data-roles="1,2,3">
+        <div class="row-head">
+          <i class="fa-solid fa-users" aria-hidden="true"></i> Funcionários
+          <i class="fa-solid fa-caret-down caret" aria-hidden="true"></i>
+        </div>
+        <ul class="submenu" id="submenuFuncionarios" role="menu">
+          <!-- Gestão de Funcionários: Admin (1) e Gestão (2) -->
+          <li data-tab="tabFuncGestao"
+              aria-controls="tabFuncGestao"
+              role="menuitem"
+              data-roles="1,2">
+            <i class="fa-solid fa-clipboard-user" aria-hidden="true"></i>
+            Gestão de Funcionários
+          </li>
+          <!-- Segurança do Trabalho: Admin (1), Gestão (2) e ST (3) -->
+          <li data-tab="tabFuncionarios"
+              aria-controls="tabFuncionarios"
+              role="menuitem"
+              data-roles="1,2,3">
+            <i class="fa-solid fa-helmet-safety" aria-hidden="true"></i>
+            Segurança do trabalho
+          </li>
+        </ul>
+      </li>
+    <!-- Benefícios (submenu) -->
+    <li class="has-submenu menu-benef-root"
+        aria-haspopup="true"
+        aria-expanded="false"
+        data-roles="1,2">
+      <div class="row-head">
+        <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i> Benefícios
+        <i class="fa-solid fa-caret-down caret" aria-hidden="true"></i>
+      </div>
+      <ul class="submenu" id="submenuBeneficios" role="menu">
+        <!-- Vale Transporte: Admin (1) e Gestão (2) -->
+        <li data-tab="tabVT"
+            aria-controls="tabVT"
+            role="menuitem"
+            data-roles="1,2">
+          <i class="fa-solid fa-bus" aria-hidden="true"></i> Vale Transporte
         </li>
-
-        <!-- Benefícios (submenu) -->
-        <li class="has-submenu menu-benef-root" aria-haspopup="true" aria-expanded="false">
-          <div class="row-head">
-            <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i> Benefícios
-            <i class="fa-solid fa-caret-down caret" aria-hidden="true"></i>
-          </div>
-          <ul class="submenu" id="submenuBeneficios" role="menu">
-            <li data-tab="tabVT" aria-controls="tabVT" role="menuitem">
-              <i class="fa-solid fa-bus" aria-hidden="true"></i> Vale Transporte
-            </li>
-            <li data-tab="tabVR" aria-controls="tabVR" role="menuitem">
-              <i class="fa-solid fa-utensils" aria-hidden="true"></i> Vale Refeição
-            </li>
-          </ul>
+        <!-- Vale Refeição: Admin (1) e Gestão (2) -->
+        <li data-tab="tabVR"
+            aria-controls="tabVR"
+            role="menuitem"
+            data-roles="1,2">
+          <i class="fa-solid fa-utensils" aria-hidden="true"></i> Vale Refeição
         </li>
-
       </ul>
-
-
+    </li>
+    </ul>
       <div class="sidebar-mobile-footer">
         <button class="btn btn-light" id="btnCloseSidebar" type="button">
           <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Voltar
@@ -170,21 +194,77 @@
       </div>
     </aside>
 
-    <!-- Main -->
-    <main>
-      <div class="topbar">
-        <div class="hello">Olá, <span id="helloNome">Colaborador(a)</span></div>
-        <div class="right">
-          <span class="badge">
-            <i class="fa-regular fa-clock" aria-hidden="true"></i>
-            <span id="nowClock">--:--:--</span>
+  <!-- Main -->
+  <main>
+    <div class="topbar">
+      <div class="hello">
+        Olá, <span id="helloNome">Colaborador(a)</span>
+      </div>
+
+      <div class="right">
+        <!-- Relógio -->
+        <span class="badge">
+          <i class="fa-regular fa-clock" aria-hidden="true"></i>
+          <span id="nowClock">--:--:--</span>
+        </span>
+
+        <!-- Botão de alertas -->
+        <button class="btn btn-light icon-btn"
+                id="btnAlerts"
+                title="Lembretes"
+                aria-haspopup="dialog">
+          <i class="fa-regular fa-bell" aria-hidden="true"></i>
+          <span class="notif-dot" id="notifDot" hidden></span>
+        </button>
+
+        <!-- BOTÃO DO USUÁRIO (abre o dropdown) -->
+        <button class="user-chip"
+                id="btnUserMenu"
+                type="button"
+                aria-haspopup="true"
+                aria-expanded="false">
+          <span class="user-chip-initials" id="topUserInitials">
+            <!-- ícone default de usuário; se quiser, o JS pode trocar por iniciais -->
+            <i class="fa-regular fa-user" aria-hidden="true"></i>
           </span>
-          <button class="btn btn-light icon-btn" id="btnAlerts" title="Lembretes" aria-haspopup="dialog">
-            <i class="fa-regular fa-bell" aria-hidden="true"></i>
-            <span class="notif-dot" id="notifDot" hidden></span>
+        </button>
+
+        <!-- DROPDOWN DO USUÁRIO -->
+        <div class="user-menu"
+            id="userMenu"
+            aria-hidden="true">
+          <div class="user-menu-header">
+            <!-- Avatar do usuário com borda em degradê (clicável p/ trocar foto) -->
+            <button class="user-menu-avatar"
+                    id="userMenuAvatar"
+                    type="button"
+                    title="Alterar foto">
+              <i class="fa-regular fa-user" aria-hidden="true"></i>
+            </button>
+
+            <!-- Input escondido para upload da foto -->
+            <input type="file"
+                  id="userMenuAvatarInput"
+                  accept="image/*"
+                  hidden>
+
+            <div class="user-menu-texts">
+              <div class="user-menu-name" id="userMenuName">Usuário</div>
+              <div class="user-menu-email" id="userMenuEmail">email@rcr.com.br</div>
+            </div>
+          </div>
+
+          <div class="user-menu-divider"></div>
+
+          <!-- ÚNICA AÇÃO: SAIR -->
+          <button class="user-menu-item logout" id="btnUserLogout" type="button">
+            <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+            <span>Sair</span>
           </button>
         </div>
       </div>
+    </div>
+
 
     <!-- Cartão de Ponto -->
     <section id="tabPonto" class="tab active" role="region" aria-labelledby="hdrPonto">
@@ -316,8 +396,8 @@
       </div>
     </section>
 
-                  <!-- Incluir Ponto -->
-                  <section id="tabIncluir" class="tab" role="region" aria-labelledby="hdrIncluir">
+     <!-- Incluir Ponto -->
+    <section id="tabIncluir" class="tab" role="region" aria-labelledby="hdrIncluir">
                     <div class="card">
                       <div class="card-header" id="hdrIncluir">Incluir Ponto (geolocalização)</div>
 
@@ -365,7 +445,7 @@
                         </small>
                       </div>
                     </div>
-                  </section>
+    </section>
 
                   <!-- ===================== MODAL: AJUSTAR PONTO ===================== -->
                   <div class="modal" id="modalAjustarPonto" style="display:none;">
@@ -498,597 +578,674 @@
                     </div>
                   </div>
 
-      <!-- ===================== CADASTRAR USUÁRIO (ADMIN) ===================== -->
-      <section id="tabCadastroUsuario" class="tab only-admin" role="region" aria-labelledby="hdrCadastroUsuario">
-        <div class="card">
-          <div class="card-header" id="hdrCadastroUsuario">Cadastrar Usuário</div>
+    <!-- ===================== CADASTRAR USUÁRIO (ADMIN) ===================== -->
+    <section id="tabCadastroUsuario" class="tab only-admin" role="region" aria-labelledby="hdrCadastroUsuario">
+              <div class="card">
+                <div class="card-header" id="hdrCadastroUsuario">Cadastrar Usuário</div>
 
-          <div class="card-body">
-            <div class="user-form-grid">
+                <div class="card-body">
+                  <div class="user-form-grid">
 
-              <div class="col">
-                <label for="usrLogin">Nome Login</label>
-                <input id="usrLogin" type="text" class="input-dark" placeholder="Seu nome de usuário" autocomplete="username">
-              </div>
-
-              <div class="col">
-                <label for="usrEmail">Email</label>
-                <input id="usrEmail" type="email" class="input-dark" placeholder="voce@empresa.com" autocomplete="email">
-              </div>
-
-              <div class="col">
-                <label for="usrCPF">CPF</label>
-                <input id="usrCPF" type="text" class="input-dark" placeholder="000.000.000-00" inputmode="numeric" autocomplete="off">
-                <small class="tiny muted">CPF será salvo no banco <b>sem formatação</b>.</small>
-              </div>
-
-              <div class="col">
-                <label for="usrTelefone">Telefone</label>
-                <input id="usrTelefone" type="text" class="input-dark" placeholder="(11) 90000-0000" inputmode="tel" autocomplete="tel">
-                <small class="tiny muted">Telefone será salvo no banco <b>sem formatação</b>.</small>
-              </div>
-
-              <div class="col">
-                <label for="usrSenha">Senha</label>
-                <input id="usrSenha" type="password" class="input-dark" placeholder="Crie uma senha" autocomplete="new-password">
-              </div>
-
-              <div class="col">
-                <label for="usrSenha2">Confirmar Senha</label>
-                <input id="usrSenha2" type="password" class="input-dark" placeholder="Repita a senha" autocomplete="new-password">
-              </div>
-
-              <div class="col" style="grid-column:1/-1;">
-                <label for="usrPerfil">Perfil de acesso</label>
-                <select id="usrPerfil" class="select-dark">
-                  <option value="1">Admin</option>
-                  <option value="2">User Gestão</option>
-                  <option value="3">User ST</option>
-                  <option value="4">User Funcionário</option>
-                </select>
-              </div>
-
-            </div>
-
-            <div class="inline-row user-form-actions">
-              <button class="btn btn-light" id="btnUsrLimpar" type="button">
-                <i class="fa-solid fa-eraser" aria-hidden="true"></i> Limpar
-              </button>
-
-              <button class="btn btn-primary" id="btnUsrSalvar" type="button">
-                <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i> Cadastrar Usuário
-              </button>
-            </div>
-
-            <div id="usrStatus" class="filehint" style="margin-top:12px;">
-              Preencha os dados e clique em “Cadastrar Usuário”.
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-     <!-- Documentos & Assinaturas -->
-     <section id="tabDocs" class="tab" role="region" aria-labelledby="hdrDocs">
-      <div class="card" style="height:100%;min-height:580px">
-        <div class="card-header" id="hdrDocs">Documentos &amp; Assinaturas</div>
-
-        <div class="card-body docs-card-body" style="padding:0;height:calc(100% - 48px)">
-
-          <!-- ================== SUB-ABAS DE DOCUMENTOS ================== -->
-          <div class="docs-tabs" role="tablist" aria-label="Documentos">
-            <button
-              type="button"
-              class="btn btn-light docs-tab-btn active"
-              data-target="#paneDocsGerar"
-            >
-              <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
-              Gerar documentos
-            </button>
-
-            <button
-              type="button"
-              class="btn btn-light docs-tab-btn"
-              data-target="#paneDocsAssinar"
-            >
-              <i class="fa-solid fa-signature" aria-hidden="true"></i>
-              Assinar documentos (Clicksign)
-            </button>
-          </div>
-
-          <!-- ================== PANE 1: GERAR DOCUMENTOS (SEU FLUXO ATUAL) ================== -->
-          <div class="docs-pane active" id="paneDocsGerar" role="tabpanel" aria-label="Gerar documentos">
-            <!-- ================== Documentos & Assinaturas: HERO ================== -->
-            <div id="docs-sign-root" class="docs-shell">
-              <div class="docs-hero">
-                <!-- Botão "Templates" (abre o gerenciador de templates) -->
-                <button id="btn-templates" type="button" class="btn secondary">Templates</button>
-                <!-- Botão Gerar documento -->
-                <section class="docs-cta-card" role="region" aria-labelledby="docs-cta-title">
-                  <h2 id="docs-cta-title" class="sr-only">Documentos &amp; Assinaturas</h2>
-                  <button id="btn-open" type="button" class="btn_doc">Gerar documento</button>
-                </section>
-              </div>
-
-              <footer class="docs-footer">
-                © Atrium • <span class="grad">2025</span>
-              </footer>
-
-              <!-- MODAL WIZARD GERAR DOCUMENTO (resizável) -->
-              <div id="wizard" class="backdrop" role="dialog" aria-modal="true" aria-hidden="true">
-                <div class="modal" id="wizardModal">
-                  <div class="modal-h">Geração de documentos</div>
-                  <div class="modal-b">
-                    <!-- STEP 1 -->
-                    <div id="step1" class="grid grid-2">
-                      <div>
-                        <label for="template">Selecione o template</label>
-                        <select id="template" class="select-dark"></select>
-                        <small class="tiny">Crie/edite templates no botão “Templates”.</small>
-                      </div>
-
-                      <div>
-                        <label>Vincular funcionário?</label>
-                        <div class="radio-inline">
-                          <label><input type="radio" name="vinc" value="sim" checked> Sim</label>
-                          <label><input type="radio" name="vinc" value="nao"> Não</label>
-                        </div>
-                      </div>
-
-                      <div id="func-wrap">
-                        <label for="func">Escolha o funcionário</label>
-                        <select id="func" class="select-dark"></select>
-                      </div>
-
-                      <div class="panel" style="grid-column:1/-1">
-                        <small class="muted">
-                          Variáveis:
-                          <code>{nome}</code>, <code>{cpf}</code>, <code>{endereco.cidade}</code>,
-                          <code>{salario|money}</code>, <code>{admissao|date}</code>,
-                          <code>{nome|upper}</code>, <code>{hoje}</code>.
-                        </small>
-                      </div>
+                    <div class="col">
+                      <label for="usrLogin">Nome Login</label>
+                      <input id="usrLogin" type="text" class="input-dark" placeholder="Seu nome de usuário" autocomplete="username">
                     </div>
 
-                    <!-- STEP 2 -->
-                    <div id="step2" style="display:none;">
-                      <div class="cols">
-                        <div class="panel">
-                          <h4>Variáveis detectadas</h4>
-                          <div id="vars"></div>
-                          <hr style="border-color:rgba(255,255,255,.08);margin:10px 0">
-                          <label class="radio-inline" style="gap:8px;">
-                            <input type="checkbox" id="chk-preview" checked> Pré-visualizar com dados do funcionário
-                          </label>
-                          <div class="panel" style="margin-top:10px;">
-                            <small class="muted">
-                              Clique em uma variável para inserir no cursor do editor.
-                            </small>
-                          </div>
+                    <div class="col">
+                      <label for="usrEmail">Email</label>
+                      <input id="usrEmail" type="email" class="input-dark" placeholder="voce@empresa.com" autocomplete="email">
+                    </div>
 
-                          <!-- ======= Configurações de Layout ======= -->
-                          <div class="panel" style="margin-top:12px;">
-                            <h4>Configurações de layout</h4>
-                            <div class="grid">
-                              <div>
-                                <label for="ly-font-family">Fonte</label>
-                                <select id="ly-font-family" class="select-dark">
-                                  <option value="Arial, Helvetica, sans-serif">Arial / Helvetica</option>
-                                  <option value="Times New Roman, Times, serif">Times New Roman</option>
-                                  <option value="Calibri, Arial, Helvetica, sans-serif">Calibri</option>
-                                  <option value="Cambria, Georgia, 'Times New Roman', Times, serif">Cambria</option>
-                                  <option value="Roboto, Arial, Helvetica, sans-serif">Roboto</option>
-                                </select>
-                              </div>
-                              <div>
-                                <label for="ly-font-size">Tamanho base da fonte (px)</label>
-                                <input id="ly-font-size" type="number" class="input-dark" min="8" max="20" step="1" />
-                              </div>
-                              <div>
-                                <label for="ly-line-height">Altura de linha</label>
-                                <input id="ly-line-height" type="number" class="input-dark" min="1" max="2" step="0.05" />
-                              </div>
-                              <div>
-                                <label for="ly-p-spacing">Espaço entre parágrafos (px)</label>
-                                <input id="ly-p-spacing" type="number" class="input-dark" min="0" max="40" step="1" />
-                              </div>
+                    <div class="col">
+                      <label for="usrCPF">CPF</label>
+                      <input id="usrCPF" type="text" class="input-dark" placeholder="000.000.000-00" inputmode="numeric" autocomplete="off">
+                      <small class="tiny muted">CPF será<b> Validado</b>.</small>
+                    </div>
 
-                              <div>
-                                <label for="ly-h1">Tamanho H1 (x da base)</label>
-                                <input id="ly-h1" type="number" class="input-dark" min="1.0" max="3" step="0.05" />
-                              </div>
-                              <div>
-                                <label for="ly-h2">Tamanho H2 (x da base)</label>
-                                <input id="ly-h2" type="number" class="input-dark" min="1.0" max="3" step="0.05" />
-                              </div>
-                              <div>
-                                <label for="ly-h3">Tamanho H3 (x da base)</label>
-                                <input id="ly-h3" type="number" class="input-dark" min="1.0" max="3" step="0.05" />
-                              </div>
+                    <div class="col">
+                      <label for="usrTelefone">Telefone</label>
+                      <input id="usrTelefone" type="text" class="input-dark" placeholder="(11) 90000-0000" inputmode="tel" autocomplete="tel">
+                      <small class="tiny muted">Telefone será<b> Validado</b>.</small>
+                    </div>
 
-                              <div>
-                                <label for="ly-page-format">Formato da página</label>
-                                <select id="ly-page-format" class="select-dark">
-                                  <option value="a4">A4</option>
-                                  <option value="letter">Carta (Letter)</option>
-                                </select>
-                              </div>
-                              <div>
-                                <label for="ly-orientation">Orientação</label>
-                                <select id="ly-orientation" class="select-dark">
-                                  <option value="p">Retrato</option>
-                                  <option value="l">Paisagem</option>
-                                </select>
-                              </div>
+                    <div class="col">
+                      <label for="usrSenha">Senha</label>
+                      <input id="usrSenha" type="password" class="input-dark" placeholder="Crie uma senha" autocomplete="new-password">
+                    </div>
 
-                              <div>
-                                <label for="ly-mt">Margem superior (mm)</label>
-                                <input id="ly-mt" type="number" class="input-dark" min="0" max="50" step="1" />
-                              </div>
-                              <div>
-                                <label for="ly-mr">Margem direita (mm)</label>
-                                <input id="ly-mr" type="number" class="input-dark" min="0" max="50" step="1" />
-                              </div>
-                              <div>
-                                <label for="ly-mb">Margem inferior (mm)</label>
-                                <input id="ly-mb" type="number" class="input-dark" min="0" max="50" step="1" />
-                              </div>
-                              <div>
-                                <label for="ly-ml">Margem esquerda (mm)</label>
-                                <input id="ly-ml" type="number" class="input-dark" min="0" max="50" step="1" />
+                    <div class="col">
+                      <label for="usrSenha2">Confirmar Senha</label>
+                      <input id="usrSenha2" type="password" class="input-dark" placeholder="Repita a senha" autocomplete="new-password">
+                    </div>
+
+                    <div class="col" style="grid-column:1/-1;">
+                      <label for="usrPerfil">Perfil de acesso</label>
+                      <select id="usrPerfil" class="select-dark">
+                        <option value="1">Administrador(a)</option>
+                        <option value="2">Gestão</option>
+                        <option value="3">Segurança do Trabalho</option>
+                        <option value="4">Funcionário(a)</option>
+                      </select>
+                    </div>
+
+                  </div>
+
+                  <div class="inline-row user-form-actions">
+                    <button class="btn btn-light" id="btnUsrLimpar" type="button">
+                      <i class="fa-solid fa-eraser" aria-hidden="true"></i> Limpar
+                    </button>
+
+                    <button class="btn btn-primary" id="btnUsrSalvar" type="button">
+                      <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i> Cadastrar Usuário
+                    </button>
+                  </div>
+
+                  <div id="usrStatus" class="filehint" style="margin-top:12px;">
+                    Preencha os dados e clique em “Cadastrar Usuário”.
+                  </div>
+                </div>
+              </div>
+    </section>
+
+    <!-- Documentos & Assinaturas -->
+    <section id="tabDocs" class="tab" role="region" aria-labelledby="hdrDocs">
+            <div class="card" style="height:100%;min-height:580px">
+              <div class="card-header" id="hdrDocs">Documentos &amp; Assinaturas</div>
+
+              <div class="card-body docs-card-body" style="padding:0;height:calc(100% - 48px)">
+
+                <!-- ================== SUB-ABAS DE DOCUMENTOS ================== -->
+                <div class="docs-tabs" role="tablist" aria-label="Documentos">
+                  <button
+                    type="button"
+                    class="btn btn-light docs-tab-btn active"
+                    data-target="#paneDocsGerar"
+                  >
+                    <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+                    Gerar documentos
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-light docs-tab-btn"
+                    data-target="#paneDocsAssinar"
+                  >
+                    <i class="fa-solid fa-signature" aria-hidden="true"></i>
+                    Assinar documentos (Clicksign)
+                  </button>
+                </div>
+
+                <!-- ================== PANE 1: GERAR DOCUMENTOS (SEU FLUXO ATUAL) ================== -->
+                <div class="docs-pane active" id="paneDocsGerar" role="tabpanel" aria-label="Gerar documentos">
+                  <!-- ================== Documentos & Assinaturas: HERO ================== -->
+                  <div id="docs-sign-root" class="docs-shell">
+                    <div class="docs-hero">
+                      <!-- Botão "Templates" (abre o gerenciador de templates) -->
+                      <button id="btn-templates" type="button" class="btn secondary">Templates</button>
+                      <!-- Botão Gerar documento -->
+                      <section class="docs-cta-card" role="region" aria-labelledby="docs-cta-title">
+                        <h2 id="docs-cta-title" class="sr-only">Documentos &amp; Assinaturas</h2>
+                        <button id="btn-open" type="button" class="btn_doc">Gerar documento</button>
+                      </section>
+                    </div>
+
+                    <footer class="docs-footer">
+                      © Atrium • <span class="grad">2025</span>
+                    </footer>
+
+                    <!-- MODAL WIZARD GERAR DOCUMENTO (resizável) -->
+                    <div id="wizard" class="backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+                      <div class="modal" id="wizardModal">
+                        <div class="modal-h">Geração de documentos</div>
+                        <div class="modal-b">
+                          <!-- STEP 1 -->
+                          <div id="step1" class="grid grid-2">
+                            <div>
+                              <label for="template">Selecione o template</label>
+                              <select id="template" class="select-dark"></select>
+                              <small class="tiny">Crie/edite templates no botão “Templates”.</small>
+                            </div>
+
+                            <div>
+                              <label>Vincular funcionário?</label>
+                              <div class="radio-inline">
+                                <label><input type="radio" name="vinc" value="sim" checked> Sim</label>
+                                <label><input type="radio" name="vinc" value="nao"> Não</label>
                               </div>
                             </div>
 
-                            <div class="panel" style="margin-top:12px;">
-                              <div class="row">
+                            <div id="func-wrap">
+                              <label for="func">Escolha o funcionário</label>
+                              <select id="func" class="select-dark"></select>
+                            </div>
+
+                            <div class="panel" style="grid-column:1/-1">
+                              <small class="muted">
+                                Variáveis:
+                                <code>{nome}</code>, <code>{cpf}</code>, <code>{endereco.cidade}</code>,
+                                <code>{salario|money}</code>, <code>{admissao|date}</code>,
+                                <code>{nome|upper}</code>, <code>{hoje}</code>.
+                              </small>
+                            </div>
+                          </div>
+
+                          <!-- STEP 2 -->
+                          <div id="step2" style="display:none;">
+                            <div class="cols">
+                              <div class="panel">
+                                <h4>Variáveis detectadas</h4>
+                                <div id="vars"></div>
+                                <hr style="border-color:rgba(255,255,255,.08);margin:10px 0">
                                 <label class="radio-inline" style="gap:8px;">
-                                  <input type="checkbox" id="ly-logo-enabled"> Inserir logo no topo
+                                  <input type="checkbox" id="chk-preview" checked> Pré-visualizar com dados do funcionário
                                 </label>
-                              </div>
-                              <div class="grid" style="margin-top:8px;">
-                                <div>
-                                  <label for="ly-logo-size">Tamanho do logo (px)</label>
-                                  <input id="ly-logo-size" type="number" class="input-dark" min="24" max="600" step="1" />
+                                <div class="panel" style="margin-top:10px;">
+                                  <small class="muted">
+                                    Clique em uma variável para inserir no cursor do editor.
+                                  </small>
                                 </div>
-                                <div>
-                                  <label for="ly-logo-align">Alinhamento do logo</label>
-                                  <select id="ly-logo-align" class="select-dark">
-                                    <option value="left">Esquerda</option>
-                                    <option value="center">Centro</option>
-                                    <option value="right">Direita</option>
-                                  </select>
-                                </div>
-                                <div>
-                                  <label for="ly-logo-space">Espaço abaixo do logo (px)</label>
-                                  <input id="ly-logo-space" type="number" class="input-dark" min="0" max="80" step="1" />
-                                </div>
-                                <div>
-                                  <label for="ly-logo-file">Logo (imagem)</label>
-                                  <div class="file-input">
-                                    <input id="ly-logo-file" type="file" accept="image/*" hidden />
-                                    <button id="ly-logo-file-btn" type="button" class="input-like">
-                                      <span>Selecionar imagem</span>
-                                      <span class="tiny">🖼️</span>
-                                    </button>
-                                    <div id="ly-logo-file-info" class="tiny file-name">Nenhum arquivo selecionado</div>
+
+                                <!-- ======= Configurações de Layout ======= -->
+                                <div class="panel" style="margin-top:12px;">
+                                  <h4>Configurações de layout</h4>
+                                  <div class="grid">
+                                    <div>
+                                      <label for="ly-font-family">Fonte</label>
+                                      <select id="ly-font-family" class="select-dark">
+                                        <option value="Arial, Helvetica, sans-serif">Arial / Helvetica</option>
+                                        <option value="Times New Roman, Times, serif">Times New Roman</option>
+                                        <option value="Calibri, Arial, Helvetica, sans-serif">Calibri</option>
+                                        <option value="Cambria, Georgia, 'Times New Roman', Times, serif">Cambria</option>
+                                        <option value="Roboto, Arial, Helvetica, sans-serif">Roboto</option>
+                                      </select>
+                                    </div>
+                                    <div>
+                                      <label for="ly-font-size">Tamanho base da fonte (px)</label>
+                                      <input id="ly-font-size" type="number" class="input-dark" min="8" max="20" step="1" />
+                                    </div>
+                                    <div>
+                                      <label for="ly-line-height">Altura de linha</label>
+                                      <input id="ly-line-height" type="number" class="input-dark" min="1" max="2" step="0.05" />
+                                    </div>
+                                    <div>
+                                      <label for="ly-p-spacing">Espaço entre parágrafos (px)</label>
+                                      <input id="ly-p-spacing" type="number" class="input-dark" min="0" max="40" step="1" />
+                                    </div>
+
+                                    <div>
+                                      <label for="ly-h1">Tamanho H1 (x da base)</label>
+                                      <input id="ly-h1" type="number" class="input-dark" min="1.0" max="3" step="0.05" />
+                                    </div>
+                                    <div>
+                                      <label for="ly-h2">Tamanho H2 (x da base)</label>
+                                      <input id="ly-h2" type="number" class="input-dark" min="1.0" max="3" step="0.05" />
+                                    </div>
+                                    <div>
+                                      <label for="ly-h3">Tamanho H3 (x da base)</label>
+                                      <input id="ly-h3" type="number" class="input-dark" min="1.0" max="3" step="0.05" />
+                                    </div>
+
+                                    <div>
+                                      <label for="ly-page-format">Formato da página</label>
+                                      <select id="ly-page-format" class="select-dark">
+                                        <option value="a4">A4</option>
+                                        <option value="letter">Carta (Letter)</option>
+                                      </select>
+                                    </div>
+                                    <div>
+                                      <label for="ly-orientation">Orientação</label>
+                                      <select id="ly-orientation" class="select-dark">
+                                        <option value="p">Retrato</option>
+                                        <option value="l">Paisagem</option>
+                                      </select>
+                                    </div>
+
+                                    <div>
+                                      <label for="ly-mt">Margem superior (mm)</label>
+                                      <input id="ly-mt" type="number" class="input-dark" min="0" max="50" step="1" />
+                                    </div>
+                                    <div>
+                                      <label for="ly-mr">Margem direita (mm)</label>
+                                      <input id="ly-mr" type="number" class="input-dark" min="0" max="50" step="1" />
+                                    </div>
+                                    <div>
+                                      <label for="ly-mb">Margem inferior (mm)</label>
+                                      <input id="ly-mb" type="number" class="input-dark" min="0" max="50" step="1" />
+                                    </div>
+                                    <div>
+                                      <label for="ly-ml">Margem esquerda (mm)</label>
+                                      <input id="ly-ml" type="number" class="input-dark" min="0" max="50" step="1" />
+                                    </div>
+                                  </div>
+
+                                  <div class="panel" style="margin-top:12px;">
+                                    <div class="row">
+                                      <label class="radio-inline" style="gap:8px;">
+                                        <input type="checkbox" id="ly-logo-enabled"> Inserir logo no topo
+                                      </label>
+                                    </div>
+                                    <div class="grid" style="margin-top:8px;">
+                                      <div>
+                                        <label for="ly-logo-size">Tamanho do logo (px)</label>
+                                        <input id="ly-logo-size" type="number" class="input-dark" min="24" max="600" step="1" />
+                                      </div>
+                                      <div>
+                                        <label for="ly-logo-align">Alinhamento do logo</label>
+                                        <select id="ly-logo-align" class="select-dark">
+                                          <option value="left">Esquerda</option>
+                                          <option value="center">Centro</option>
+                                          <option value="right">Direita</option>
+                                        </select>
+                                      </div>
+                                      <div>
+                                        <label for="ly-logo-space">Espaço abaixo do logo (px)</label>
+                                        <input id="ly-logo-space" type="number" class="input-dark" min="0" max="80" step="1" />
+                                      </div>
+                                      <div>
+                                        <label for="ly-logo-file">Logo (imagem)</label>
+                                        <div class="file-input">
+                                          <input id="ly-logo-file" type="file" accept="image/*" hidden />
+                                          <button id="ly-logo-file-btn" type="button" class="input-like">
+                                            <span>Selecionar imagem</span>
+                                            <span class="tiny">🖼️</span>
+                                          </button>
+                                          <div id="ly-logo-file-info" class="tiny file-name">Nenhum arquivo selecionado</div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div class="row" style="margin-top:10px;">
+                                      <label class="radio-inline" style="gap:8px;">
+                                        <input type="checkbox" id="ly-logo-resize-first" checked>
+                                        Redimensionar primeira imagem do conteúdo (usa o tamanho do logo)
+                                      </label>
+                                    </div>
+                                  </div>
+
+                                  <div class="row" style="margin-top:10px;">
+                                    <button id="ly-reset" class="btn secondary">Resetar</button>
+                                    <div style="display:flex;gap:8px;">
+                                      <button id="ly-save" class="btn">Salvar como padrão</button>
+                                    </div>
                                   </div>
                                 </div>
+                                <!-- ======= /Configurações de Layout ======= -->
                               </div>
 
-                              <div class="row" style="margin-top:10px;">
-                                <label class="radio-inline" style="gap:8px;">
-                                  <input type="checkbox" id="ly-logo-resize-first" checked>
-                                  Redimensionar primeira imagem do conteúdo (usa o tamanho do logo)
-                                </label>
+                              <div>
+                                <div class="toolbar">
+                                  <button class="tb-btn" data-cmd="bold"><b>N</b></button>
+                                  <button class="tb-btn" data-cmd="italic"><i>I</i></button>
+                                  <button class="tb-btn" data-cmd="underline"><u>S</u></button>
+                                  <button class="tb-btn" data-cmd="insertUnorderedList">• Lista</button>
+                                  <button class="tb-btn" data-cmd="insertOrderedList">1. Lista</button>
+                                  <button class="tb-btn" id="btn-clear">Limpar formatação</button>
+                                </div>
+                                <div id="editor" class="editor" contenteditable="true"></div>
+                                <div id="preview" class="preview"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="modal-f">
+                          <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button id="btn-back" class="btn secondary">Voltar</button>
+                          </div>
+                          <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button id="btn-close" class="btn secondary">Fechar</button>
+                            <button id="btn-next" class="btn">Avançar</button>
+                            <button id="btn-concluir" class="btn" style="display:none;">Concluir (PDF)</button>
+                          </div>
+                        </div>
+
+                        <!-- handles de resize -->
+                        <div class="resizer-e" id="wizardResizeE"></div>
+                        <div class="resizer-se" id="wizardResizeSE"></div>
+                      </div>
+                    </div>
+
+                    <!-- MODAL GERENCIAR TEMPLATES -->
+                    <div id="tplModal" class="backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+                      <div class="modal" style="width:min(1100px,96vw)">
+                        <div class="modal-h row">
+                          <span>Templates</span>
+                          <button id="btn-close-tpl" class="btn secondary">Fechar</button>
+                        </div>
+                        <div class="modal-b">
+                          <!-- Lista -->
+                          <div id="tplListView">
+                            <div class="row" style="margin-bottom:10px;">
+                              <h3 style="margin:0">Meus templates</h3>
+                              <button id="btn-new-tpl" class="btn">Criar template</button>
+                            </div>
+                            <div class="list" id="tplList"></div>
+                            <div class="panel" style="margin-top:10px;">
+                              <small class="muted">
+                                Templates “padrão” não podem ser apagados. Para editar, use “Duplicar” e edite a cópia.
+                              </small>
+                            </div>
+                          </div>
+
+                          <!-- Criar/Editar -->
+                          <div id="tplEditView" style="display:none;">
+                            <div class="grid grid-2">
+                              <div>
+                                <label for="tplName">Nome do template</label>
+                                <input id="tplName" type="text" class="input-dark" placeholder="Ex: Contrato CLT – Loja SP" />
+                              </div>
+
+                              <div>
+                                <label for="docxTpl">Importar Word (.docx)</label>
+                                <div class="file-input">
+                                  <input id="docxTpl" type="file" accept=".docx" hidden />
+                                  <button id="docxTplBtn" type="button" class="input-like">
+                                    <span>Selecionar arquivo .docx</span>
+                                    <span class="tiny">📄</span>
+                                  </button>
+                                  <div id="docxTplInfo" class="tiny file-name">Nenhum arquivo selecionado</div>
+                                </div>
+                                <small class="tiny">
+                                  A importação mantém a formatação (títulos, listas, negrito etc.).
+                                </small>
+                              </div>
+
+                              <div class="panel" style="grid-column:1/-1">
+                                <small class="muted">
+                                  Variáveis:
+                                  <code>{nome}</code>, <code>{cpf}</code>, <code>{endereco.cidade}</code>,
+                                  <code>{salario|money}</code>, <code>{admissao|date}</code>,
+                                  <code>{nome|upper}</code>, <code>{hoje}</code>.
+                                </small>
                               </div>
                             </div>
 
-                            <div class="row" style="margin-top:10px;">
-                              <button id="ly-reset" class="btn secondary">Resetar</button>
+                            <div class="cols" style="margin-top:12px;">
+                              <div class="panel">
+                                <h4>Variáveis detectadas</h4>
+                                <div id="tplVars"></div>
+                              </div>
+                              <div>
+                                <div class="toolbar">
+                                  <button class="tb-btn" data-cmd="bold"><b>N</b></button>
+                                  <button class="tb-btn" data-cmd="italic"><i>I</i></button>
+                                  <button class="tb-btn" data-cmd="underline"><u>S</u></button>
+                                  <button class="tb-btn" data-cmd="insertUnorderedList">• Lista</button>
+                                  <button class="tb-btn" data-cmd="insertOrderedList">1. Lista</button>
+                                  <button class="tb-btn" id="btn-clear-tpl">Limpar formatação</button>
+                                </div>
+                                <div id="tplEditor" class="editor" contenteditable="true"></div>
+                              </div>
+                            </div>
+
+                            <div class="row" style="margin-top:12px;">
+                              <button id="btn-back-list" class="btn secondary">Cancelar</button>
                               <div style="display:flex;gap:8px;">
-                                <button id="ly-save" class="btn">Salvar como padrão</button>
+                                <button id="btn-save-tpl" class="btn">Salvar template</button>
                               </div>
                             </div>
                           </div>
-                          <!-- ======= /Configurações de Layout ======= -->
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Área oculta para render do PDF -->
+                    <div id="print-area"></div>
+                  </div>
+                </div>
+
+                <!-- ================== PANE 2: ASSINAR DOCUMENTOS (CLICKSIGN) ================== -->
+                <div class="docs-pane" id="paneDocsAssinar" role="tabpanel" aria-label="Assinar documentos">
+                  <div class="docs-clicksign-shell">
+
+                    <div class="docs-clicksign-header">
+                      <div class="cs-title-row">
+                        <h3>Assinar documentos com Clicksign</h3>
+                        <span class="cs-pill">Integração</span>
+                      </div>
+
+                      <p class="muted">
+                        Selecione o documento e vincule ao funcionário. Os dados do signatário serão preenchidos automaticamente.
+                        Em seguida, envie para assinatura e depois baixe o PDF assinado.
+                      </p>
+
+                      <div class="cs-header-hints">
+                        <div class="cs-hint">
+                          <b>Dica:</b> salve no seu banco as chaves retornadas (document/envelope/signer) para consultar status e baixar depois.
+                        </div>
+                        <div class="cs-hint">
+                          <b>Canal de envio:</b> WhatsApp/Gmail/SMS podem ser disparados pelo seu sistema após receber o <i>signUrl</i>.
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="docs-clicksign-grid">
+
+                      <!-- Coluna esquerda: preparar e enviar -->
+                      <div class="panel docs-clicksign-panel" aria-label="Passo 1: Vincular e enviar">
+                        <div class="cs-step-head">
+                          <span class="cs-badge">Passo 1</span>
+                          <h4>Vincular e enviar para assinatura</h4>
                         </div>
 
-                        <div>
-                          <div class="toolbar">
-                            <button class="tb-btn" data-cmd="bold"><b>N</b></button>
-                            <button class="tb-btn" data-cmd="italic"><i>I</i></button>
-                            <button class="tb-btn" data-cmd="underline"><u>S</u></button>
-                            <button class="tb-btn" data-cmd="insertUnorderedList">• Lista</button>
-                            <button class="tb-btn" data-cmd="insertOrderedList">1. Lista</button>
-                            <button class="tb-btn" id="btn-clear">Limpar formatação</button>
+                        <div class="cs-section">
+                          <label for="csDocSelect">Documento gerado</label>
+                          <select id="csDocSelect" class="select-dark">
+                            <option value="">Selecione um documento…</option>
+                          </select>
+
+                          <label for="csFuncSelect" style="margin-top:10px;">Funcionário</label>
+                          <select id="csFuncSelect" class="select-dark">
+                            <option value="">Selecione um funcionário…</option>
+                          </select>
+                        </div>
+
+                        <div class="cs-divider"></div>
+
+                        <div class="cs-section">
+                          <div class="grid">
+                            <div class="col">
+                              <label for="csSignerName">Nome do signatário</label>
+                              <input id="csSignerName" type="text" class="input-dark" placeholder="Nome completo" readonly>
+                            </div>
+
+                            <div class="col">
+                              <label for="csSignerEmail">E-mail do signatário</label>
+                              <input id="csSignerEmail" type="email" class="input-dark" placeholder="colaborador@empresa.com" readonly>
+                            </div>
+
+                            <div class="col">
+                              <label for="csSignerPhone">Celular do signatário</label>
+                              <input id="csSignerPhone" type="text" class="input-dark" placeholder="(DD) XXXXX-XXXX" readonly>
+                            </div>
                           </div>
-                          <div id="editor" class="editor" contenteditable="true"></div>
-                          <div id="preview" class="preview"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="modal-f">
-                    <div style="display:flex;gap:8px;flex-wrap:wrap">
-                      <button id="btn-back" class="btn secondary">Voltar</button>
-                    </div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap">
-                      <button id="btn-close" class="btn secondary">Fechar</button>
-                      <button id="btn-next" class="btn">Avançar</button>
-                      <button id="btn-concluir" class="btn" style="display:none;">Concluir (PDF)</button>
-                    </div>
-                  </div>
-
-                  <!-- handles de resize -->
-                  <div class="resizer-e" id="wizardResizeE"></div>
-                  <div class="resizer-se" id="wizardResizeSE"></div>
-                </div>
-              </div>
-
-              <!-- MODAL GERENCIAR TEMPLATES -->
-              <div id="tplModal" class="backdrop" role="dialog" aria-modal="true" aria-hidden="true">
-                <div class="modal" style="width:min(1100px,96vw)">
-                  <div class="modal-h row">
-                    <span>Templates</span>
-                    <button id="btn-close-tpl" class="btn secondary">Fechar</button>
-                  </div>
-                  <div class="modal-b">
-                    <!-- Lista -->
-                    <div id="tplListView">
-                      <div class="row" style="margin-bottom:10px;">
-                        <h3 style="margin:0">Meus templates</h3>
-                        <button id="btn-new-tpl" class="btn">Criar template</button>
-                      </div>
-                      <div class="list" id="tplList"></div>
-                      <div class="panel" style="margin-top:10px;">
-                        <small class="muted">
-                          Templates “padrão” não podem ser apagados. Para editar, use “Duplicar” e edite a cópia.
-                        </small>
-                      </div>
-                    </div>
-
-                    <!-- Criar/Editar -->
-                    <div id="tplEditView" style="display:none;">
-                      <div class="grid grid-2">
-                        <div>
-                          <label for="tplName">Nome do template</label>
-                          <input id="tplName" type="text" class="input-dark" placeholder="Ex: Contrato CLT – Loja SP" />
                         </div>
 
-                        <div>
-                          <label for="docxTpl">Importar Word (.docx)</label>
-                          <div class="file-input">
-                            <input id="docxTpl" type="file" accept=".docx" hidden />
-                            <button id="docxTplBtn" type="button" class="input-like">
-                              <span>Selecionar arquivo .docx</span>
-                              <span class="tiny">📄</span>
-                            </button>
-                            <div id="docxTplInfo" class="tiny file-name">Nenhum arquivo selecionado</div>
+                        <div class="cs-divider"></div>
+
+                        <div class="cs-section">
+                          <div class="grid">
+                            <div class="col">
+                              <label>Enviar link por</label>
+
+                              <!-- Botões (3 opções) -->
+                              <div class="cs-segment" role="group" aria-label="Canal de envio do link">
+                                <button type="button" class="cs-seg-btn active" data-channel="whatsapp" aria-pressed="true">
+                                  <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                                  WhatsApp
+                                </button>
+                                <button type="button" class="cs-seg-btn" data-channel="gmail" aria-pressed="false">
+                                  <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                                  Gmail
+                                </button>
+                                <button type="button" class="cs-seg-btn" data-channel="sms" aria-pressed="false">
+                                  <i class="fa-solid fa-comment-sms" aria-hidden="true"></i>
+                                  SMS
+                                </button>
+                              </div>
+
+                              <!-- Mantém o select original (pra seu JS/back) -->
+                              <select id="csSendChannel" class="select-dark cs-hidden">
+                                <option value="email">E-mail (padrão Clicksign)</option>
+                                <option value="whatsapp" selected>WhatsApp</option>
+                                <option value="gmail">Gmail</option>
+                                <option value="sms">SMS</option>
+                              </select>
+
+                              <small class="tiny muted cs-helper">
+                                WhatsApp/SMS exigem integração externa (WhatsApp Business API / provedor de SMS).
+                              </small>
+                            </div>
+
+                            <div class="col">
+                              <label for="csAuthMethod">Autenticação</label>
+                              <select id="csAuthMethod" class="select-dark">
+                                <option value="email">Token por e-mail</option>
+                                <option value="whatsapp">Token por WhatsApp</option>
+                                <option value="sms">Token por SMS</option>
+                              </select>
+                              <small class="tiny muted cs-helper">
+                                Método de autenticação pode ser diferente do canal de envio do link.
+                              </small>
+                            </div>
                           </div>
-                          <small class="tiny">
-                            A importação mantém a formatação (títulos, listas, negrito etc.).
-                          </small>
                         </div>
 
-                        <div class="panel" style="grid-column:1/-1">
-                          <small class="muted">
-                            Variáveis:
-                            <code>{nome}</code>, <code>{cpf}</code>, <code>{endereco.cidade}</code>,
-                            <code>{salario|money}</code>, <code>{admissao|date}</code>,
-                            <code>{nome|upper}</code>, <code>{hoje}</code>.
-                          </small>
+                        <div class="cs-section">
+                          <label for="csMsg">Mensagem (opcional)</label>
+                          <textarea id="csMsg" class="input-dark cs-textarea"
+                            placeholder="Ex.: Olá, segue o link para assinatura do seu documento."></textarea>
                         </div>
-                      </div>
 
-                      <div class="cols" style="margin-top:12px;">
-                        <div class="panel">
-                          <h4>Variáveis detectadas</h4>
-                          <div id="tplVars"></div>
+                        <div class="cs-actions">
+                          <button id="btnCsEnviar" type="button" class="btn btn-primary">
+                            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                            Enviar para Clicksign
+                          </button>
+
+                          <button id="btnCsLimparVinculo" type="button" class="btn btn-light">
+                            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+                            Limpar vínculo
+                          </button>
                         </div>
-                        <div>
-                          <div class="toolbar">
-                            <button class="tb-btn" data-cmd="bold"><b>N</b></button>
-                            <button class="tb-btn" data-cmd="italic"><i>I</i></button>
-                            <button class="tb-btn" data-cmd="underline"><u>S</u></button>
-                            <button class="tb-btn" data-cmd="insertUnorderedList">• Lista</button>
-                            <button class="tb-btn" data-cmd="insertOrderedList">1. Lista</button>
-                            <button class="tb-btn" id="btn-clear-tpl">Limpar formatação</button>
-                          </div>
-                          <div id="tplEditor" class="editor" contenteditable="true"></div>
+
+                        <div class="cs-note tiny muted">
+                          Ao enviar, salve no banco: <b>documentKey</b>, <b>envelopeKey</b> e o <b>signUrl</b>.
                         </div>
                       </div>
 
-                      <div class="row" style="margin-top:12px;">
-                        <button id="btn-back-list" class="btn secondary">Cancelar</button>
-                        <div style="display:flex;gap:8px;">
-                          <button id="btn-save-tpl" class="btn">Salvar template</button>
+                      <!-- Coluna direita: status + baixar -->
+                      <div class="panel docs-clicksign-panel" aria-label="Passo 2: Acompanhar e baixar">
+                        <div class="cs-step-head">
+                          <span class="cs-badge">Passo 2</span>
+                          <h4>Acompanhar e baixar</h4>
+                        </div>
+
+                        <div class="cs-section">
+                          <label for="csEnvelopeKey">Chave do envelope (opcional)</label>
+                          <input id="csEnvelopeKey" type="text" class="input-dark"
+                                placeholder="Ex.: envelope_key (se você salvar)">
+
+                          <label for="csDocKey" style="margin-top:8px;">Chave/código do documento (Clicksign)</label>
+                          <input id="csDocKey" type="text" class="input-dark"
+                                placeholder="Ex.: document_key retornada pela API">
+                        </div>
+
+                        <div class="cs-actions">
+                          <button id="btnCsConsultar" type="button" class="btn btn-light">
+                            <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+                            Consultar status
+                          </button>
+
+                          <button id="btnCsBaixar" type="button" class="btn btn-ok">
+                            <i class="fa-solid fa-download" aria-hidden="true"></i>
+                            Baixar PDF assinado
+                          </button>
+                        </div>
+
+                        <div class="cs-note tiny muted">
+                          Se você guardar as chaves no banco, você nem precisa digitar aqui — pode popular automaticamente ao selecionar documento/funcionário.
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
 
-              <!-- Área oculta para render do PDF -->
-              <div id="print-area"></div>
-            </div>
-          </div>
-
-          <!-- ================== PANE 2: ASSINAR DOCUMENTOS (CLICKSIGN) ================== -->
-          <div class="docs-pane" id="paneDocsAssinar" role="tabpanel" aria-label="Assinar documentos">
-            <div class="docs-clicksign-shell">
-              <div class="docs-clicksign-header">
-                <h3>Assinar documentos com Clicksign</h3>
-                <p class="muted">
-                  Selecione o documento e vincule ao funcionário. Os dados do signatário serão preenchidos automaticamente.
-                  Em seguida, envie para assinatura e depois baixe o PDF assinado.
-                </p>
-              </div>
-
-              <div class="docs-clicksign-grid">
-
-                <!-- Coluna esquerda: preparar e enviar -->
-                <div class="panel docs-clicksign-panel">
-                  <h4>1) Vincular e enviar para assinatura</h4>
-
-                  <label for="csDocSelect">Documento gerado</label>
-                  <select id="csDocSelect" class="select-dark">
-                    <option value="">Selecione um documento…</option>
-                  </select>
-
-                  <label for="csFuncSelect" style="margin-top:10px;">Funcionário</label>
-                  <select id="csFuncSelect" class="select-dark">
-                    <option value="">Selecione um funcionário…</option>
-                  </select>
-
-                  <div class="grid" style="margin-top:10px;">
-                    <div class="col">
-                      <label for="csSignerName">Nome do signatário</label>
-                      <input id="csSignerName" type="text" class="input-dark" placeholder="Nome completo" readonly>
+                    <div id="csStatus" class="cs-status cs-status--info" style="margin-top:12px;">
+                      Nenhuma ação realizada ainda.
                     </div>
-
-                    <div class="col">
-                      <label for="csSignerEmail">E-mail do signatário</label>
-                      <input id="csSignerEmail" type="email" class="input-dark" placeholder="colaborador@empresa.com" readonly>
-                    </div>
-
-                    <div class="col">
-                      <label for="csSignerPhone">Celular do signatário</label>
-                      <input id="csSignerPhone" type="text" class="input-dark" placeholder="(DD) XXXXX-XXXX" readonly>
-                    </div>
-                  </div>
-
-                  <div class="grid" style="margin-top:10px;">
-                    <div class="col">
-                      <label for="csSendChannel">Enviar link por</label>
-                      <select id="csSendChannel" class="select-dark">
-                        <option value="email">E-mail (padrão Clicksign)</option>
-                        <option value="whatsapp">WhatsApp (via integração do seu sistema)</option>
-                      </select>
-                      <small class="tiny muted" style="display:block;margin-top:6px;">
-                        WhatsApp exige integração externa (WhatsApp Business API / provedor). A Clicksign pode usar WhatsApp para token de autenticação.
-                      </small>
-                    </div>
-
-                    <div class="col">
-                      <label for="csAuthMethod">Autenticação</label>
-                      <select id="csAuthMethod" class="select-dark">
-                        <option value="email">Token por e-mail</option>
-                        <option value="whatsapp">Token por WhatsApp</option>
-                        <option value="sms">Token por SMS</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <label for="csMsg" style="margin-top:10px;">Mensagem (opcional)</label>
-                  <textarea id="csMsg" class="input-dark" style="min-height:100px; padding-top:10px; line-height:1.35;"
-                    placeholder="Ex.: Olá, segue o link para assinatura do seu documento."></textarea>
-
-                  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-                    <button id="btnCsEnviar" type="button" class="btn btn-primary">
-                      <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
-                      Enviar para Clicksign
-                    </button>
-
-                    <button id="btnCsLimparVinculo" type="button" class="btn btn-light">
-                      <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
-                      Limpar vínculo
-                    </button>
-                  </div>
-
-                  <div class="tiny muted" style="margin-top:10px;">
-                    Dica: ao enviar, salve no seu banco as chaves retornadas (document/envelope/signer) para consultar status e baixar depois.
                   </div>
                 </div>
 
-                <!-- Coluna direita: status + baixar -->
-                <div class="panel docs-clicksign-panel">
-                  <h4>2) Acompanhar e baixar</h4>
-
-                  <label for="csEnvelopeKey">Chave do envelope (opcional)</label>
-                  <input id="csEnvelopeKey" type="text" class="input-dark"
-                        placeholder="Ex.: envelope_key (se você salvar)">
-
-                  <label for="csDocKey" style="margin-top:8px;">Chave/código do documento (Clicksign)</label>
-                  <input id="csDocKey" type="text" class="input-dark"
-                        placeholder="Ex.: document_key retornada pela API">
-
-                  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-                    <button id="btnCsConsultar" type="button" class="btn btn-light">
-                      <i class="fa-solid fa-rotate" aria-hidden="true"></i>
-                      Consultar status
-                    </button>
-
-                    <button id="btnCsBaixar" type="button" class="btn btn-ok">
-                      <i class="fa-solid fa-download" aria-hidden="true"></i>
-                      Baixar PDF assinado
-                    </button>
-                  </div>
-
-                  <div class="tiny muted" style="margin-top:10px;">
-                    Se você guardar as chaves no banco, você nem precisa digitar aqui — pode popular automaticamente ao selecionar documento/funcionário.
-                  </div>
-                </div>
-              </div>
-
-              <div id="csStatus" class="filehint" style="margin-top:12px;">
-                Nenhuma ação realizada ainda.
               </div>
             </div>
-          </div>
+    </section>
 
+    <!-- GESTÃO DE FUNCIONÁRIOS -->
+    <section id="tabFuncGestao" class="tab" role="region" aria-labelledby="hdrFuncGestao">
+      <div class="card">
+        <div class="card-header" id="hdrFuncGestao">Gestão de Funcionários</div>
 
-        </div>
-      </div>
-     </section>
+        <div class="card-body">
 
-      <!-- GESTÃO DE FUNCIONÁRIOS -->
-      <section id="tabFuncGestao" class="tab" role="region" aria-labelledby="hdrFuncGestao">
-        <div class="card">
-          <div class="card-header" id="hdrFuncGestao">Gestão de Funcionários</div>
-          <div class="card-body">
+          <!-- (Bloco de cadastro é aberto em modal) -->
+          <div class="gestao-cadastro-wrap">
+            <div class="gestao-cadastro">
+              <div class="card flat">
+                <div class="card-header">Cadastro de Funcionários</div>
 
-            <!-- (Bloco de cadastro é aberto em modal) -->
-            <div class="gestao-cadastro-wrap">
-              <div class="gestao-cadastro">
-                <div class="card flat">
-                  <div class="card-header">Cadastro de Funcionários</div>
-                  <div class="card-body">
-                    <!-- FOTO -->
-                    <div class="row">
-                      <div class="col" style="max-width:320px">
-                        <label for="cadFoto">Foto do funcionário</label>
-                        <input type="file" id="cadFoto" accept="image/*">
-                      </div>
-                      <div class="col" style="display:flex;align-items:flex-end;gap:12px">
-                        <div>
-                          <label style="visibility:hidden">.</label>
-                          <img id="cadFotoPreview" class="emp-avatar" src="" alt="" style="width:90px;height:90px;border-radius:16px">
+                <div class="card-body">
+
+                  <!-- FOTO (avatar grande + botão escolher foto) -->
+                  <div class="row">
+                    <div class="col" style="max-width:260px">
+                      <label class="avatar-label">Foto do funcionário</label>
+
+                      <div class="avatar-wrapper">
+                        <!-- ✅ avatar do CADASTRO (não use .emp-avatar aqui) -->
+                        <div class="cad-avatar cad-avatar-large" aria-label="Pré-visualização da foto">
+                          <div class="cad-avatar-inner">
+                            <img
+                              id="cadFotoPreview"
+                              class="cad-avatar-img"
+                              src="assets/img/user.png"
+                              alt="Foto do funcionário"
+                            >
+                          </div>
                         </div>
+
+                        <!-- input real escondido -->
+                        <input type="file" id="cadFoto" accept="image/*" style="display:none">
+
+                        <!-- botão estilizado pra escolher a foto -->
+                        <label for="cadFoto" class="btn btn-light avatar-upload-btn" role="button" tabindex="0">
+                          <i class="fa-regular fa-image" aria-hidden="true"></i>
+                          <span>Escolher foto</span>
+                        </label>
                       </div>
                     </div>
+                  </div>
 
-                    <div class="row">
-                      <div class="col">
-                        <label for="cadNome">Nome</label>
-                        <input type="text" id="cadNome" placeholder="Nome completo">
-                      </div>
-                      <div class="col">
-                        <label for="cadFuncao">Função</label>
-                        <input type="text" id="cadFuncao" placeholder="Cargo/Função">
-                      </div>
+                  <!-- NOME / FUNÇÃO -->
+                  <div class="row">
+                    <div class="col">
+                      <label for="cadNome">Nome</label>
+                      <input type="text" id="cadNome" placeholder="Nome completo">
                     </div>
+                    <div class="col">
+                      <label for="cadFuncao">Função</label>
+                      <input type="text" id="cadFuncao" placeholder="Cargo/Função">
+                    </div>
+                  </div>
 
-                    <div class="row">
-                      <div class="col">
-                        <label for="cadRG">RG</label>
-                        <input type="text" id="cadRG" placeholder="00.000.000-0">
-                      </div>
-                      <div class="col">
-                        <label for="cadCPF">CPF</label>
-                        <input type="text" id="cadCPF" placeholder="000.000.000-00">
-                      </div>
+                  <!-- RG / CPF / CEL / E-MAIL / IDADE -->
+                  <div class="row">
+                    <div class="col">
+                      <label for="cadRG">RG</label>
+                      <input type="text" id="cadRG" placeholder="00.000.000-0">
+                    </div>
+                    <div class="col">
+                      <label for="cadCPF">CPF</label>
+                      <input type="text" id="cadCPF" placeholder="000.000.000-00">
+                    </div>
                     <div class="col">
                       <label for="cadCell">Celular</label>
                       <input
@@ -1099,318 +1256,352 @@
                         autocomplete="tel"
                       >
                     </div>
-                      <div class="col">
-                        <label for="cadEmail">E-mail</label>
-                        <input
-                          type="email"
-                          id="cadEmail"
-                          placeholder="ex: colaborador@empresa.com"
-                          inputmode="email"
-                          autocomplete="email"
-                          spellcheck="false"
-                        >
+                    <div class="col">
+                      <label for="cadEmail">E-mail</label>
+                      <input
+                        type="email"
+                        id="cadEmail"
+                        placeholder="ex: colaborador@empresa.com"
+                        inputmode="email"
+                        autocomplete="email"
+                        spellcheck="false"
+                      >
+                    </div>
+                    <div class="col">
+                      <label for="cadIdade">Idade</label>
+                      <input type="number" id="cadIdade" min="0" placeholder="0">
+                    </div>
+                  </div>
+
+                  <!-- ADMISSÃO / SALÁRIO -->
+                  <div class="row" id="wrapAdmissaoSalario">
+                    <div class="col">
+                      <label for="cadAdmissao">Data de admissão</label>
+                      <input type="date" id="cadAdmissao">
+                    </div>
+                    <div class="col">
+                      <label for="cadSalario">Salário (R$)</label>
+                      <input type="number" id="cadSalario" min="0" step="0.01" placeholder="0,00">
+                    </div>
+                  </div>
+
+                  <!-- VALORES VR / VT -->
+                  <div class="row benefit-prices">
+                    <div class="col">
+                      <label for="cadVtUnit">Tarifa VT (R$)</label>
+                      <input type="number" id="cadVtUnit" step="0.01" min="0" placeholder="ex.: 5,00">
+                    </div>
+                    <div class="col">
+                      <label for="cadVrDaily">Valor diário VR (R$)</label>
+                      <input type="number" id="cadVrDaily" step="0.01" min="0" placeholder="ex.: 25,00">
+                    </div>
+                  </div>
+
+                  <!-- CARGO (mantido pro JS, mas escondido via CSS se quiser) -->
+                  <div class="row" id="wrapCargoField">
+                    <div class="col">
+                      <label for="cadCargo">Cargo</label>
+                      <input type="text" id="cadCargo" placeholder="Ex.: Analista, Engenheiro">
+                    </div>
+                  </div>
+
+                  <!-- VR / VT -->
+                  <div class="row">
+                    <div class="col">
+                      <label>Benefícios</label>
+                      <div class="benefit-toggles" id="benefitToggleRow">
+                        <label>
+                          <input type="checkbox" id="cadOptVR">
+                          VR
+                        </label>
+                        <label>
+                          <input type="checkbox" id="cadOptVT">
+                          VT
+                        </label>
                       </div>
-                      <div class="col">
-                        <label for="cadIdade">Idade</label>
-                        <input type="number" id="cadIdade" min="0" placeholder="0">
+                      <div class="vr-help">
+                        Marque as opções desejadas. Você pode editar regras em <b>Benefícios</b> depois.
                       </div>
                     </div>
+                  </div>
 
-                    <div class="row" id="wrapAdmissaoSalario">
-                      <div class="col">
-                        <label for="cadAdmissao">Data de admissão</label>
-                        <input type="date" id="cadAdmissao">
+                  <!-- TIPO DE CONTRATO: CLT / PJ -->
+                  <div class="row">
+                    <div class="col">
+                      <label>Tipo de contrato</label>
+                      <div class="benefit-toggles" id="contractToggleRow">
+                        <label>
+                          <input type="radio" name="cadTipoContrato" id="cadTipoContratoCLT" value="CLT">
+                          CLT
+                        </label>
+                        <label>
+                          <input type="radio" name="cadTipoContrato" id="cadTipoContratoPJ" value="PJ">
+                          PJ
+                        </label>
                       </div>
-                      <div class="col">
-                        <label for="cadSalario">Salário (R$)</label>
-                        <input type="number" id="cadSalario" min="0" step="0.01" placeholder="0,00">
+                      <div class="vr-help">
+                        Selecione o tipo de contrato do colaborador.
                       </div>
                     </div>
+                  </div>
 
-                    <div class="row benefit-prices">
-                      <div class="col">
-                        <label for="cadVtUnit">Tarifa VT (R$)</label>
-                        <input type="number" id="cadVtUnit" step="0.01" min="0" placeholder="ex.: 5,00">
-                      </div>
-                      <div class="col">
-                        <label for="cadVrDaily">Valor diário VR (R$)</label>
-                        <input type="number" id="cadVrDaily" step="0.01" min="0" placeholder="ex.: 25,00">
+                  <!-- DOCUMENTO + BOTÕES -->
+                  <div class="row">
+                    <div class="col">
+                      <label for="cadDocumento">Documento (arquivo)</label>
+                      <input type="file" id="cadDocumento">
+                    </div>
+                    <div class="col">
+                      <label style="visibility:hidden">.</label>
+                      <div class="inline-row">
+                        <button class="btn btn-primary" id="btnSalvarCadastro" type="button">
+                          <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i> Salvar cadastro
+                        </button>
+                        <button class="btn btn-light" id="btnLimparCadastro" type="button">
+                          <i class="fa-solid fa-eraser" aria-hidden="true"></i> Limpar
+                        </button>
                       </div>
                     </div>
+                  </div>
 
-                    <div class="row" id="wrapCargoField">
-                      <div class="col">
-                        <label for="cadCargo">Cargo</label>
-                        <input type="text" id="cadCargo" placeholder="Ex.: Analista, Engenheiro">
-                      </div>
-                    </div>
+                </div><!-- /.card-body -->
+              </div><!-- /.card -->
+            </div><!-- /.gestao-cadastro -->
+          </div><!-- /.gestao-cadastro-wrap -->
 
-                    <div class="row">
-                      <div class="col">
-                        <div class="benefit-toggles" id="benefitToggleRow">
-                          <label><input type="checkbox" id="cadOptVR"> VR</label>
-                          <label><input type="checkbox" id="cadOptVT"> VT</label>
-                        </div>
-                        <div class="vr-help">
-                          Marque as opções desejadas. Você pode editar regras em <b>Benefícios</b> depois.
-                        </div>
-                      </div>
-                    </div>
+          <!-- BUSCA (Gestão) -->
+          <div class="emp-tools centered" id="empToolsGestao">
+            <div class="search-group">
+              <input type="text" id="funcSearchGestao" placeholder="Pesquisar funcionário… (digite para filtrar)">
+              <button class="btn btn-light" id="funcSearchGestaoBtn" title="Pesquisar" type="button">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+              </button>
+              <button class="btn btn-light" id="funcClearGestao" type="button">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i> Limpar
+              </button>
+            </div>
+          </div>
 
-                    <div class="row">
-                      <div class="col">
-                        <label for="cadDocumento">Documento (arquivo)</label>
-                        <input type="file" id="cadDocumento">
-                      </div>
-                      <div class="col">
-                        <label style="visibility:hidden">.</label>
-                        <div class="inline-row">
-                          <button class="btn btn-primary" id="btnSalvarCadastro">
-                            <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i> Salvar cadastro
-                          </button>
-                          <button class="btn btn-light" id="btnLimparCadastro">
-                            <i class="fa-solid fa-eraser" aria-hidden="true"></i> Limpar
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+          <!-- Botão Cadastro de Usuário -->
+          <div class="gestao-actions-left">
+            <button class="btn btn-primary" id="btnAbrirCadastro" type="button">
+              <i class="fa-solid fa-user-plus" aria-hidden="true"></i> Cadastro de Funcionário
+            </button>
+          </div>
 
+          <!-- Host para a grade -->
+          <div id="empGridHostGestao"></div>
+
+        </div><!-- /.card-body -->
+      </div><!-- /.card -->
+    </section>
+    <!-- FIM GESTÃO -->
+
+    <!-- GERENCIAR FUNCIONÁRIOS -->
+    <section id="tabFuncionarios" class="tab" role="region" aria-labelledby="hdrFuncionarios">
+          <div class="card">
+            <div class="card-header" id="hdrFuncionarios">Funcionários</div>
+            <div class="card-body">
+
+              <!-- Busca simples -->
+              <div class="emp-tools centered">
+                <div class="search-group">
+                  <input type="text" id="funcSearch" placeholder="Pesquisar funcionário… (digite para filtrar)">
+                  <button class="btn btn-light" id="funcSearchBtn" title="Pesquisar">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                  </button>
+                  <button class="btn btn-light" id="funcClear">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i> Limpar
+                  </button>
+                </div>
+              </div>
+
+              <!-- Grade de funcionários (preenchida via JS) -->
+              <div class="emp-grid" id="empGrid"><!-- via JS --></div>
+
+            </div>
+          </div>
+    </section>
+
+    <!-- Benefícios — VT -->
+    <section id="tabVT" class="tab" role="region" aria-labelledby="hdrVT">
+          <div class="card">
+            <div class="card-header" id="hdrVT">Benefícios — Vale Transporte</div>
+            <div class="card-body">
+              <div class="kpis">
+                <div class="kpi">
+                  <div class="title">Colaboradores com VT</div>
+                  <div class="value" id="vtKColab">0</div>
+                </div>
+                <div class="kpi">
+                  <div class="title">Total de VTs / mês</div>
+                  <div class="value" id="vtKQtd">0</div>
+                </div>
+                <div class="kpi">
+                  <div class="title">Valor total (R$)</div>
+                  <div class="value" id="vtKValor">R$ 0,00</div>
+                </div>
+              </div>
+
+              <div class="row" style="align-items:flex-end">
+                <div class="col" style="max-width:220px">
+                  <label for="vtUnit">Tarifa padrão (R$)</label>
+                  <input type="number" step="0.01" min="0" id="vtUnit" placeholder="ex.: 5.00" disabled>
+                </div>
+                <div class="col" style="max-width:220px">
+                  <label for="vtCreditDay">Dia do crédito (geral)</label>
+                  <input type="number" min="1" max="31" id="vtCreditDay" placeholder="1 a 31" disabled>
+                </div>
+                <div class="col">
+                  <div class="vt-help">
+                    Dados preenchidos automaticamente a partir do cadastro (somente visualização).
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- BUSCA (Gestão) -->
-            <div class="emp-tools centered" id="empToolsGestao">
-              <div class="search-group">
-                <input type="text" id="funcSearchGestao" placeholder="Pesquisar funcionário… (digite para filtrar)">
-                <button class="btn btn-light" id="funcSearchGestaoBtn" title="Pesquisar">
-                  <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                </button>
-                <button class="btn btn-light" id="funcClearGestao">
-                  <i class="fa-solid fa-xmark" aria-hidden="true"></i> Limpar
-                </button>
-              </div>
-            </div>
-
-            <!-- Botão Cadastro de Usuário -->
-            <div class="gestao-actions-left">
-              <button class="btn btn-primary" id="btnAbrirCadastro">
-                <i class="fa-solid fa-user-plus" aria-hidden="true"></i> Cadastro de Usuário
-              </button>
-            </div>
-
-            <!-- Host para a grade -->
-            <div id="empGridHostGestao"></div>
-          </div>
-        </div>
-      </section>
-      <!-- FIM GESTÃO -->
-
-      <!-- GERENCIAR FUNCIONÁRIOS -->
-      <section id="tabFuncionarios" class="tab" role="region" aria-labelledby="hdrFuncionarios">
-        <div class="card">
-          <div class="card-header" id="hdrFuncionarios">Funcionários</div>
-          <div class="card-body">
-
-            <!-- Busca simples -->
-            <div class="emp-tools centered">
-              <div class="search-group">
-                <input type="text" id="funcSearch" placeholder="Pesquisar funcionário… (digite para filtrar)">
-                <button class="btn btn-light" id="funcSearchBtn" title="Pesquisar">
-                  <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                </button>
-                <button class="btn btn-light" id="funcClear">
-                  <i class="fa-solid fa-xmark" aria-hidden="true"></i> Limpar
-                </button>
-              </div>
-            </div>
-
-            <!-- Grade de funcionários (preenchida via JS) -->
-            <div class="emp-grid" id="empGrid"><!-- via JS --></div>
-
-          </div>
-        </div>
-      </section>
-
-      <!-- Benefícios — VT -->
-      <section id="tabVT" class="tab" role="region" aria-labelledby="hdrVT">
-        <div class="card">
-          <div class="card-header" id="hdrVT">Benefícios — Vale Transporte</div>
-          <div class="card-body">
-            <div class="kpis">
-              <div class="kpi">
-                <div class="title">Colaboradores com VT</div>
-                <div class="value" id="vtKColab">0</div>
-              </div>
-              <div class="kpi">
-                <div class="title">Total de VTs / mês</div>
-                <div class="value" id="vtKQtd">0</div>
-              </div>
-              <div class="kpi">
-                <div class="title">Valor total (R$)</div>
-                <div class="value" id="vtKValor">R$ 0,00</div>
-              </div>
-            </div>
-
-            <div class="row" style="align-items:flex-end">
-              <div class="col" style="max-width:220px">
-                <label for="vtUnit">Tarifa padrão (R$)</label>
-                <input type="number" step="0.01" min="0" id="vtUnit" placeholder="ex.: 5.00" disabled>
-              </div>
-              <div class="col" style="max-width:220px">
-                <label for="vtCreditDay">Dia do crédito (geral)</label>
-                <input type="number" min="1" max="31" id="vtCreditDay" placeholder="1 a 31" disabled>
-              </div>
-              <div class="col">
-                <div class="vt-help">
-                  Dados preenchidos automaticamente a partir do cadastro (somente visualização).
-                </div>
-              </div>
-            </div>
-
-            <div class="filters">
-              <button class="btn btn-light" id="btnExportVTCSV">
-                <i class="fa-regular fa-file-excel" aria-hidden="true"></i> Exportar Excel (CSV)
-              </button>
-              <button class="btn btn-primary" id="btnExportVTPDF">
-                <i class="fa-regular fa-file-pdf" aria-hidden="true"></i> Exportar PDF
-              </button>
-            </div>
-
-            <div class="table-wrap">
-              <table class="table" id="vtTable">
-                <thead>
-                  <tr>
-                    <th>Ativo</th>
-                    <th class="vt-cell-left">Funcionário</th>
-                    <th>Qtd VT/mês</th>
-                    <th>Tarifa (R$)</th>
-                    <th>Dia crédito</th>
-                    <th>Próximo crédito</th>
-                    <th>Valor (R$)</th>
-                  </tr>
-                </thead>
-                <tbody id="vtBody"><tr><td colspan="7">—</td></tr></tbody>
-                <tfoot>
-                  <tr>
-                    <th colspan="2" class="t-right">Totais</th>
-                    <th id="vtSumQtd">0</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th id="vtSumValor">R$ 0,00</th>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      <!-- Benefícios — VR -->
-      <section id="tabVR" class="tab" role="region" aria-labelledby="hdrVR">
-        <div class="card">
-          <div class="card-header" id="hdrVR">Benefícios — Vale Refeição</div>
-          <div class="card-body">
-            <div class="kpis">
-              <div class="kpi">
-                <div class="title">Adesões (VR)</div>
-                <div class="value" id="vrKAdesoes">0</div>
-              </div>
-              <div class="kpi">
-                <div class="title">Custo total do benefício</div>
-                <div class="value" id="vrKBeneficio">R$ 0,00</div>
-              </div>
-              <div class="kpi">
-                <div class="title">Desconto total (func.)</div>
-                <div class="value" id="vrKDesconto">R$ 0,00</div>
-              </div>
-              <div class="kpi">
-                <div class="title">Custo líquido p/ empresa</div>
-                <div class="value" id="vrKLiquido">R$ 0,00</div>
-              </div>
-
-              <div class="export-actions">
-                <button class="btn btn-light" id="btnExportVRCSV">
+              <div class="filters">
+                <button class="btn btn-light" id="btnExportVTCSV">
                   <i class="fa-regular fa-file-excel" aria-hidden="true"></i> Exportar Excel (CSV)
                 </button>
-                <button class="btn btn-primary" id="btnExportVRPDF">
+                <button class="btn btn-primary" id="btnExportVTPDF">
                   <i class="fa-regular fa-file-pdf" aria-hidden="true"></i> Exportar PDF
                 </button>
               </div>
-            </div>
 
-            <div class="row" style="align-items:flex-end">
-              <div class="col" style="max-width:220px">
-                <label for="vrDaily">Valor diário (R$)</label>
-                <input type="number" step="0.01" min="0" id="vrDaily" placeholder="ex.: 25.00">
+              <div class="table-wrap">
+                <table class="table" id="vtTable">
+                  <thead>
+                    <tr>
+                      <th>Ativo</th>
+                      <th class="vt-cell-left">Funcionário</th>
+                      <th>Qtd VT/mês</th>
+                      <th>Tarifa (R$)</th>
+                      <th>Dia crédito</th>
+                      <th>Próximo crédito</th>
+                      <th>Valor (R$)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="vtBody"><tr><td colspan="7">—</td></tr></tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="2" class="t-right">Totais</th>
+                      <th id="vtSumQtd">0</th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th id="vtSumValor">R$ 0,00</th>
+                    </tr>
+                  </tfoot>
+                </table>
               </div>
-              <div class="col" style="max-width:220px">
-                <label for="vrDays">Dias úteis / mês</label>
-                <input type="number" min="0" max="31" id="vrDays" placeholder="ex.: 22">
-              </div>
-              <div class="col" style="max-width:220px">
-                <label for="vrPct">% desconto sobre salário</label>
-                <input type="number" min="0" max="100" step="0.01" id="vrPct" placeholder="6">
-              </div>
-              <div class="col" style="max-width:220px">
-                <label for="vrCreditDay">Dia do crédito (geral)</label>
-                <input type="number" min="1" max="31" id="vrCreditDay" placeholder="1 a 31">
-              </div>
-            </div>
 
-            <div class="row" style="align-items:center">
-              <div class="col" style="max-width:320px">
-                <label>
-                  <input type="checkbox" id="vrCapDiscount" style="margin-right:6px">
-                  Limitar desconto ao valor do benefício
-                </label>
-                <div class="vr-help">
-                  Quando marcado, o desconto (6% do salário por padrão) jamais supera o total do VR do mês para aquele colaborador.
+            </div>
+          </div>
+    </section>
+
+    <!-- Benefícios — VR -->
+    <section id="tabVR" class="tab" role="region" aria-labelledby="hdrVR">
+          <div class="card">
+            <div class="card-header" id="hdrVR">Benefícios — Vale Refeição</div>
+            <div class="card-body">
+              <div class="kpis">
+                <div class="kpi">
+                  <div class="title">Adesões (VR)</div>
+                  <div class="value" id="vrKAdesoes">0</div>
+                </div>
+                <div class="kpi">
+                  <div class="title">Custo total do benefício</div>
+                  <div class="value" id="vrKBeneficio">R$ 0,00</div>
+                </div>
+                <div class="kpi">
+                  <div class="title">Desconto total (func.)</div>
+                  <div class="value" id="vrKDesconto">R$ 0,00</div>
+                </div>
+                <div class="kpi">
+                  <div class="title">Custo líquido p/ empresa</div>
+                  <div class="value" id="vrKLiquido">R$ 0,00</div>
+                </div>
+
+                <div class="export-actions">
+                  <button class="btn btn-light" id="btnExportVRCSV">
+                    <i class="fa-regular fa-file-excel" aria-hidden="true"></i> Exportar Excel (CSV)
+                  </button>
+                  <button class="btn btn-primary" id="btnExportVRPDF">
+                    <i class="fa-regular fa-file-pdf" aria-hidden="true"></i> Exportar PDF
+                  </button>
                 </div>
               </div>
-            </div>
 
-            <div class="table-wrap">
-              <table class="table" id="vrTable">
-                <thead>
-                  <tr>
-                    <th>Optou</th>
-                    <th class="vr-cell-left">Funcionário</th>
-                    <th>Salário (R$)</th>
-                    <th>Valor diário (R$)</th>
-                    <th>Dias úteis</th>
-                    <th>Dia crédito</th>
-                    <th>Próximo crédito</th>
-                    <th>Benefício</th>
-                    <th>Desconto</th>
-                    <th>Líquido</th>
-                  </tr>
-                </thead>
-                <tbody id="vrBody"><tr><td colspan="10">—</td></tr></tbody>
-                <tfoot>
-                  <tr>
-                    <th colspan="2" class="t-right">Totais</th>
-                    <th></th><th></th><th></th><th></th><th></th>
-                    <th id="vrSumBeneficio">R$ 0,00</th>
-                    <th id="vrSumDesconto">R$ 0,00</th>
-                    <th id="vrSumLiquido">R$ 0,00</th>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
+              <div class="row" style="align-items:flex-end">
+                <div class="col" style="max-width:220px">
+                  <label for="vrDaily">Valor diário (R$)</label>
+                  <input type="number" step="0.01" min="0" id="vrDaily" placeholder="ex.: 25.00">
+                </div>
+                <div class="col" style="max-width:220px">
+                  <label for="vrDays">Dias úteis / mês</label>
+                  <input type="number" min="0" max="31" id="vrDays" placeholder="ex.: 22">
+                </div>
+                <div class="col" style="max-width:220px">
+                  <label for="vrPct">% desconto sobre salário</label>
+                  <input type="number" min="0" max="100" step="0.01" id="vrPct" placeholder="6">
+                </div>
+                <div class="col" style="max-width:220px">
+                  <label for="vrCreditDay">Dia do crédito (geral)</label>
+                  <input type="number" min="1" max="31" id="vrCreditDay" placeholder="1 a 31">
+                </div>
+              </div>
 
-            <div class="vr-help" style="margin-top:8px">
-              Observação: os campos por funcionário aceitam sobrescrever os padrões
-              (valor diário, dias, % desconto e dia do crédito).
-            </div>
+              <div class="row" style="align-items:center">
+                <div class="col" style="max-width:320px">
+                  <label>
+                    <input type="checkbox" id="vrCapDiscount" style="margin-right:6px">
+                    Limitar desconto ao valor do benefício
+                  </label>
+                  <div class="vr-help">
+                    Quando marcado, o desconto (6% do salário por padrão) jamais supera o total do VR do mês para aquele colaborador.
+                  </div>
+                </div>
+              </div>
 
+              <div class="table-wrap">
+                <table class="table" id="vrTable">
+                  <thead>
+                    <tr>
+                      <th>Optou</th>
+                      <th class="vr-cell-left">Funcionário</th>
+                      <th>Salário (R$)</th>
+                      <th>Valor diário (R$)</th>
+                      <th>Dias úteis</th>
+                      <th>Dia crédito</th>
+                      <th>Próximo crédito</th>
+                      <th>Benefício</th>
+                      <th>Desconto</th>
+                      <th>Líquido</th>
+                    </tr>
+                  </thead>
+                  <tbody id="vrBody"><tr><td colspan="10">—</td></tr></tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="2" class="t-right">Totais</th>
+                      <th></th><th></th><th></th><th></th><th></th>
+                      <th id="vrSumBeneficio">R$ 0,00</th>
+                      <th id="vrSumDesconto">R$ 0,00</th>
+                      <th id="vrSumLiquido">R$ 0,00</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div class="vr-help" style="margin-top:8px">
+                Observação: os campos por funcionário aceitam sobrescrever os padrões
+                (valor diário, dias, % desconto e dia do crédito).
+              </div>
+
+            </div>
           </div>
-        </div>
-      </section>
-    </main>
+    </section>
+
+  </main>
   </div>
 
   <!-- Modal: Batimentos do Dia -->
@@ -1448,22 +1639,55 @@
       <div class="modal-header">
         <span id="funcModalTitle">Funcionário</span>
       </div>
-      <div class="modal-body">
-        <div class="emp-modal-header">
-          <img id="funcModalAvatar" class="emp-avatar" src="" alt="">
-          <div>
-            <div class="emp-name" id="funcModalNome">—</div>
-            <div class="emp-role" id="funcModalFuncao">—</div>
-          </div>
-        </div>
+        <div class="modal-body">
+          <div class="emp-modal-header">
 
-        <!-- Abas (duas: Documentos e Documentos Importantes) -->
+            <!-- ✅ AVATAR CORRIGIDO (anel degradê + recorte redondo) -->
+            <div class="emp-avatar" id="funcModalAvatarWrap" aria-label="Foto do funcionário">
+              <div class="emp-avatar-inner">
+                <img
+                  id="funcModalAvatar"
+                  src="assets/img/user.png"
+                  alt="Foto do funcionário"
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.src='assets/img/user.png'"
+                />
+              </div>
+            </div>
+            <!-- ✅ FIM AVATAR -->
+
+            <div>
+              <div class="emp-name" id="funcModalNome">—</div>
+              <div class="emp-role" id="funcModalFuncao">—</div>
+            </div>
+          </div>
+
+        <!-- Abas (Documentos, Documentos importantes, Cursos) -->
         <div class="emp-tabs" role="tablist" aria-label="Documentos do funcionário">
-          <button class="btn btn-light emp-tab-btn active" id="btnTabDocsSimples" data-target="#paneDocsSimples">
+          <button
+            class="btn btn-light emp-tab-btn active"
+            id="btnTabDocsSimples"
+            data-target="#paneDocsSimples"
+            type="button">
             <i class="fa-regular fa-folder-open" aria-hidden="true"></i> Documentos
           </button>
-          <button class="btn btn-warn emp-tab-btn" id="btnTabDocsImportantes" data-target="#paneDocsImportantes">
+
+          <button
+            class="btn btn-warn emp-tab-btn"
+            id="btnTabDocsImportantes"
+            data-target="#paneDocsImportantes"
+            type="button">
             <i class="fa-regular fa-bell" aria-hidden="true"></i> Documentos importantes
+          </button>
+
+          <!-- NOVA ABA: CURSOS -->
+          <button
+            class="btn btn-light emp-tab-btn"
+            id="btnTabCursos"
+            data-target="#paneCursos"
+            type="button">
+            <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Cursos
           </button>
         </div>
 
@@ -1490,10 +1714,9 @@
                 <button class="btn btn-light" type="button" id="feBtnPaste">
                   <i class="fa-regular fa-clipboard"></i> Colar
                 </button>
-                <button id="feBtnDownload" class="btn btn-light">
+                <button id="feBtnDownload" class="btn btn-light" type="button">
                   <i class="fa-solid fa-download"></i> Baixar
                 </button>
-
 
                 <label class="btn btn-ok fe-upload-label">
                   <i class="fa-solid fa-upload" aria-hidden="true"></i> Importar arquivos
@@ -1552,9 +1775,9 @@
             <div>
               <label for="impDocDue">Data de validade</label>
               <input type="date" id="impDocDue">
-            </div>
+              </div>
             <div>
-              <button class="btn btn-ok" id="btnAddImpDoc">
+              <button class="btn btn-ok" id="btnAddImpDoc" type="button">
                 <i class="fa-solid fa-plus" aria-hidden="true"></i> Adicionar
               </button>
             </div>
@@ -1575,16 +1798,45 @@
                 <th>Ações</th>
               </tr>
             </thead>
-            <tbody id="impDocsTable"><tr><td colspan="5">—</td></tr></tbody>
+            <tbody id="impDocsTable">
+              <tr><td colspan="5">—</td></tr>
+            </tbody>
           </table>
         </div>
 
+        <!-- NOVO PANE: CURSOS -->
+        <div class="emp-pane" id="paneCursos">
+          <div class="imp-docs-form">
+            <div style="flex:1 1 100%">
+              <label for="funcCursosInput">Cursos do funcionário</label>
+              <textarea
+                id="funcCursosInput"
+                rows="4"
+                placeholder="Ex.:
+  NR 10 Básico 40h
+  NR 12 Máquinas e Equipamentos (Básico)
+  NR 12 Motosserra ou similares 8h"></textarea>
+            </div>
+            <div>
+              <label style="visibility:hidden;">.</label>
+              <button class="btn btn-ok" id="btnSalvarCursos" type="button">
+                <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i> Salvar cursos
+              </button>
+            </div>
+          </div>
+
+          <div class="filehint" style="margin-top:6px">
+          </div>
+        </div>
+
       </div>
+
       <div class="modal-footer">
         <button class="btn btn-light" id="fecharFuncionario">Fechar</button>
       </div>
     </div>
   </div>
+
 
   <!-- Modal Criar Tipo de Documento -->
   <div class="modal" id="modalNovoDoc" role="dialog" aria-modal="true" aria-labelledby="novoDocTitulo">
@@ -1616,10 +1868,10 @@
     </div>
   </div>
 
-  <!-- Modal Cadastro de Usuário -->
+  <!-- Modal Cadastro de Funcionário -->
   <div class="modal" id="modalCadastroUsuario" role="dialog" aria-modal="true" aria-labelledby="cadastroTitulo">
     <div class="modal-content">
-      <div class="modal-header" id="cadastroTitulo">Cadastro de Usuário</div>
+      <div class="modal-header" id="cadastroTitulo">Cadastro de Funcionário</div>
       <div class="modal-body" id="modalCadastroBody"><!-- o bloco .gestao-cadastro será movido aqui via JS --></div>
       <div class="modal-footer">
         <button class="btn btn-light" id="btnFecharCadastro">Fechar</button>
@@ -1691,10 +1943,73 @@
     </div>
   </div>
 
+  <!-- Modal do crachá -->
+  <div id="modalCracha" class="modal" style="display:none">
+    <div class="modal-content cracha-modal">
+
+      <!-- HEADER GRADIENTE -->
+      <div class="cracha-header">
+        <div class="cracha-header-title">
+           Crachá RCR Engenharia  
+          <span class="cracha-header-sub">© Atrium • <span class="grad">2025</span></span>
+        </div>
+        <button
+          type="button"
+          id="btnFecharCracha"
+          class="cracha-close"
+          aria-label="Fechar crachá"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- CARTÃO DO CRACHÁ -->
+      <div class="cracha-card">
+        <div class="cracha-left">
+          <div class="cracha-foto-wrap">
+            <img id="crachaFoto" src="" alt="Foto do funcionário">
+          </div>
+          <div class="cracha-nome" id="crachaNome">Nome do Funcionário</div>
+          <div class="cracha-cpf" id="crachaCpf">000.000.000-00</div>
+        </div>
+
+        <div class="cracha-right">
+          <div class="cracha-field">
+            <span class="label">Função</span>
+            <span class="value" id="crachaFuncao">—</span>
+          </div>
+
+          <div class="cracha-field">
+            <span class="label">Cursos</span>
+            <span class="value" id="crachaCursos">—</span>
+          </div>
+
+          <div class="cracha-field">
+            <span class="label">Tipo de contrato</span>
+            <span class="value" id="crachaContrato">—</span>
+          </div>
+
+          <div class="cracha-footer">
+            <div class="cracha-empresa-sec">RCR Engenharia</div>
+            <button class="btn btn-primary" id="btnCrachaGerar">
+              <i class="fa-regular fa-id-card"></i>
+              Gerar carteirinha
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <!-- Javascript completo (ordem corrigida) -->
   <script src="assets/js/core.js"></script>
   <script src="assets/js/ponto.js"></script>
+
+  <!-- Funcionários -->
   <script src="assets/js/funcionarios.js"></script>
+
+
   <script src="assets/js/beneficios-vt.js"></script>
   <script src="assets/js/beneficios-vr.js"></script>
   <script src="assets/js/doc.assinatura.js"></script>
@@ -1703,12 +2018,13 @@
   <script src="assets/js/ponto-justificativa.js"></script>
   <script src="assets/js/assinatura-clicksign.js"></script>
   <script src="assets/js/usuarios.js"></script>
+  <script src="assets/js/perfil-user.js"></script>
+  <script src="assets/js/cracha-acesso.js"></script>
+  <script src="assets/js/user-menu.js"></script>
   <script src="assets/js/home.js"></script>
 
-
-
   <!-- Pré-carregar logo para o PDF -->
-  <img id="pdfLogoPreload" src="assets/img/logo_new.png" alt="" style="display:none"/>
+  <img id="pdfLogoPreload" src="assets/img/logo_rcr_transparente.png" alt="" style="display:none"/>
 
 </body>
 </html>

@@ -1,101 +1,319 @@
-/* Ferramentas de busca/ações */
-.emp-tools{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px }
-.emp-tools input{ max-width:360px }
-.emp-tools.centered{ justify-content:center }
-.emp-tools.centered input{ min-width:240px; max-width:480px }
-.emp-tools .search-group{ display:flex; gap:8px; align-items:center }
+/* ===================== FUNCIONÁRIOS – GRID / LISTA ===================== */
 
+/* Ferramentas de busca/ações */
+.emp-tools {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+.emp-tools input {
+  max-width:360px;
+}
+.emp-tools.centered {
+  justify-content:center;
+}
+.emp-tools.centered input {
+  min-width:240px;
+  max-width:480px;
+}
+.emp-tools .search-group {
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
 
 /* Grid de cartões */
-.emp-grid{ display:grid; grid-template-columns:repeat(3,minmax(220px,1fr)); gap:12px }
-@media (max-width:1100px){ .emp-grid{ grid-template-columns:repeat(2,minmax(220px,1fr)) } }
-@media (max-width:640px){ .emp-grid{ grid-template-columns:1fr } }
-
+.emp-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(220px,1fr));
+  gap:12px;
+}
+@media (max-width:1100px){
+  .emp-grid {
+    grid-template-columns:repeat(2,minmax(220px,1fr));
+  }
+}
+@media (max-width:640px){
+  .emp-grid {
+    grid-template-columns:1fr;
+  }
+}
 
 /* Card de funcionário */
-.emp-card{ position:relative; background:var(--surface); border:1px solid rgba(255,255,255,.08); border-radius:14px; display:flex; gap:12px; padding:12px; align-items:center; cursor:pointer }
-.emp-card:hover{ outline:1px dashed rgba(255,255,255,.18) }
-.emp-card.inactive{ opacity:.55; filter:grayscale(.8); }
-.emp-avatar{
-width:64px; height:64px; border-radius:14px; object-fit:cover;
-background:radial-gradient(80% 80% at 20% 20%, var(--c1), transparent),
-radial-gradient(80% 80% at 80% 80%, var(--c2), transparent);
-border:1px solid rgba(255,255,255,.2)
+.emp-card {
+  position:relative;
+  background:var(--surface);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  display:flex;
+  gap:12px;
+  padding:12px;
+  align-items:center;
+  cursor:pointer;
 }
-.emp-name{ font-weight:800 }
-.emp-role{ color:var(--muted); font-size:13px }
+.emp-card:hover {
+  outline:1px dashed rgba(255,255,255,.18);
+}
+.emp-card.inactive {
+  opacity:.55;
+  filter:grayscale(.8);
+}
 
+/* Nome / função no card */
+.emp-name {
+  font-weight:800;
+}
+.emp-role {
+  color:var(--muted);
+  font-size:13px;
+}
 
 /* Selo INATIVO */
-.emp-badge-off{ position:absolute; top:8px; left:8px; background:linear-gradient(135deg, rgba(239,68,68,.18), transparent); border:1px solid rgba(239,68,68,.5); color:#fee2e2; font-weight:800; padding:4px 8px; border-radius:8px; font-size:11px; }
-
-
-/* Botão 3 pontinhos + dropdown */
-.emp-menu{ position:absolute; top:6px; right:6px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:10px; border:1px solid rgba(255,255,255,.25); background:var(--surface); color:#d6e6f3; cursor:pointer; }
-.emp-menu:hover{ filter:brightness(1.1) }
-.emp-menu .fa-ellipsis-vertical{ font-size:16px }
-.emp-menu-dropdown{ position:absolute; top:42px; right:6px; background:var(--surface); border:1px solid rgba(255,255,255,.18); border-radius:10px; box-shadow:0 10px 26px rgba(0,0,0,.35); display:none; min-width:160px; z-index:5; overflow:hidden; }
-.emp-menu-dropdown.open{ display:block; }
-.emp-menu-dropdown button{ width:100%; text-align:left; padding:10px 12px; background:transparent; border:none; color:#e7eef6; cursor:pointer; }
-.emp-menu-dropdown button:hover{ background:rgba(255,255,255,.08) }
-.emp-menu-dropdown .danger{ color:#ffd3d3; }
-
-
-/* Modal Funcionário */
-#modalFuncionario .emp-modal-header{ display:flex; align-items:center; gap:14px; margin-bottom:12px; }
-#modalFuncionario .emp-avatar{ width:72px; height:72px; border-radius:16px; }
-#modalFuncionario .emp-name{ font-size:22px; font-weight:900; line-height:1.1; }
-#modalFuncionario .emp-role{ font-size:15px; font-weight:700; color:#d6e6f3; opacity:0.95; }
-#modalFuncionario .emp-tabs{ display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px; }
-#modalFuncionario .emp-tab-btn.active{ outline:2px solid rgba(0,224,255,.35); }
-
-
-/* Panes */
-.emp-pane{ display:none; }
-.emp-pane.active{ display:block; }
-
-
-/* Cadastro modal refinado */
-#modalCadastroUsuario .modal-content{ max-width:860px }
-#modalCadastroUsuario .modal-body{ max-height: calc(100vh - 160px); overflow:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
-#modalCadastroUsuario .gestao-cadastro .card{ background:transparent; border:none; box-shadow:none }
-#modalCadastroUsuario .gestao-cadastro .card-header{ display:none }
-#modalCadastroUsuario .gestao-cadastro .card-body{ padding:0 }
-@media (max-width:960px){
-#modalCadastroUsuario .modal-content{ width:100%; height:100%; max-width:none; border-radius:0 }
-#modalCadastroUsuario .modal-body{ max-height: calc(100vh - 110px) }
-#modalCadastroUsuario .gestao-cadastro .col{ min-width:100%!important }
+.emp-badge-off {
+  position:absolute;
+  top:8px;
+  left:8px;
+  background:linear-gradient(135deg, rgba(239,68,68,.18), transparent);
+  border:1px solid rgba(239,68,68,.5);
+  color:#fee2e2;
+  font-weight:800;
+  padding:4px 8px;
+  border-radius:8px;
+  font-size:11px;
 }
 
+/* Botão 3 pontinhos + dropdown */
+.emp-menu {
+  position:absolute;
+  top:6px;
+  right:6px;
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.25);
+  background:var(--surface);
+  color:#d6e6f3;
+  cursor:pointer;
+}
+.emp-menu:hover {
+  filter:brightness(1.1);
+}
+.emp-menu .fa-ellipsis-vertical {
+  font-size:16px;
+}
+.emp-menu-dropdown {
+  position:absolute;
+  top:42px;
+  right:6px;
+  background:var(--surface);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:10px;
+  box-shadow:0 10px 26px rgba(0,0,0,.35);
+  display:none;
+  min-width:160px;
+  z-index:5;
+  overflow:hidden;
+}
+.emp-menu-dropdown.open {
+  display:block;
+}
+.emp-menu-dropdown button {
+  width:100%;
+  text-align:left;
+  padding:10px 12px;
+  background:transparent;
+  border:none;
+  color:#e7eef6;
+  cursor:pointer;
+}
+.emp-menu-dropdown button:hover {
+  background:rgba(255,255,255,.08);
+}
+.emp-menu-dropdown .danger {
+  color:#ffd3d3;
+}
+
+/* =========================================================
+   AVATAR DO FUNCIONÁRIO (ANEL DEGRADÊ + FOTO 100% REDONDA)
+   Estrutura esperada:
+   .emp-avatar > .emp-avatar-inner > img  OU  span.emp-initial
+========================================================= */
+
+/* ✅ CARD: tamanho padrão do avatar */
+.emp-avatar{
+  width:56px;
+  height:56px;
+  flex:0 0 56px;
+
+  box-sizing:border-box;
+  padding:2px;                 /* espessura do anel */
+  border-radius:999px;
+  overflow:hidden;
+
+  background:
+    linear-gradient(#0b1622,#0b1622) padding-box,
+    linear-gradient(135deg,var(--c1,#00E0FF),var(--c2,#FF2FB9)) border-box;
+  border:2px solid transparent;
+}
+
+/* Miolo (recorte) */
+.emp-avatar-inner{
+  width:100%;
+  height:100%;
+  border-radius:999px;
+  overflow:hidden;
+  background:#0b1622;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* ✅ SEM “FAIXA”: imagem ocupa tudo e recorta certo */
+.emp-avatar-inner img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  object-position:center;
+}
+
+/* Fallback iniciais */
+.emp-initial{
+  font-weight:800;
+  font-size:14px;
+  letter-spacing:.02em;
+  line-height:1;
+  color:#e8f0f7;
+}
+.emp-avatar.no-photo .emp-avatar-inner{
+  background:#0b1622;
+}
+
+/* ===================== MODAL FUNCIONÁRIO ===================== */
+
+#modalFuncionario .emp-modal-header {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:12px;
+}
+
+/* ✅ MODAL: avatar maior, mantendo o mesmo “sistema” (wrapper/inner/img) */
+#modalFuncionario .emp-avatar{
+  width:86px;
+  height:86px;
+  flex:0 0 86px;
+  padding:3px;                 /* anel um pouco mais grosso no modal */
+}
+
+/* Tipografia do modal */
+#modalFuncionario .emp-name {
+  font-size:22px;
+  font-weight:900;
+  line-height:1.1;
+}
+#modalFuncionario .emp-role {
+  font-size:15px;
+  font-weight:700;
+  color:#d6e6f3;
+  opacity:0.95;
+}
+
+#modalFuncionario .emp-tabs {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:10px 0 14px;
+}
+#modalFuncionario .emp-tab-btn.active {
+  outline:2px solid rgba(0,224,255,.35);
+}
+
+/* Panes */
+.emp-pane {
+  display:none;
+}
+.emp-pane.active {
+  display:block;
+}
+
+/* ===================== CADASTRO MODAL REFINADO ===================== */
+
+#modalCadastroUsuario .modal-content {
+  max-width:860px;
+}
+#modalCadastroUsuario .modal-body {
+  max-height: calc(100vh - 160px);
+  overflow:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+#modalCadastroUsuario .gestao-cadastro .card {
+  background:transparent;
+  border:none;
+  box-shadow:none;
+}
+#modalCadastroUsuario .gestao-cadastro .card-header {
+  display:none;
+}
+#modalCadastroUsuario .gestao-cadastro .card-body {
+  padding:0;
+}
+@media (max-width:960px){
+  #modalCadastroUsuario .modal-content {
+    width:100%;
+    height:100%;
+    max-width:none;
+    border-radius:0;
+  }
+  #modalCadastroUsuario .modal-body {
+    max-height: calc(100vh - 110px);
+  }
+  #modalCadastroUsuario .gestao-cadastro .col {
+    min-width:100%!important;
+  }
+}
 
 /* Esconder cargo no form (mantido no HTML) */
-#wrapCargoField{ display:none !important }
-
+#wrapCargoField {
+  display:none !important;
+}
 
 /* Esconder “Alterar foto” legado (se existir) */
-#modalFuncionario #btnTabFoto, #modalFuncionario #paneFoto { display:none !important; }
-
+#modalFuncionario #btnTabFoto,
+#modalFuncionario #paneFoto {
+  display:none !important;
+}
 
 /* Ações alinhadas à esquerda em gestão */
-.gestao-actions-left{ display:flex; justify-content:flex-start; align-items:center; margin:8px 0 12px }
-
+.gestao-actions-left {
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  margin:8px 0 12px;
+}
 
 /* Wrapper de cadastro antigo (abre em modal) */
-.gestao-cadastro-wrap{ display:none !important; }
+.gestao-cadastro-wrap {
+  display:none !important;
+}
 
+/* ===================== EXPLORADOR DE ARQUIVOS ===================== */
 
-/* ====== Explorador de arquivos do funcionário ====== */
-
-.emp-file-explorer{
+.emp-file-explorer {
   display:flex;
   flex-direction:column;
   gap:8px;
-  /* ocupa a área do modal, mas respeita a altura */
   min-height:260px;
   max-height:60vh;
 }
 
-.emp-file-explorer .fe-toolbar{
+.emp-file-explorer .fe-toolbar {
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -103,35 +321,34 @@ border:1px solid rgba(255,255,255,.2)
   flex-wrap:wrap;
 }
 
-.fe-path{
+.fe-path {
   font-size:13px;
   color:var(--muted);
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
-
-.fe-path .fe-bc{
+.fe-path .fe-bc {
   cursor:pointer;
   color:var(--c1);
 }
-.fe-path .fe-bc.current{
+.fe-path .fe-bc.current {
   font-weight:600;
   color:#fff;
 }
-.fe-path .fe-bc + .fe-bc::before{
+.fe-path .fe-bc + .fe-bc::before {
   content:" / ";
   color:var(--muted);
 }
 
-.fe-actions{
+.fe-actions {
   display:flex;
   gap:6px;
   flex-wrap:wrap;
 }
 
 /* caixa principal (esquerda árvore, direita lista) */
-.fe-body{
+.fe-body {
   display:flex;
   min-height:220px;
   border-radius:12px;
@@ -141,7 +358,7 @@ border:1px solid rgba(255,255,255,.2)
 }
 
 /* árvore de pastas (lado esquerdo) */
-.fe-tree{
+.fe-tree {
   width:220px;
   max-width:260px;
   padding:8px;
@@ -149,18 +366,15 @@ border:1px solid rgba(255,255,255,.2)
   font-size:13px;
   overflow:auto;
 }
-
-.fe-tree ul{
+.fe-tree ul {
   list-style:none;
   margin:0;
   padding-left:14px;
 }
-
-.fe-tree-root{
+.fe-tree-root {
   display:block;
 }
-
-.fe-tree-folder{
+.fe-tree-folder {
   display:flex;
   align-items:center;
   gap:6px;
@@ -169,46 +383,167 @@ border:1px solid rgba(255,255,255,.2)
   cursor:pointer;
   color:#e5f0ff;
 }
-
-.fe-tree-folder:hover{
+.fe-tree-folder:hover {
   background:rgba(255,255,255,.06);
 }
-
-.fe-tree-folder.active{
+.fe-tree-folder.active {
   background:rgba(255,255,255,.12);
 }
-
-.fe-icon{
+.fe-icon {
   width:18px;
   text-align:center;
 }
 
 /* lista (lado direito) */
-.fe-list-wrap{
+.fe-list-wrap {
   flex:1;
   overflow:auto;
 }
-
-.fe-list tbody tr{
+.fe-list tbody tr {
   cursor:pointer;
 }
-
-.fe-list tbody tr.selected{
+.fe-list tbody tr.selected {
   background:rgba(255,255,255,.08);
 }
-
-.fe-list td:first-child{
+.fe-list td:first-child {
   text-align:left;
 }
-
-.fe-list .fe-empty td{
+.fe-list .fe-empty td {
   text-align:center;
   color:#9fb1c3;
 }
 
 /* botão de upload “label” */
-.fe-upload-label{
+.fe-upload-label {
   display:inline-flex;
   align-items:center;
   gap:6px;
+}
+
+/* ===================== CADASTRO DE FUNCIONÁRIOS – FORM  ===================== */
+
+.gestao-cadastro .card-body {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.gestao-cadastro .row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:8px;
+}
+.gestao-cadastro .col {
+  flex:1 1 0;
+  min-width:190px;
+}
+
+/* Campo de IDADE mais estreito */
+.gestao-cadastro #cadIdade { max-width:120px; }
+
+/* Labels dos campos */
+.gestao-cadastro .card-body label {
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  margin-bottom:4px;
+  color:#cbd5f5;
+}
+
+/* Inputs */
+.gestao-cadastro .card-body input[type="text"],
+.gestao-cadastro .card-body input[type="email"],
+.gestao-cadastro .card-body input[type="number"],
+.gestao-cadastro .card-body input[type="date"],
+.gestao-cadastro .card-body input[type="file"] {
+  width:100%;
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid rgba(148,163,184,.55);
+  background:rgba(15,23,42,.96);
+  color:#e5f0ff;
+  font-size:14px;
+  outline:none;
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.gestao-cadastro .card-body input[type="text"]:focus,
+.gestao-cadastro .card-body input[type="email"]:focus,
+.gestao-cadastro .card-body input[type="number"]:focus,
+.gestao-cadastro .card-body input[type="date"]:focus,
+.gestao-cadastro .card-body input[type="file"]:focus {
+  border-color:var(--c1,#0ea5e9);
+  box-shadow:0 0 0 1px rgba(56,189,248,.35);
+  background:rgba(15,23,42,1);
+}
+
+/* Placeholder */
+.gestao-cadastro .card-body input::placeholder {
+  color:rgba(148,163,184,.75);
+}
+
+/* ===================== TOGGLES VR / VT / CLT / PJ ===================== */
+
+.benefit-toggles {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  margin-top:4px;
+}
+
+/* Chip */
+.benefit-toggles label {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,.6);
+  background:transparent;
+  font-size:13px;
+  cursor:pointer;
+  user-select:none;
+  color:#e2e8f0;
+}
+
+/* bolinha do check/radio */
+.benefit-toggles input[type="checkbox"],
+.benefit-toggles input[type="radio"] {
+  appearance:none;
+  -webkit-appearance:none;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  border:2px solid var(--c1);
+  background:transparent;
+  position:relative;
+  margin:0;
+}
+
+/* miolinho menor quando marcado */
+.benefit-toggles input[type="checkbox"]:checked::after,
+.benefit-toggles input[type="radio"]:checked::after {
+  content:"";
+  position:absolute;
+  inset:3px;
+  border-radius:50%;
+  background:var(--c1);
+}
+
+/* texto ao lado da bolinha */
+.benefit-toggles span {
+  font-size:13px;
+}
+
+/* destaque leve quando selecionado */
+.benefit-toggles input:checked + span {
+  color:var(--c1);
+}
+
+/* ===================== BOTÕES FINAIS ===================== */
+
+.inline-row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
 }

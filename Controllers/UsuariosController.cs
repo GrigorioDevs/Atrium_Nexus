@@ -1,38 +1,62 @@
-using System.ComponentModel.DataAnnotations;
+using Atrium.RH.Data;
+using Atrium.RH.Domain.Entities;
+using Atrium.RH.Dtos.Usuarios;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Atrium.RH.Utils;
 
-namespace Atrium.RH.Dtos.Usuarios
+
+namespace Atrium.RH.Controllers
 {
-    public class UsuarioCadastroDto
+    [ApiController]
+    [Route("api/[controller]")] // => "api/usuarios"
+    public class UsuariosController : ControllerBase
     {
-        [Required(ErrorMessage = "Login é obrigatório.")]
-        [StringLength(80, MinimumLength = 3, ErrorMessage = "Login deve ter entre 3 e 80 caracteres.")]
-        public string Login { get; set; } = string.Empty;
+        private readonly AtriumRhDbContext _ctx;
 
-        [Required(ErrorMessage = "Email é obrigatório.")]
-        [EmailAddress(ErrorMessage = "Email inválido.")]
-        [StringLength(180)]
-        public string Email { get; set; } = string.Empty;
+        public UsuariosController(AtriumRhDbContext ctx)
+        {
+            _ctx = ctx;
+        }
 
-        // OBS: vem mascarado do front, mas o back vai normalizar (tirar máscara).
-        [Required(ErrorMessage = "CPF é obrigatório.")]
-        [StringLength(14, MinimumLength = 11, ErrorMessage = "CPF inválido.")]
-        public string Cpf { get; set; } = string.Empty;
+        // POST /api/usuarios
+        [HttpPost]
+        public async Task<IActionResult> Cadastrar([FromBody] UsuarioCadastroDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-        // OBS: vem mascarado do front, mas o back vai normalizar (tirar máscara).
-        [Required(ErrorMessage = "Telefone é obrigatório.")]
-        [StringLength(20, MinimumLength = 8, ErrorMessage = "Telefone inválido.")]
-        public string Telefone { get; set; } = string.Empty;
+            var cpfLimpo = new string(dto.Cpf.Where(char.IsDigit).ToArray());
+            var telLimpo = new string(dto.Telefone.Where(char.IsDigit).ToArray());
 
-        [Required(ErrorMessage = "Senha é obrigatória.")]
-        [StringLength(64, MinimumLength = 6, ErrorMessage = "Senha deve ter no mínimo 6 caracteres.")]
-        public string Senha { get; set; } = string.Empty;
+            var jaExiste = await _ctx.Usuarios
+                .AnyAsync(u => u.Login == dto.Login || u.Cpf == cpfLimpo);
 
-        [Required(ErrorMessage = "Confirmar senha é obrigatório.")]
-        [Compare(nameof(Senha), ErrorMessage = "As senhas não conferem.")]
-        public string ConfirmarSenha { get; set; } = string.Empty;
+            if (jaExiste)
+                return Conflict(new { message = "Já existe um usuário com esse login ou CPF." });
 
-        // 1 Admin, 2 User Gestão, 3 User ST, 4 User Funcionário
-        [Range(1, 4, ErrorMessage = "Perfil inválido.")]
-        public int TypeUser { get; set; }
+            var usuario = new Usuario
+            {
+                Nome     = dto.Login,          // por enquanto usa o login como nome
+                Login    = dto.Login,
+                Email    = dto.Email,
+                Cpf      = cpfLimpo,
+                Telefone = telLimpo,
+                TypeUser = dto.TypeUser,      // 1..4 (no front vamos mandar 4)
+                Ativo    = true,
+                Criacao  = DateTimeOffset.UtcNow,
+                Senha    = Security.Sha256Hex(dto.Senha ?? "") // << grava SHA256 em hex
+            };
+
+            _ctx.Usuarios.Add(usuario);
+            await _ctx.SaveChangesAsync();
+
+            return Ok(new {
+                message = "Usuário cadastrado com sucesso.",
+                id = usuario.Id,
+                login = usuario.Login,
+                typeUser = usuario.TypeUser
+            });
+        }
     }
 }

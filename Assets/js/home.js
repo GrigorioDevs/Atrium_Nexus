@@ -209,19 +209,6 @@ sidebarOverlay?.addEventListener('click', closeSidebar);
   setInterval(tick, 1000);
   tick();
 
-  /* ===================== PERFIL (usuário logado) ===================== */
-
-  (function initMe() {
-    if (typeof window.getMe !== 'function') return;
-
-    try {
-      const me = window.getMe() || {};
-      $('uNome') && ($('uNome').textContent = me.nome || 'Colaborador(a)');
-      $('uFuncao') && ($('uFuncao').textContent = me.funcao || 'Função');
-      $('helloNome') && ($('helloNome').textContent = me.nome || 'Colaborador(a)');
-    } catch {}
-  })();
-
   /* ===================== SEED DE BATIMENTOS (demo) ===================== */
 
   (function seedPunchesIfNeeded() {
@@ -311,6 +298,14 @@ sidebarOverlay?.addEventListener('click', closeSidebar);
     if (list.length === 0) return 'Entrada';
     return list[list.length - 1].type === 'Entrada' ? 'Saída' : 'Entrada';
   }
+
+
+  // Auto-abrir aba Docs se existir (útil para links diretos)
+  document.addEventListener('DOMContentLoaded', () => {
+  // tenta achar o item do menu da aba Docs
+  const liDocs = document.querySelector('li[data-tab="tabDocs"]');
+  if (liDocs) liDocs.click(); // dispara o mesmo comportamento do clique
+  });
 
   // Clique no botão incluir ponto (se existir nessa aba)
   document.addEventListener('click', (e) => {
