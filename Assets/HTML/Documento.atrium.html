@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Atrium.RH — Documentação do Sistema</title>
+
+  <!-- Mermaid (fluxogramas) -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "dark" });
+  </script>
+
+  <style>
+    :root{
+      --bg:#0A111A;
+      --card:#101a27;
+      --ink:#eaf2ff;
+      --muted:#a8b3c7;
+      --line:rgba(255,255,255,.10);
+      --c1:#00e0ff;
+      --c2:#ff2fb9;
+      --ok:#18d48a;
+      --warn:#ffc34a;
+      --bad:#ff5d5d;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:
+        radial-gradient(900px 500px at 20% 0%, rgba(0,224,255,.10), transparent 60%),
+        radial-gradient(900px 500px at 80% 0%, rgba(255,47,185,.10), transparent 60%),
+        var(--bg);
+      color:var(--ink);
+      font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    a{color:var(--c1); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px}
+    .hero{
+      border:1px solid var(--line);
+      background:linear-gradient(160deg, rgba(0,224,255,.10), rgba(255,47,185,.08)), rgba(255,255,255,.03);
+      border-radius:18px;
+      padding:22px 20px;
+    }
+    .title{
+      display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+      margin:0 0 6px 0;
+      font-weight:900; letter-spacing:.3px;
+    }
+    .pill{
+      font-size:12px;
+      border:1px solid var(--line);
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+    }
+    .subtitle{margin:0;color:var(--muted)}
+    .grid{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:16px;
+      margin-top:16px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+    }
+    h2,h3{margin:0 0 10px 0}
+    h2{
+      margin-top:22px;
+      font-size:18px;
+      display:flex; align-items:center; gap:10px;
+    }
+    h3{font-size:15px;color:#dce7ff}
+    .muted{color:var(--muted)}
+    .toc a{display:block;padding:6px 8px;border-radius:10px}
+    .toc a:hover{background:rgba(255,255,255,.05)}
+    .hr{height:1px;background:var(--line);margin:14px 0}
+    .tag{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      font-size:12px;color:var(--muted);
+      margin:3px 6px 3px 0;
+    }
+    .kpi{
+      display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+    }
+    @media (max-width: 780px){ .kpi{grid-template-columns:1fr} }
+    .kpi .box{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.18);
+      border-radius:14px;
+      padding:12px;
+    }
+    .kpi .box b{display:block;font-size:13px}
+    .kpi .box span{color:var(--muted)}
+    pre, code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px;
+    }
+    pre{
+      white-space:pre-wrap;
+      background:rgba(0,0,0,.25);
+      border:1px solid var(--line);
+      padding:12px;
+      border-radius:14px;
+      overflow:auto;
+    }
+    .callout{
+      border-left:4px solid rgba(0,224,255,.65);
+      background:rgba(0,224,255,.07);
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(0,224,255,.18);
+    }
+    .callout.warn{
+      border-left-color: rgba(255,195,74,.75);
+      background:rgba(255,195,74,.08);
+      border-color:rgba(255,195,74,.18);
+    }
+    .callout.bad{
+      border-left-color: rgba(255,93,93,.75);
+      background:rgba(255,93,93,.08);
+      border-color:rgba(255,93,93,.18);
+    }
+    .two{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 980px){ .two{grid-template-columns:1fr} }
+
+    /* Mermaid container */
+    .mermaid{
+      background:rgba(0,0,0,.22);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      overflow:auto;
+    }
+
+    /* Print */
+    @media print{
+      body{background:#fff;color:#000}
+      .wrap{max-width:none}
+      .hero,.card,.mermaid,pre{background:#fff;border-color:#ddd}
+      a{color:#000;text-decoration:none}
+      .pill,.tag{border-color:#ddd}
+      .muted{color:#444}
+      .callout{border-color:#ddd;background:#f8f8f8}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1 class="title">
+        📘 Atrium.RH — Documentação Oficial do Sistema
+        <span class="pill">Web + API + SQL Server</span>
+        <span class="pill">RCR Engenharia — RH</span>
+      </h1>
+      <p class="subtitle">
+        Documento único para manutenção, evolução e onboarding. Gere PDF via <b>Ctrl+P → Salvar como PDF</b>.
+      </p>
+      <div class="hr"></div>
+      <div class="kpi">
+        <div class="box"><b>Frontend</b><span>HTML/CSS/JS (tabs, sidebar, módulos RH)</span></div>
+        <div class="box"><b>Backend</b><span>ASP.NET Core Web API (.NET 9) — projeto <b>Atrium.RH</b></span></div>
+        <div class="box"><b>Banco</b><span>SQL Server: <b>atrium_rh</b> (tabela <b>usuario</b>)</span></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card toc">
+        <h3>🧭 Sumário</h3>
+        <a href="#visao-geral">1) Visão geral</a>
+        <a href="#arquitetura">2) Arquitetura & Fluxos</a>
+        <a href="#frontend">3) Frontend (HTML/CSS/JS)</a>
+        <a href="#permissoes">4) Perfis de acesso (permissões)</a>
+        <a href="#cadastro-usuario">5) Cadastro de usuário (novo)</a>
+        <a href="#clicksign">6) Clicksign (assinaturas) — ideia e estrutura</a>
+        <a href="#backend">7) Backend ASP.NET Core (padrão recomendado)</a>
+        <a href="#db">8) Banco de dados (SQL Server)</a>
+        <a href="#endpoints">9) Endpoints e exemplos de JSON</a>
+        <a href="#checklist">10) Checklist de execução & troubleshooting</a>
+        <a href="#roadmap">11) Próximos passos</a>
+        <div class="hr"></div>
+        <div class="muted">
+          Versão: 2025-11-28<br/>
+          Projeto: Atrium.RH
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 id="visao-geral">🧩 1) Visão geral</h2>
+        <p class="muted">
+          O sistema Atrium.RH é um portal de RH com foco em <b>cartão de ponto</b>, <b>gestão de funcionários</b>,
+          <b>benefícios</b> (VT/VR) e <b>documentos</b> (geração e assinatura). Possui interface web responsiva
+          com menu lateral (sidebar) e abas.
+        </p>
+
+        <div class="two">
+          <div class="callout">
+            <b>Principais módulos</b><br/>
+            • Cartão de Ponto (consulta, períodos, PDF)<br/>
+            • Incluir Ponto (geolocalização/mapa)<br/>
+            • Ajustar Ponto (modal)<br/>
+            • Justificar Ausência (modal)<br/>
+            • Pontos Justificados (listagem por funcionário/período)<br/>
+            • Funcionários (gestão + segurança do trabalho)<br/>
+            • Benefícios (VT/VR)<br/>
+            • Documentos & Assinaturas (gerar, assinatura pública e Clicksign)
+          </div>
+
+          <div class="callout warn">
+            <b>Pontos críticos</b><br/>
+            • Controle de acesso por perfil (Admin / Gestão / ST / Funcionário)<br/>
+            • Cadastro de usuário (admin-only)<br/>
+            • Senha armazenada em hash (requisito SHA-256)<br/>
+            • Integração Clicksign (fluxo + webhook + envio por WhatsApp)
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2 id="arquitetura">🗺️ 2) Arquitetura & Fluxos</h2>
+
+        <h3>2.1 Arquitetura geral (alto nível)</h3>
+        <div class="mermaid">
+graph TD
+  U[👤 Usuário (Browser)] -->|HTTP| FE[🖥️ Frontend Atrium.RH]
+  FE -->|REST/JSON| API[⚙️ ASP.NET Core Web API (Atrium.RH)]
+  API -->|EF Core| DB[(🗄️ SQL Server: atrium_rh)]
+  API -->|API| CS[✍️ Clicksign]
+  CS -->|E-mail/SMS (ou link)| SIGNER[📩 Colaborador assina]
+  API -->|opcional| WA[💬 Provedor WhatsApp (Twilio/Zenvia/360dialog)]
+  WA --> SIGNER
+  CS -->|Webhook| API
+        </div>
+
+        <h3>2.2 Fluxo — Registrar ponto (geolocalização)</h3>
+        <div class="mermaid">
+flowchart TD
+  A[Abrir aba "Incluir Ponto"] --> B[Init Map (Leaflet)]
+  B --> C{Geolocalização disponível?}
+  C -- Sim --> D[Captura coords + salva lastLatLng]
+  C -- Não --> E[Usa fallback]
+  D --> F[Clicar "Incluir Ponto"]
+  E --> F
+  F --> G[Calcula Entrada/Saída (nextTypeFor)]
+  G --> H[Grava batimento (localStorage)]
+  H --> I[Atualiza tabela de ponto / abre modal do dia]
+        </div>
+
+        <h3>2.3 Fluxo — Cadastro de usuário (novo)</h3>
+        <div class="mermaid">
+flowchart TD
+  A[Admin abre "Cadastrar Usuário"] --> B[Frontend valida CPF/Email/Telefone + Senha/Confirma]
+  B --> C[POST /api/usuarios]
+  C --> D[Service valida duplicidades (cpf/email/login)]
+  D --> E[Calcula novo Id = MAX(id)+1]
+  E --> F[Hash SHA-256 da senha]
+  F --> G[INSERT tabela usuario]
+  G --> H[Retorna id + mensagem]
+        </div>
+
+        <h3>2.4 Fluxo — Clicksign com envio por WhatsApp (meta desejada)</h3>
+        <div class="mermaid">
+flowchart TD
+  A[Selecionar Documento + Funcionário] --> B[Auto-preencher Email/Telefone]
+  B --> C[Clicar "Enviar para Clicksign"]
+  C --> D[API cria envelope/documento no Clicksign]
+  D --> E[API adiciona signatário (email)]
+  E --> F[Clicksign retorna sign_url / key]
+  F --> G[API salva key/url no banco]
+  G --> H[API envia link via WhatsApp (provedor)]
+  H --> I[Funcionário assina]
+  I --> J[Clicksign chama Webhook (assinado)]
+  J --> K[API baixa PDF assinado e marca status]
+        </div>
+
+        <div class="callout">
+          <b>Observação importante:</b> Clicksign normalmente notifica por e-mail. WhatsApp exige um <b>provedor</b> (Twilio, Zenvia, 360dialog, etc.)
+          e templates aprovados (dependendo do provedor). O link de assinatura pode ser o <code>sign_url</code> retornado pelo Clicksign.
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px" id="frontend">
+      <h2>🖥️ 3) Frontend (HTML/CSS/JS)</h2>
+
+      <h3>3.1 Estrutura de UI (padrão)</h3>
+      <p class="muted">
+        A UI é baseada em: <b>sidebar fixa</b> (desktop) + <b>drawer</b> (mobile), abas (tabs) e modais.
+      </p>
+      <div class="tag">📌 Sidebar: <code>#sidebar</code></div>
+      <div class="tag">📌 Menu: <code>#menu</code> (<code>li[data-tab]</code>)</div>
+      <div class="tag">📌 Tabs: <code>.tab</code> + <code>.tab.active</code></div>
+      <div class="tag">📌 Mobile toggle: <code>#btnHamb</code> (botão + estilo Instagram)</div>
+
+      <div class="hr"></div>
+
+      <h3>3.2 CSS — comportamento mobile da sidebar</h3>
+      <pre>
+- Desktop: sidebar fixa à esquerda + main com margin-left: var(--nav-width)
+- Mobile (&lt;= 960px):
+  - main: margin-left: 0
+  - sidebar: fica fora da tela (left negativo)
+  - quando JS adiciona .active em #sidebar: sidebar entra (left: 0)
+  - body.sidebar-open cria overlay (pseudo-elemento) e trava scroll
+      </pre>
+
+      <h3>3.3 JS — módulos principais (descrição)</h3>
+      <div class="two">
+        <div class="card">
+          <b>assets/js/home.js</b><br/>
+          <span class="muted">
+            • controla menu/sidebar/tabs<br/>
+            • inicializa relógio<br/>
+            • integra mapa/geo p/ incluir ponto<br/>
+            • movimenta grade de funcionários entre abas<br/>
+            • dispara renderizações (VT/VR, docs, etc.)<br/>
+          </span>
+        </div>
+        <div class="card">
+          <b>assets/js/ponto.js</b><br/>
+          <span class="muted">
+            • lógica e render do cartão de ponto<br/>
+            • localStorage dos batimentos<br/>
+            • modal de batimentos por dia<br/>
+          </span>
+        </div>
+      </div>
+      <div class="two" style="margin-top:10px">
+        <div class="card">
+          <b>assets/js/funcionarios.js</b><br/>
+          <span class="muted">
+            • cadastro/listagem de colaboradores<br/>
+            • documentos (explorador de arquivos)<br/>
+            • documentos importantes + lembretes<br/>
+          </span>
+        </div>
+        <div class="card">
+          <b>assets/js/doc.assinatura.js</b><br/>
+          <span class="muted">
+            • geração de documentos (wizard) + templates<br/>
+            • editor e preview + export PDF<br/>
+          </span>
+        </div>
+      </div>
+      <div class="two" style="margin-top:10px">
+        <div class="card">
+          <b>assets/js/assinatura-publica.js</b><br/>
+          <span class="muted">
+            • fluxo de assinatura pública via hash<br/>
+            • canvas de assinatura + PDF final<br/>
+          </span>
+        </div>
+        <div class="card">
+          <b>assets/js/assinatura-clicksign.js</b><br/>
+          <span class="muted">
+            • integra sub-abas (Gerar / Assinar)<br/>
+            • chama backend: /api/clicksign/send e /download<br/>
+          </span>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3>3.4 Diretório (visão recomendada + atual)</h3>
+      <pre>
+Atrium-rh/
+  Program.cs
+  Atrium.RH.csproj
+  Atrium-rh.sln
+  appsettings.json
+  appsettings.Development.json
+  Properties/
+    launchSettings.json
+  Controllers/
+    UsuariosController.cs
+    (ClicksignController.cs - recomendado)
+  Services/
+    UsuariosService.cs
+    (ClicksignService.cs - recomendado)
+  Data/
+    AtriumRhDbContext.cs
+  Domain/
+    Entities/
+      Usuario.cs
+  Dtos/
+    Usuarios/
+      UsuarioCadastroDto.cs
+      (LoginDto.cs - recomendado)
+  Utils/
+    Normalizacao.cs (CPF/Telefone)
+    Hashing.cs (SHA-256)
+  assets/
+    css/ (reset, tokens, base, layout, components, módulos, overrides)
+    js/  (core, home, ponto, funcionarios, beneficios, docs, clicksign, etc.)
+  *.html (home.html, index.html, register.html etc.)
+      </pre>
+
+      <div class="callout warn">
+        <b>Nota:</b> você tem pastas <code>assets/</code> e também aparece <code>Assets/</code> em alguns paths no HTML.
+        Em Windows funciona, mas isso pode quebrar em servidor Linux (case-sensitive). Padronize tudo para <code>assets</code>.
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px" id="permissoes">
+      <h2>🛡️ 4) Perfis de acesso (permissões)</h2>
+      <p class="muted">Perfis definidos no sistema:</p>
+      <pre>
+Admin (type_user=1):
+  - Acesso total
+  - Pode criar usuários
+
+User Gestão (type_user=2):
+  - Acesso geral
+  - Exceto: incluir ponto e criar usuário
+
+User ST (type_user=3):
+  - Acesso apenas na área Segurança do Trabalho / Funcionários
+
+User Funcionário (type_user=4):
+  - Acesso somente ao cartão de ponto e registrar ponto
+      </pre>
+
+      <div class="callout">
+        <b>Regra de negócio:</b> a opção “Cadastrar Usuário” deve aparecer no menu <b>somente</b> para Admin.
+        No backend, isso deve ser reforçado por autorização (não só esconder no front).
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px" id="cadastro-usuario">
+      <h2>👤 5) Cadastro de usuário (novo)</h2>
+
+      <h3>5.1 Campos UI (tela)</h3>
+      <pre>
+Nome Login          placeholder: Seu nome de usuário
+Email               placeholder: voce@empresa.com
+CPF                 placeholder: 000.000.000-00
+Telefone            placeholder: (11) 90000-0000
+Senha               placeholder: Crie uma senha
+Confirmar Senha     placeholder: Repita a senha
+Perfil de acesso    select: Admin | User Gestão | User ST | User Funcionário
+      </pre>
+
+      <h3>5.2 Validações (frontend)</h3>
+      <pre>
+- CPF: validar dígitos (front com máscara; enviar sem máscara)
+- Email: regex básica + obrigatório
+- Telefone: máscara no front; enviar só números
+- Senha: mínimo recomendado (ex.: 8 chars) + confirmar
+- Perfil: obrigatório
+      </pre>
+
+      <div class="callout warn">
+        <b>Segurança:</b> Mesmo que o requisito peça SHA-256, o ideal é usar <b>hash com salt e custo</b> (BCrypt/Argon2).
+        Se ficar SHA-256, pelo menos use salt (e guarde separado).
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px" id="clicksign">
+      <h2>✍️ 6) Clicksign — ideia e estrutura</h2>
+      <p class="muted">
+        Objetivo: selecionar documento + vincular funcionário → auto preencher e-mail/celular → enviar p/ Clicksign → enviar link pro WhatsApp → baixar PDF assinado.
+      </p>
+
+      <h3>6.1 É possível?</h3>
+      <div class="callout">
+        ✅ <b>Sim</b>, com esses componentes:<br/>
+        1) Backend cria documento/envelope na Clicksign e pega <code>key</code> e/ou <code>sign_url</code>.<br/>
+        2) Backend salva no banco o vínculo <code>documentoId</code> ↔ <code>usuarioId</code> ↔ <code>clicksignKey</code>.<br/>
+        3) Clicksign notifica por e-mail (padrão). Para WhatsApp, você usa um provedor de WhatsApp e manda o link.<br/>
+        4) Para saber quando assinou, use <b>webhook</b> do Clicksign (ou polling) e atualize status.<br/>
+      </div>
+
+      <h3>6.2 O que você precisa criar no backend</h3>
+      <pre>
+- ClicksignService:
+  - CreateDocument(...) / UploadPDF(...)
+  - AddSigner(...)
+  - GetSignUrl(...)
+  - DownloadSignedPdf(...)
+  - Webhook handler (Update status)
+
+- ClicksignController:
+  POST /api/clicksign/send
+  GET  /api/clicksign/download/{key}
+  POST /api/clicksign/webhook (recebe eventos)
+
+- WhatsAppService (opcional):
+  - SendMessage(phone, text/link)
+      </pre>
+    </div>
+
+    <div class="card" style="margin-top:16px" id="backend">
+      <h2>⚙️ 7) Backend ASP.NET Core (Atrium.RH)</h2>
+
+      <h3>7.1 Stack atual (observado)</h3>
+      <pre>
+- .NET: net9.0
+- DB: SQL Server (Microsoft.Data.SqlClient)
+- ORM: EF Core
+- Swagger: Swashbuckle (corrigido após conflito Microsoft.OpenApi)
+      </pre>
+
+      <h3>7.2 Camadas (recomendado)</h3>
+      <pre>
+Controllers/  -> entrada HTTP
+Services/     -> regras de negócio
+Data/         -> DbContext e mapeamentos
+Domain/       -> entidades
+Dtos/         -> contratos de entrada/saída
+Utils/        -> normalização, hashing, validações
+      </pre>
+
+      <div class="callout">
+        <b>Observação:</b> quando o Swagger mostrou “No operations defined in spec”, a causa típica é:
+        controllers não mapeados (<code>app.MapControllers()</code>) ou <code>AddControllers()</code> ausente.
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px" id="db">
+      <h2>🗄️ 8) Banco de dados (SQL Server)</h2>
+
+      <h3>8.1 Conexão (referência)</h3>
+      <pre>
+Server=STORMZERAGG;Database=atrium_rh;User Id=system;Password=***;TrustServerCertificate=True;
+      </pre>
+      <div class="callout warn">
+        <b>Recomendação:</b> não versionar senha no Git. Use User Secrets / env var.
+      </div>
+
+      <h3>8.2 Tabela: usuario (requisito)</h3>
+      <pre>
+PK: id
+
+id                 int (ValueGeneratedNever / MAX+1)
+lociid              int default 1
+ativo               bit (0/1) default 1
+criacao             datetime (GMT-3)
+datasincronizacao   datetime null
+datainterface       datetime null
+cpf                 varchar(11) (sem máscara) UNIQUE
+nome                varchar(120)
+email               varchar(180) UNIQUE
+login               varchar(80) UNIQUE
+senha               varchar(64) (sha256 hex)
+telefone            varchar(20) (sem máscara)
+type_user           int (1..4)
+user_img            varchar(300) null
+      </pre>
+
+      <h3>8.3 Observações de concorrência (MAX+1)</h3>
+      <div class="callout bad">
+        <b>IMPORTANTE:</b> MAX(id)+1 pode dar colisão se dois cadastros ocorrerem ao mesmo tempo.
+        Soluções: <br/>
+        • trocar para IDENTITY no banco, ou<br/>
+        • gerar em transação com lock apropriado, ou<br/>
+        • usar SEQUENCE (SQL Server) e obter próximo valor.
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px" id="endpoints">
+      <h2>🔌 9) Endpoints e exemplos de JSON</h2>
+
+      <h3>9.1 Login (observado no Program.cs)</h3>
+      <pre>
+POST /api/usuario/login
+Body:
+{
+  "cpf": "00000000000",
+  "login": "gustavo",
+  "senha": "123"
+}
+      </pre>
+
+      <h3>9.2 Cadastro de usuário (novo)</h3>
+      <pre>
+POST /api/usuarios
+Header:
+  X-User-Type: 1   (Admin)
+
+Body sugerido (DTO):
+{
+  "nome": "Maria Souza",
+  "login": "maria.souza",
+  "email": "maria@empresa.com",
+  "cpf": "12345678901",
+  "telefone": "11990000000",
+  "senha": "SenhaForte@123",
+  "confirmarSenha": "SenhaForte@123",
+  "typeUser": 2
+}
+      </pre>
+
+      <h3>9.3 Clicksign (proposto)</h3>
+      <pre>
+POST /api/clicksign/send
+{
+  "documentoId": 123,
+  "usuarioId": 55
+}
+
+Resposta:
+{
+  "clicksignKey": "abc123",
+  "signUrl": "https://app.clicksign.com/.../sign",
+  "message": "Enviado para assinatura."
+}
+
+GET /api/clicksign/download/{key}
+-> retorna application/pdf (PDF assinado)
+      </pre>
+    </div>
+
+    <div class="card" style="margin-top:16px" id="checklist">
+      <h2>✅ 10) Checklist de execução & troubleshooting</h2>
+
+      <h3>10.1 Rodar API</h3>
+      <pre>
+dotnet restore
+dotnet build
+dotnet run
+
+Swagger:
+http://localhost:5253/swagger
+      </pre>
+
+      <h3>10.2 Swagger “No operations defined in spec”</h3>
+      <pre>
+Verifique se existe:
+- builder.Services.AddControllers();
+- app.MapControllers();
+
+E no Swagger:
+- builder.Services.AddSwaggerGen();
+- app.UseSwagger();
+- app.UseSwaggerUI();
+      </pre>
+
+      <h3>10.3 Erro Microsoft.OpenApi / downgrade</h3>
+      <pre>
+Sintoma:
+- ReflectionTypeLoadException
+- NU1605 downgrade Microsoft.OpenApi
+
+Causa:
+- versões conflitando entre Swashbuckle e Microsoft.OpenApi referenciada diretamente
+
+Correção:
+- remover referência direta Microsoft.OpenApi (ou alinhar versão >= exigida pelo Swashbuckle)
+      </pre>
+    </div>
+
+    <div class="card" style="margin-top:16px" id="roadmap">
+      <h2>🚀 11) Próximos passos</h2>
+      <div class="two">
+        <div class="callout">
+          <b>Curto prazo</b><br/>
+          • Finalizar endpoint real de cadastro de usuário (persistindo no SQL)<br/>
+          • Implementar autenticação real (JWT) + autorização por perfil<br/>
+          • Ajustar menu para exibir “Cadastrar Usuário” só para Admin<br/>
+          • Padronizar assets/Assets (case-sensitive)
+        </div>
+        <div class="callout warn">
+          <b>Médio prazo</b><br/>
+          • Clicksign completo: salvar chave/url/status + webhook<br/>
+          • WhatsApp: integrar provedor e disparar link para o colaborador<br/>
+          • Auditoria: logs de ações (quem cadastrou, quando)<br/>
+          • Melhorar senha: BCrypt/Argon2 (se possível)
+        </div>
+      </div>
+
+      <div class="hr"></div>
+      <p class="muted">
+        Fim do documento.
+      </p>
+    </div>
+
+    <div class="muted" style="text-align:center;margin:18px 0 6px">
+      © Atrium • 2025 • Documento gerado em HTML para exportar PDF
+    </div>
+
+  </div>
+</body>
+</html>

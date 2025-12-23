@@ -1,83 +1,135 @@
+using Atrium.RH.Data;
+using Atrium.RH.Services;
+using Microsoft.AspNetCore.Http.Json;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// ======================================================
+// 1) Controllers + JSON (camelCase) - combina com seu JS
+// ======================================================
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(o =>
+    {
+        o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        o.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+        o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
+
+// (Opcional) mesma config para Minimal APIs (se você usar)
+builder.Services.Configure<JsonOptions>(o =>
+{
+    o.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    o.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+    o.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+});
+
+// ======================================================
+// 2) Swagger (Swashbuckle)
+// ======================================================
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Atrium.RH | API",
+        Version = "v1",
+        Description = "API do sistema RCR Engenharia — RH"
+    });
+
+    // Header que você usou para simular permissão de Admin
+    c.AddSecurityDefinition("X-User-Type", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.ApiKey,
+        Name = "X-User-Type",
+        In = ParameterLocation.Header,
+        Description = "Simulação de permissão: 1 = Admin"
+    });
+});
+
+// ======================================================
+// 3) CORS (para seu front chamar a API)
+// ======================================================
+// Se você abre o front com Live Server, normalmente é :5500.
+// Se você abrir o HTML como file://, vai dar problema de CORS.
+const string CorsPolicy = "DefaultCors";
+
+var allowedOrigins = new[]
+{
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    "http://localhost:5173",  // se usar Vite
+    "http://127.0.0.1:5173"
+};
+
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-        policy.AllowAnyOrigin()
+    options.AddPolicy(CorsPolicy, policy =>
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
-              .AllowAnyMethod());
+              .AllowAnyMethod()
+        // Se você NÃO usa cookie/autenticação por sessão, deixe SEM AllowCredentials.
+        // .AllowCredentials()
+    );
 });
+
+// ======================================================
+// 4) DbContext (SQL Server)
+// ======================================================
+var connectionString =
+    "Server=STORMZERAGG;Database=atrium_rh;User Id=system;Password=123;TrustServerCertificate=True;";
+
+builder.Services.AddDbContext<AtriumRhDbContext>(opt =>
+{
+    opt.UseSqlServer(connectionString);
+    // opt.EnableSensitiveDataLogging(); // DEV apenas (debug)
+});
+
+// ======================================================
+// 5) Services (DI)
+// ======================================================
+builder.Services.AddScoped<UsuariosService>();
+builder.Services.AddScoped<AuthService>(); // se você criou
+
+// ======================================================
+// 6) HealthChecks
+// ======================================================
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ======================================================
+// Pipeline
+// ======================================================
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.DocumentTitle = "Atrium.RH Swagger";
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Atrium.RH v1");
+        c.RoutePrefix = "swagger";
+    });
 }
 
-app.UseHttpsRedirection();
-app.UseCors();
-
-var summaries = new[]
+// ⚠️ No DEV isso costuma atrapalhar quando você chama http://localhost:5253 pelo front.
+// Se quiser manter HTTPS, beleza — mas pra evitar dor de cabeça, deixo assim:
+if (!app.Environment.IsDevelopment())
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    app.UseHttpsRedirection();
+}
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.UseRouting();
+app.UseCors(CorsPolicy);
 
-app.MapPost("/api/usuario/login", (LoginRequest req) =>
-{
-    var byUsuario = !string.IsNullOrWhiteSpace(req.Login);
-    var byCpf = !string.IsNullOrWhiteSpace(req.Cpf);
+app.MapControllers();
+app.MapHealthChecks("/health");
 
-    if (byUsuario && req.Login!.Equals("gustavo", StringComparison.OrdinalIgnoreCase) && req.Senha == "123")
-    {
-        var usuario = new
-        {
-            id = 1,
-            nome = "Gustavo",
-            login = "gustavo",
-            role = "Colaborador"
-        };
-        return Results.Ok(usuario);
-    }
-
-    if (byCpf && req.Senha == "123")
-    {
-        var usuario = new
-        {
-            id = 2,
-            nome = "Usuário CPF",
-            cpf = req.Cpf,
-            role = "Colaborador"
-        };
-        return Results.Ok(usuario);
-    }
-
-    return Results.Unauthorized();
-});
+// Atalho: abrir raiz vai pro Swagger
+app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
-
-record LoginRequest(string? Cpf, string? Login, string Senha);

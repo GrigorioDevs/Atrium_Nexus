@@ -58,6 +58,7 @@
   <link rel="stylesheet" href="assets/css/30-modulos/assinatura-publica.css">
   <link rel="stylesheet" href="assets/css/30-modulos/ponto-justificativa.css">
   <link rel="stylesheet" href="Assets/css/30-modulos/assinatura-clicksign.css">
+  <link rel="stylesheet" href="assets/css/30-modulos/usuarios.css">
 
   <!-- Outros -->
   <link rel="stylesheet" href="assets/css/40-integracoes.css">
@@ -117,6 +118,11 @@
           <i class="fa-solid fa-location-dot" aria-hidden="true"></i> Incluir Ponto
         </li>
 
+        <!-- ✅ Somente Admin verá (JS controla) -->
+        <li data-tab="tabCadastroUsuario" aria-controls="tabCadastroUsuario" class="only-admin">
+          <i class="fa-solid fa-user-plus" aria-hidden="true"></i> Cadastrar Usuário
+        </li>
+
         <!-- Item normal: Documentos & Assinaturas -->
         <li data-tab="tabDocs" aria-controls="tabDocs">
           <i class="fa-regular fa-file-lines" aria-hidden="true"></i> Documentos & Assinaturas
@@ -153,6 +159,7 @@
             </li>
           </ul>
         </li>
+
       </ul>
 
 
@@ -490,6 +497,75 @@
                       </div>
                     </div>
                   </div>
+
+      <!-- ===================== CADASTRAR USUÁRIO (ADMIN) ===================== -->
+      <section id="tabCadastroUsuario" class="tab only-admin" role="region" aria-labelledby="hdrCadastroUsuario">
+        <div class="card">
+          <div class="card-header" id="hdrCadastroUsuario">Cadastrar Usuário</div>
+
+          <div class="card-body">
+            <div class="user-form-grid">
+
+              <div class="col">
+                <label for="usrLogin">Nome Login</label>
+                <input id="usrLogin" type="text" class="input-dark" placeholder="Seu nome de usuário" autocomplete="username">
+              </div>
+
+              <div class="col">
+                <label for="usrEmail">Email</label>
+                <input id="usrEmail" type="email" class="input-dark" placeholder="voce@empresa.com" autocomplete="email">
+              </div>
+
+              <div class="col">
+                <label for="usrCPF">CPF</label>
+                <input id="usrCPF" type="text" class="input-dark" placeholder="000.000.000-00" inputmode="numeric" autocomplete="off">
+                <small class="tiny muted">CPF será salvo no banco <b>sem formatação</b>.</small>
+              </div>
+
+              <div class="col">
+                <label for="usrTelefone">Telefone</label>
+                <input id="usrTelefone" type="text" class="input-dark" placeholder="(11) 90000-0000" inputmode="tel" autocomplete="tel">
+                <small class="tiny muted">Telefone será salvo no banco <b>sem formatação</b>.</small>
+              </div>
+
+              <div class="col">
+                <label for="usrSenha">Senha</label>
+                <input id="usrSenha" type="password" class="input-dark" placeholder="Crie uma senha" autocomplete="new-password">
+              </div>
+
+              <div class="col">
+                <label for="usrSenha2">Confirmar Senha</label>
+                <input id="usrSenha2" type="password" class="input-dark" placeholder="Repita a senha" autocomplete="new-password">
+              </div>
+
+              <div class="col" style="grid-column:1/-1;">
+                <label for="usrPerfil">Perfil de acesso</label>
+                <select id="usrPerfil" class="select-dark">
+                  <option value="1">Admin</option>
+                  <option value="2">User Gestão</option>
+                  <option value="3">User ST</option>
+                  <option value="4">User Funcionário</option>
+                </select>
+              </div>
+
+            </div>
+
+            <div class="inline-row user-form-actions">
+              <button class="btn btn-light" id="btnUsrLimpar" type="button">
+                <i class="fa-solid fa-eraser" aria-hidden="true"></i> Limpar
+              </button>
+
+              <button class="btn btn-primary" id="btnUsrSalvar" type="button">
+                <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i> Cadastrar Usuário
+              </button>
+            </div>
+
+            <div id="usrStatus" class="filehint" style="margin-top:12px;">
+              Preencha os dados e clique em “Cadastrar Usuário”.
+            </div>
+          </div>
+        </div>
+      </section>
 
 
      <!-- Documentos & Assinaturas -->
@@ -1626,7 +1702,10 @@
   <script src="assets/js/config-theme.js"></script>
   <script src="assets/js/ponto-justificativa.js"></script>
   <script src="assets/js/assinatura-clicksign.js"></script>
+  <script src="assets/js/usuarios.js"></script>
   <script src="assets/js/home.js"></script>
+
+
 
   <!-- Pré-carregar logo para o PDF -->
   <img id="pdfLogoPreload" src="assets/img/logo_new.png" alt="" style="display:none"/>

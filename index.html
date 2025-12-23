@@ -221,11 +221,9 @@ radios.forEach(r=>{
     if(r.checked && r.value==='cpf'){
       labelLogin.textContent='CPF';
       inputLogin.placeholder='Digite seu CPF (somente números)';
-      inputLogin.type='text';
     } else {
       labelLogin.textContent='Usuário';
       inputLogin.placeholder='Digite seu usuário';
-      inputLogin.type='text';
     }
     inputLogin.value='';
   });
@@ -235,52 +233,97 @@ radios.forEach(r=>{
 function abrirCadastro(){ window.location.href='register.html'; }
 function abrirEsqueciSenha(){ window.location.href='forgot_password.html'; }
 
-/* Login com condição CPF ou Usuário */
+/* Helpers */
+const API_BASE = "http://localhost:5253";
+
+function onlyDigits(v){ return String(v||'').replace(/\D/g,''); }
+
+/* Login (banco) com fallback para credencial fixa */
 document.getElementById('loginForm').addEventListener('submit', async function(e){
   e.preventDefault();
+
   const loginType = document.querySelector('input[name="loginType"]:checked').value;
-  const login = document.getElementById('user').value.trim();
+  const loginRaw = document.getElementById('user').value.trim();
   const senha = document.getElementById('password').value.trim();
 
-  if(!login || !senha){
+  if(!loginRaw || !senha){
     alert("Preencha todos os campos!");
     return;
   }
 
-  // login fixo
-  if(loginType==='usuario' && login.toLowerCase()==='gustavo' && senha==='123'){
-    const usuarioFake={id:1,nome:'Gustavo',login:'gustavo',role:'Colaborador'};
-    localStorage.setItem("usuario",JSON.stringify(usuarioFake));
-    window.location.href="home.html";
-    return;
-  }
+  const isFixed =
+    loginType === 'usuario' &&
+    loginRaw.toLowerCase() === 'gustavo' &&
+    senha === '123';
 
-  try{
-    const body = loginType==='cpf'
-      ? { cpf: login, senha: senha }
-      : { login: login, senha: senha };
+  // Monta body esperado pelo backend
+  const body = loginType === 'cpf'
+    ? { cpf: onlyDigits(loginRaw), login: null, senha }
+    : { cpf: null, login: loginRaw, senha };
 
-    const response = await fetch("http://localhost:5253/api/usuario/login", {
+  try {
+    // 1) tenta banco
+    const response = await fetch(`${API_BASE}/api/usuario/login`, {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body: JSON.stringify(body)
     });
 
-    if(response.ok){
+    if (response.ok) {
       const data = await response.json();
-      localStorage.setItem("usuario",JSON.stringify(data));
-      window.location.href="home.html";
+
+      // garante campos mínimos (ajuda no seu front)
+      // (o ideal é o backend sempre devolver)
+      if (!data || !data.id) {
+        alert("Login OK, mas resposta inválida do servidor.");
+        return;
+      }
+
+      localStorage.setItem("usuario", JSON.stringify(data));
+      window.location.href = "home.html";
+      return;
     }
-    else if(response.status===401){
+
+    if (response.status === 401) {
+      // 2) fallback: credencial fixa (só para seu usuário)
+      if (isFixed) {
+        const usuarioFake = {
+          id: 1,
+          nome: "Gustavo",
+          login: "gustavo",
+          typeUser: 1, // admin
+          role: "Admin"
+        };
+        localStorage.setItem("usuario", JSON.stringify(usuarioFake));
+        window.location.href = "home.html";
+        return;
+      }
+
       alert("Credenciais inválidas. Verifique CPF/Usuário e senha.");
+      return;
     }
-    else{
-      alert("Erro no servidor. Tente novamente.");
+
+    // outros erros
+    alert("Erro no servidor. Tente novamente.");
+  } catch (err) {
+    // 3) sem conexão: fallback fixo (opcional)
+    if (isFixed) {
+      const usuarioFake = {
+        id: 1,
+        nome: "Gustavo",
+        login: "gustavo",
+        typeUser: 1,
+        role: "Admin"
+      };
+      localStorage.setItem("usuario", JSON.stringify(usuarioFake));
+      window.location.href = "home.html";
+      return;
     }
-  }catch(err){
-    alert("Falha de conexão com o servidor: "+err.message);
+
+    alert("Falha de conexão com o servidor: " + err.message);
   }
 });
 </script>
+
 </body>
 </html>
