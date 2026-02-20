@@ -58,12 +58,12 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API do sistema — Atrium.Nexus",
     });
 
-    // (opcional) “documenta” cookie auth
+    // (opcional) Documenta cookie auth
     c.AddSecurityDefinition("cookieAuth", new OpenApiSecurityScheme
     {
-        Name = "Cookie",
+        Name = "atrium.auth",
         Type = SecuritySchemeType.ApiKey,
-        In = ParameterLocation.Header,
+        In = ParameterLocation.Cookie,
         Description = "Auth via Cookie (atrium.auth). Faça login no navegador para o cookie ser enviado."
     });
 
@@ -80,7 +80,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // ======================================================
-// 3) CORS (DEV) — Cookie precisa de credentials
+// 3) CORS — Cookie precisa de credentials
 // ======================================================
 const string CorsPolicy = "DefaultCors";
 
@@ -221,11 +221,20 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 var app = builder.Build();
 
 // ======================================================
+// ✅ Flag p/ Swagger em produção
+// - Em DEV: sempre on
+// - Em PROD: só se ENABLE_SWAGGER=true
+// ======================================================
+var enableSwagger =
+    app.Environment.IsDevelopment() ||
+    Environment.GetEnvironmentVariable("ENABLE_SWAGGER") == "true";
+
+// ======================================================
 // Pipeline
 // ======================================================
 app.UseForwardedHeaders();
 
-if (app.Environment.IsDevelopment())
+if (enableSwagger)
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
@@ -237,6 +246,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // ✅ Em produção, normalmente você quer HTTPS redirection (se tiver TLS no proxy/IIS)
+// OBS: Se você está acessando direto por http://IP:8080 sem TLS, isso pode não ser necessário.
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
@@ -249,7 +259,6 @@ app.UseCors(CorsPolicy);
 // ======================================================
 // ✅ 10) EXPOR A PASTA STORAGE COMO /storage
 // ======================================================
-
 var storageRootCfg = builder.Configuration["Storage:RootPath"];
 var storagePublicBasePath = builder.Configuration["Storage:PublicBasePath"] ?? "/storage";
 
@@ -285,7 +294,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-if (app.Environment.IsDevelopment())
+// Raiz: se Swagger estiver habilitado, manda pro Swagger. Senão, responde OK.
+if (enableSwagger)
 {
     app.MapGet("/", () => Results.Redirect("/swagger"));
 }
