@@ -32,12 +32,13 @@ public class FuncionariosController : ControllerBase
 
         var cpfDigits = Regex.Replace(dto.Cpf ?? "", @"\D", "");
         if (cpfDigits.Length != 11)
-            return BadRequest("CPF inválido. Envie 11 dígitos.");
+            return BadRequest(new { message = "CPF inválido. Envie 11 dígitos." });
 
         var cpfExiste = await _db.Funcionarios.AnyAsync(x => x.Cpf == cpfDigits, ct);
-        if (cpfExiste) return Conflict("Já existe funcionário com este CPF.");
+        if (cpfExiste)
+            return Conflict(new { message = "Já existe funcionário com este CPF." });
 
-        const int usuarioCriacaoId = 1;
+        const int usuarioCriacaoId = 1; // TODO: trocar por usuário logado quando tiver auth
 
         var f = new Funcionario
         {
@@ -58,7 +59,7 @@ public class FuncionariosController : ControllerBase
 
             TipoContrato = dto.TipoContrato,
 
-            // ✅ mantenha como storageKey (normalmente null ao criar)
+            // Armazena storageKey (normalmente null ao criar)
             FotoUrl = dto.FotoUrl,
 
             Ativo = true,
@@ -84,6 +85,7 @@ public class FuncionariosController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> List([FromQuery] string? q, CancellationToken ct)
     {
+        // ⚠️ Se você quiser listar inativos também, remova o .Where(x => x.Ativo)
         var query = _db.Funcionarios.AsNoTracking().Where(x => x.Ativo);
 
         if (!string.IsNullOrWhiteSpace(q))
@@ -102,9 +104,7 @@ public class FuncionariosController : ControllerBase
                 x.TipoContrato,
                 x.Ativo,
 
-                // ✅ AQUI ESTÁ A CORREÇÃO:
-                // Em vez de devolver storageKey (x.FotoUrl),
-                // devolve uma URL pública que o navegador consegue abrir.
+                // devolve URL pública de foto (não a storageKey)
                 fotoUrl = string.IsNullOrWhiteSpace(x.FotoUrl)
                     ? null
                     : $"/api/funcionarios/{x.Id}/foto"
@@ -115,45 +115,85 @@ public class FuncionariosController : ControllerBase
     }
 
     // ======================================================
+    // GET /api/funcionarios/{id} (detalhe)
+    // ======================================================
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken ct)
+    {
+        var f = await _db.Funcionarios.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id, ct);
+
+        if (f is null)
+            return NotFound(new { message = "Funcionário não encontrado." });
+
+        return Ok(new
+        {
+            f.Id,
+            f.Nome,
+            f.Cpf,
+            f.Rg,
+            f.Email,
+            f.Celular,
+            f.Funcao,
+            f.Idade,
+            f.TipoContrato,
+            f.Ativo,
+            f.DataAdmissao,
+
+            f.Salario,
+            f.TarifaVt,
+            f.ValorDiarioVr,
+            f.RecebeVt,
+            f.RecebeVr,
+
+            // URL pública da foto
+            fotoUrl = string.IsNullOrWhiteSpace(f.FotoUrl)
+                ? null
+                : $"/api/funcionarios/{f.Id}/foto"
+        });
+    }
+
+    // ======================================================
     // POST /api/funcionarios/{id}/foto (upload da foto)
     // multipart/form-data com campo: file
     // ======================================================
-    [HttpPost("{id:int}/foto")]
-    [RequestSizeLimit(10_000_000)] // 10MB
-    public async Task<IActionResult> UploadFoto(int id, [FromForm] IFormFile file, CancellationToken ct)
+[HttpPost("{id:int}/foto")]
+[RequestSizeLimit(50_000_000)] // 50MB (ou o que você quiser)
+public async Task<IActionResult> UploadFoto(int id, [FromForm] IFormFile file, CancellationToken ct)
+
     {
         if (file is null || file.Length == 0)
-            return BadRequest("Arquivo inválido.");
+            return BadRequest(new { message = "Arquivo inválido." });
 
         var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-        var permitidas = new HashSet<string> { ".jpg", ".jpeg", ".png", ".webp" };
+        var permitidas = new HashSet<string> { ".jpg", ".jpeg", ".png", ".webp", ".gif"};
         if (!permitidas.Contains(ext))
-            return BadRequest("Foto deve ser JPG/PNG/WEBP.");
+            return BadRequest(new { message = "Foto deve ser JPG/PNG/WEBP." });
 
         var func = await _db.Funcionarios.FirstOrDefaultAsync(x => x.Id == id && x.Ativo, ct);
-        if (func is null) return NotFound("Funcionário não encontrado.");
+        if (func is null)
+            return NotFound(new { message = "Funcionário não encontrado." });
 
         await using var stream = file.OpenReadStream();
         var storageKey = await _storage.SaveAsync(stream, file.FileName, file.ContentType, id, ct);
 
-        // ✅ Continua guardando a storageKey no banco (correto)
+        // guarda storageKey
         func.FotoUrl = storageKey;
         func.Alteracao = DateTime.Now;
-        func.UsuarioId = 1; // temporário até auth
+        func.UsuarioId = 1; // TODO: trocar por usuário logado quando tiver auth
 
         await _db.SaveChangesAsync(ct);
 
-        // ✅ AQUI ESTÁ A CORREÇÃO:
-        // Retorna a URL pública, não a storageKey
+        // retorna URL pública (pro front conseguir abrir)
         return Ok(new
         {
-            storageKey = storageKey, // opcional (debug)
+            storageKey, // opcional (debug)
             fotoUrl = $"/api/funcionarios/{func.Id}/foto"
         });
     }
 
     // ======================================================
-    // GET /api/funcionarios/{id}/foto (download/serve)
+    // GET /api/funcionarios/{id}/foto (serve a imagem)
     // ======================================================
     [HttpGet("{id:int}/foto")]
     public async Task<IActionResult> GetFoto(int id, CancellationToken ct)
@@ -162,12 +202,41 @@ public class FuncionariosController : ControllerBase
             .FirstOrDefaultAsync(x => x.Id == id && x.Ativo, ct);
 
         if (func is null || string.IsNullOrWhiteSpace(func.FotoUrl))
-            return NotFound("Foto não encontrada.");
+            return NotFound(new { message = "Foto não encontrada." });
 
-        // Usa o OpenAsync do seu storage
         var (stream, contentType, fileName) =
             await _storage.OpenAsync(func.FotoUrl, "image/*", "foto", ct);
 
         return File(stream, contentType, fileName);
     }
+
+
+    // ======================================================
+    // GET /api/funcionarios/assinatura
+    // ======================================================
+    [HttpGet("{id:int}/assinatura")]
+    public async Task<IActionResult> GetAssinatura(int id, CancellationToken ct)
+    {
+        var f = await _db.Funcionarios.AsNoTracking()
+            .Where(x => x.Id == id)
+            .Select(x => new
+            {
+                x.Id,
+                x.Nome,
+                x.Funcao,
+                x.Email,
+                x.Celular,
+                FotoUrl = string.IsNullOrWhiteSpace(x.FotoUrl)
+                    ? null
+                    : $"/api/funcionarios/{x.Id}/foto"
+            })
+            .FirstOrDefaultAsync(ct);
+
+        if (f is null)
+            return NotFound();
+
+        return Ok(f);
+}
+
+
 }

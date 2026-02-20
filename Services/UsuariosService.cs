@@ -1,9 +1,11 @@
 using Atrium.RH.Data;
-using Atrium.RH.Domain.Entities;
 using Atrium.RH.Dtos.Usuarios;
 using Atrium.RH.Utils;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+
+// ✅ Alias para evitar conflito com namespace Atrium.RH.Services.Usuario
+using UsuarioEntity = Atrium.RH.Domain.Entities.Usuario;
 
 namespace Atrium.RH.Services
 {
@@ -34,18 +36,14 @@ namespace Atrium.RH.Services
             if (await _db.Usuarios.AnyAsync(x => x.Login == dto.Login))
                 throw new InvalidOperationException("Login já cadastrado.");
 
-            // IMPORTANTE: requisito "max + 1" pode dar corrida, então usa transação SERIALIZABLE
-            await using var tx = await _db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
-
-            var maxId = await _db.Usuarios.MaxAsync(x => (int?)x.Id) ?? 0;
-            var nextId = maxId + 1;
-
+            // horário BR
             var brOffset = TimeSpan.FromHours(-3);
             var nowBr = DateTimeOffset.UtcNow.ToOffset(brOffset);
 
-            var user = new Usuario
+            // ✅ usa o alias UsuarioEntity
+            var user = new UsuarioEntity
             {
-                Id = nextId,
+                // ⚠️ NÃO setar Id aqui (sua coluna é IDENTITY no SQL Server)
                 LociId = 1,
                 Ativo = true,
                 Criacao = nowBr,
@@ -59,15 +57,15 @@ namespace Atrium.RH.Services
                 Telefone = tel,
                 TypeUser = dto.TypeUser,
 
-                Senha = Security.Sha256Hex(dto.Senha),
+                Senha = Security.Sha256Hex(dto.Senha ?? ""),
                 UserImg = null
             };
 
             _db.Usuarios.Add(user);
             await _db.SaveChangesAsync();
-            await tx.CommitAsync();
 
-            return nextId;
+            // ✅ após SaveChanges, o EF preenche user.Id automaticamente (IDENTITY)
+            return user.Id;
         }
     }
 }

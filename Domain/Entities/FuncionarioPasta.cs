@@ -3,8 +3,6 @@ namespace Atrium.RH.Domain.Entities;
 public class FuncionarioPasta
 {
     public int Id { get; set; }
-    public int LociId { get; set; } = 1;
-
     public int FuncionarioId { get; set; }
     public int? PastaPaiId { get; set; }
 

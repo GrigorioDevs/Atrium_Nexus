@@ -60,7 +60,8 @@
   <link rel="stylesheet" href="assets/css/30-modulos/beneficios.css">
   <link rel="stylesheet" href="assets/css/30-modulos/assinatura-publica.css">
   <link rel="stylesheet" href="assets/css/30-modulos/ponto-justificativa.css">
-  <link rel="stylesheet" href="Assets/css/30-modulos/assinatura-clicksign.css">
+  <link rel="stylesheet" href="assets/css/30-modulos/assinatura-clicksign.css">
+  <link rel="stylesheet" href="assets/css/30-modulos/alerts.css">
   <link rel="stylesheet" href="assets/css/30-modulos/usuarios.css">
   <link rel="stylesheet" href="assets/css/30-modulos/cracha.css">
 
@@ -75,7 +76,7 @@
   <!-- Splash -->
   <div id="splash">
     <div class="splash-card">
-      <img class="splash-logo" src="Assets/img/logo_rcr_transparente.png" alt="RCR" onerror="this.style.display='none'">
+      <img class="splash-logo" src="assets/img/logo_rcr_transparente.png" alt="RCR" onerror="this.style.display='none'">
       <div class="splash-title">RCR Engenharia</div>
     </div>
   </div>
@@ -161,31 +162,33 @@
         </ul>
       </li>
     <!-- Benefícios (submenu) -->
-    <li class="has-submenu menu-benef-root"
-        aria-haspopup="true"
-        aria-expanded="false"
-        data-roles="1,2">
-      <div class="row-head">
-        <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i> Benefícios
-        <i class="fa-solid fa-caret-down caret" aria-hidden="true"></i>
-      </div>
-      <ul class="submenu" id="submenuBeneficios" role="menu">
-        <!-- Vale Transporte: Admin (1) e Gestão (2) -->
-        <li data-tab="tabVT"
-            aria-controls="tabVT"
-            role="menuitem"
-            data-roles="1,2">
-          <i class="fa-solid fa-bus" aria-hidden="true"></i> Vale Transporte
-        </li>
-        <!-- Vale Refeição: Admin (1) e Gestão (2) -->
-        <li data-tab="tabVR"
-            aria-controls="tabVR"
-            role="menuitem"
-            data-roles="1,2">
-          <i class="fa-solid fa-utensils" aria-hidden="true"></i> Vale Refeição
-        </li>
-      </ul>
-    </li>
+      <li class="has-submenu menu-benef-root"
+          aria-haspopup="true"
+          aria-expanded="false"
+          data-roles="1,2">
+        <div class="row-head">
+          <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i> Benefícios
+          <i class="fa-solid fa-caret-down caret" aria-hidden="true"></i>
+        </div>
+
+        <ul class="submenu" id="submenuBeneficios" role="menu">
+          <!-- Vale Transporte -->
+          <li role="menuitem"
+              data-benef-open="VT"
+              data-roles="1,2"
+              tabindex="0">
+            <i class="fa-solid fa-bus" aria-hidden="true"></i> Vale Transporte
+          </li>
+
+          <!-- Vale Refeição -->
+          <li role="menuitem"
+              data-benef-open="VR"
+              data-roles="1,2"
+              tabindex="0">
+            <i class="fa-solid fa-utensils" aria-hidden="true"></i> Vale Refeição
+          </li>
+        </ul>
+      </li>
     </ul>
       <div class="sidebar-mobile-footer">
         <button class="btn btn-light" id="btnCloseSidebar" type="button">
@@ -456,18 +459,18 @@
                           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                         </button>
                       </div>
-
+                  
                       <div class="modal-body">
                         <small class="muted" style="display:block;margin-bottom:12px;">
                           O ajuste de ponto deve ser utilizado caso você tenha tido algum problema para registrar o ponto.
                         </small>
-
+                  
                         <div class="grid" style="max-width:520px;margin:0 auto;">
                           <div class="col">
                             <label for="ajData">Data</label>
                             <input id="ajData" type="date" class="input-dark">
                           </div>
-
+                  
                           <div class="col">
                             <label for="ajE1">Entrada 1</label>
                             <input id="ajE1" type="time" class="input-dark">
@@ -476,7 +479,7 @@
                             <label for="ajS1">Saída 1</label>
                             <input id="ajS1" type="time" class="input-dark">
                           </div>
-
+                  
                           <div class="col">
                             <label for="ajE2">Entrada 2</label>
                             <input id="ajE2" type="time" class="input-dark">
@@ -485,7 +488,7 @@
                             <label for="ajS2">Saída 2</label>
                             <input id="ajS2" type="time" class="input-dark">
                           </div>
-
+                  
                           <div class="col">
                             <label for="ajE3">Entrada 3</label>
                             <input id="ajE3" type="time" class="input-dark">
@@ -494,21 +497,22 @@
                             <label for="ajS3">Saída 3</label>
                             <input id="ajS3" type="time" class="input-dark">
                           </div>
-
+                  
                           <div class="col">
                             <label for="ajObs">Observação</label>
-                            <textarea id="ajObs" class="input-dark" style="min-height:110px; padding-top:10px; line-height:1.35;"></textarea>
+                            <textarea id="ajObs" class="input-dark"
+                              style="min-height:110px; padding-top:10px; line-height:1.35;"></textarea>
                           </div>
                         </div>
                       </div>
-
+                  
                       <div class="modal-footer">
                         <button class="btn btn-light" id="btnCancelarAjustePonto" type="button">Cancelar</button>
                         <button class="btn btn-ok" id="btnEnviarAjustePonto" type="button">Enviar</button>
                       </div>
                     </div>
                   </div>
-
+                  
                   <!-- ===================== MODAL: JUSTIFICAR AUSÊNCIA ===================== -->
                   <div class="modal" id="modalJustificarAusencia" style="display:none;">
                     <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="justAusTitle">
@@ -518,12 +522,13 @@
                           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                         </button>
                       </div>
-
+                  
                       <div class="modal-body">
                         <small class="muted" style="display:block;margin-bottom:12px;">
-                          A justificativa de ausência deve ser utilizada caso você fique ausente do trabalho por um dia ou um período específico.
+                          A justificativa de ausência deve ser utilizada caso você fique ausente do trabalho por um dia ou um período
+                          específico.
                         </small>
-
+                  
                         <div class="grid" style="max-width:520px;margin:0 auto;">
                           <div class="col">
                             <label for="jusTipo">Ausência em</label>
@@ -532,17 +537,17 @@
                               <option value="periodo">Período</option>
                             </select>
                           </div>
-
+                  
                           <div class="col">
                             <label for="jusData">Data</label>
                             <input id="jusData" type="date" class="input-dark">
                           </div>
-
+                  
                           <div class="col" id="jusPeriodoWrap" style="display:none;">
                             <label for="jusDataFim">Data final</label>
                             <input id="jusDataFim" type="date" class="input-dark">
                           </div>
-
+                  
                           <div class="col">
                             <label for="jusPeriodo">Período da Ausência</label>
                             <select id="jusPeriodo" class="select-dark">
@@ -552,7 +557,7 @@
                               <option value="horario">Horário específico</option>
                             </select>
                           </div>
-
+                  
                           <div class="col">
                             <label for="jusMotivo">Motivo</label>
                             <select id="jusMotivo" class="select-dark">
@@ -563,14 +568,15 @@
                               <option value="outros">Outros</option>
                             </select>
                           </div>
-
+                  
                           <div class="col">
                             <label for="jusObs">Observação</label>
-                            <textarea id="jusObs" class="input-dark" style="min-height:110px; padding-top:10px; line-height:1.35;"></textarea>
+                            <textarea id="jusObs" class="input-dark"
+                              style="min-height:110px; padding-top:10px; line-height:1.35;"></textarea>
                           </div>
                         </div>
                       </div>
-
+                  
                       <div class="modal-footer">
                         <button class="btn btn-light" id="btnCancelarJustificativa" type="button">Cancelar</button>
                         <button class="btn btn-ok" id="btnEnviarJustificativa" type="button">Enviar</button>
@@ -1206,7 +1212,7 @@
                             <img
                               id="cadFotoPreview"
                               class="cad-avatar-img"
-                              src="assets/img/user.png"
+                              src="assets/img/user_teste.svg"
                               alt="Foto do funcionário"
                             >
                           </div>
@@ -1423,83 +1429,12 @@
           </div>
     </section>
 
-    <!-- Benefícios — VT -->
+    <!-- Benefícios — VT 
     <section id="tabVT" class="tab" role="region" aria-labelledby="hdrVT">
-          <div class="card">
-            <div class="card-header" id="hdrVT">Benefícios — Vale Transporte</div>
-            <div class="card-body">
-              <div class="kpis">
-                <div class="kpi">
-                  <div class="title">Colaboradores com VT</div>
-                  <div class="value" id="vtKColab">0</div>
-                </div>
-                <div class="kpi">
-                  <div class="title">Total de VTs / mês</div>
-                  <div class="value" id="vtKQtd">0</div>
-                </div>
-                <div class="kpi">
-                  <div class="title">Valor total (R$)</div>
-                  <div class="value" id="vtKValor">R$ 0,00</div>
-                </div>
-              </div>
 
-              <div class="row" style="align-items:flex-end">
-                <div class="col" style="max-width:220px">
-                  <label for="vtUnit">Tarifa padrão (R$)</label>
-                  <input type="number" step="0.01" min="0" id="vtUnit" placeholder="ex.: 5.00" disabled>
-                </div>
-                <div class="col" style="max-width:220px">
-                  <label for="vtCreditDay">Dia do crédito (geral)</label>
-                  <input type="number" min="1" max="31" id="vtCreditDay" placeholder="1 a 31" disabled>
-                </div>
-                <div class="col">
-                  <div class="vt-help">
-                    Dados preenchidos automaticamente a partir do cadastro (somente visualização).
-                  </div>
-                </div>
-              </div>
-
-              <div class="filters">
-                <button class="btn btn-light" id="btnExportVTCSV">
-                  <i class="fa-regular fa-file-excel" aria-hidden="true"></i> Exportar Excel (CSV)
-                </button>
-                <button class="btn btn-primary" id="btnExportVTPDF">
-                  <i class="fa-regular fa-file-pdf" aria-hidden="true"></i> Exportar PDF
-                </button>
-              </div>
-
-              <div class="table-wrap">
-                <table class="table" id="vtTable">
-                  <thead>
-                    <tr>
-                      <th>Ativo</th>
-                      <th class="vt-cell-left">Funcionário</th>
-                      <th>Qtd VT/mês</th>
-                      <th>Tarifa (R$)</th>
-                      <th>Dia crédito</th>
-                      <th>Próximo crédito</th>
-                      <th>Valor (R$)</th>
-                    </tr>
-                  </thead>
-                  <tbody id="vtBody"><tr><td colspan="7">—</td></tr></tbody>
-                  <tfoot>
-                    <tr>
-                      <th colspan="2" class="t-right">Totais</th>
-                      <th id="vtSumQtd">0</th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th id="vtSumValor">R$ 0,00</th>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-
-            </div>
-          </div>
     </section>
 
-    <!-- Benefícios — VR -->
+    -- Benefícios — VR 
     <section id="tabVR" class="tab" role="region" aria-labelledby="hdrVR">
           <div class="card">
             <div class="card-header" id="hdrVR">Benefícios — Vale Refeição</div>
@@ -1600,9 +1535,215 @@
             </div>
           </div>
     </section>
+    -->
 
   </main>
   </div>
+
+  <!-- =========================================================
+      MODAL: BENEFÍCIOS (VT/VR)
+      Estrutura igual ao modalFuncionario
+  ========================================================= -->
+
+    <div class="modal" id="modalBeneficios" role="dialog" aria-modal="true" aria-labelledby="benefModalTitle" style="display:none;">
+      <div class="modal-content">
+
+        <!-- Header do MODAL (padrão do seu sistema) -->
+        <div class="modal-header">
+          <span id="benefModalTitle">Benefícios</span>
+
+          <!-- Botão X (padrão) -->
+          <button type="button" class="btn btn-light" id="btnCloseBeneficios" aria-label="Fechar">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <!-- Body do MODAL -->
+        <div class="modal-body">
+
+          <!-- ✅ Escopo recomendado (pra casar com o CSS que te passei) -->
+          <div class="beneficios-pro">
+
+            <div class="max-w-7xl mx-auto">
+
+              <!-- Header interno do módulo (seu layout) -->
+              <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+                <div>
+                  <h1 class="text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-pink-500">
+                    BENEFÍCIOS INTELLIGENCE
+                  </h1>
+                  <p class="text-slate-400 text-sm font-medium">Gestão de Folha & Rotinas Mensais</p>
+                </div>
+
+                <nav class="glass-card p-1 flex gap-2">
+                  <button onclick="switchTab('VT')" id="btnTabVT" class="tab-btn active px-6 py-2 font-bold text-sm" type="button">
+                    VALE TRANSPORTE
+                  </button>
+                  <button onclick="switchTab('VR')" id="btnTabVR" class="tab-btn px-6 py-2 font-bold text-sm" type="button">
+                    VALE REFEIÇÃO
+                  </button>
+                </nav>
+              </header>
+
+              <!-- KPI Dashboard -->
+              <div id="kpiContainer" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <!-- Injetado via JS -->
+              </div>
+
+              <!-- =========================
+                  PANE VT
+              ========================== -->
+              <section id="paneVT" class="tab-content">
+
+                <!-- Painel de Configuração VT -->
+                <div class="glass-card p-6 mb-8">
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                    <div>
+                      <label class="block text-xs font-bold text-slate-500 mb-2">TARIFA PADRÃO (R$)</label>
+                      <input type="number" step="0.01" id="globalVtTarifa" class="w-full p-3" value="5.50" onchange="calculateAll()">
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-bold text-slate-500 mb-2">DIAS ÚTEIS (CALENDÁRIO)</label>
+                      <input type="number" id="globalVtDias" class="w-full p-3" value="22" onchange="calculateAll()">
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-bold text-slate-500 mb-2">DIA CRÉDITO GERAL</label>
+                      <input type="number" id="vtCreditDay" class="w-full p-3" value="1" placeholder="1 a 31">
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                      <button class="btn-tech px-6 py-3 rounded-xl font-bold text-sm" onclick="exportData('VT')" type="button">
+                        FECHAR FOLHA VT <i class="fa-solid fa-lock ml-2" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="mt-4 flex flex-wrap gap-4 items-center justify-between">
+                    <div class="text-[10px] text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                      <i class="fa-solid fa-circle-info text-cyan-400" aria-hidden="true"></i>
+                      Cálculo baseado na regra legal de 6% sobre o salário base.
+                    </div>
+
+                    <div class="flex gap-3">
+                      <button class="text-[11px] font-bold text-slate-400 hover:text-white transition uppercase tracking-wider" id="btnExportVTCSV" type="button">
+                        <i class="fa-regular fa-file-excel mr-1" aria-hidden="true"></i> Excel
+                      </button meaning="button">
+
+                      <button class="text-[11px] font-bold text-slate-400 hover:text-white transition uppercase tracking-wider" id="btnExportVTPDF" type="button">
+                        <i class="fa-regular fa-file-pdf mr-1" aria-hidden="true"></i> PDF
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tabela de Colaboradores VT -->
+                <div class="glass-card overflow-hidden">
+                  <div class="p-6 bg-slate-800/30 flex justify-between items-center border-b border-white/5">
+                    <h3 class="font-bold text-slate-200">Gestão de Ativos</h3>
+                    <span class="text-[10px] bg-cyan-500/20 text-cyan-400 px-3 py-1 rounded-full font-bold">FEVEREIRO/2026</span>
+                  </div>
+
+                  <div class="overflow-x-auto p-4">
+                    <table class="tech-table" id="vtTable">
+                      <thead>
+                        <tr>
+                          <th>Ativo</th>
+                          <th class="text-left">Funcionário</th>
+                          <th>Tarifa (R$)</th>
+                          <th>Desc. 6%</th>
+                          <th>Custo Empresa</th>
+                          <th>Próx. Crédito</th>
+                          <th>Total (R$)</th>
+                        </tr>
+                      </thead>
+                      <tbody id="vtTableBody">
+                        <!-- Injetado via JS -->
+                        <tr><td colspan="7" style="opacity:.7;">—</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </section>
+
+              <!-- =========================
+                  PANE VR
+              ========================== -->
+              <section id="paneVR" class="tab-content hidden">
+
+                <div class="glass-card p-6 mb-8">
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                    <div>
+                      <label class="block text-xs font-bold text-slate-500 mb-2">VALOR DIÁRIO VR (R$)</label>
+                      <input type="number" id="globalVrDiario" class="w-full p-3" value="35.00" onchange="calculateAll()">
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-bold text-slate-500 mb-2">DIAS ÚTEIS</label>
+                      <input type="number" id="globalVrDias" class="w-full p-3" value="22" onchange="calculateAll()">
+                    </div>
+
+                    <div>
+                      <label class="flex items-center gap-2 cursor-pointer mb-2">
+                        <input type="checkbox" id="limitVrDiscount" checked onchange="calculateAll()">
+                        <span class="text-xs font-bold text-slate-500">LIMITAR DESCONTO AO VR</span>
+                      </label>
+                      <div class="text-[10px] text-slate-500">O desconto nunca supera o valor do benefício</div>
+                    </div>
+
+                    <button class="btn-tech px-8 py-3 rounded-xl font-bold text-sm" onclick="exportData('VR')" type="button">
+                      FECHAR FOLHA VR <i class="fa-solid fa-lock ml-2" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="glass-card overflow-hidden">
+                  <div class="overflow-x-auto p-4">
+                    <table class="tech-table">
+                      <thead>
+                        <tr>
+                          <th>Optante</th>
+                          <th class="text-left">Colaborador</th>
+                          <th>Valor Mensal</th>
+                          <th>Desconto Aplicado</th>
+                          <th>Líquido Empresa</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody id="vrTableBody">
+                        <!-- Injetado via JS -->
+                        <tr><td colspan="6" style="opacity:.7;">—</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </section>
+
+            </div><!-- /.max-w-7xl -->
+          </div><!-- /.beneficios-pro -->
+
+        </div><!-- /.modal-body -->
+
+        <!-- Footer do MODAL (padrão do seu sistema) -->
+        <div class="modal-footer">
+          <button class="btn btn-light" id="btnFecharBeneficios" type="button">Fechar</button>
+        </div>
+
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+
+    <!-- =========================================================
+        (Opcional) clique no backdrop fecha
+        Você pode colocar isso no seu JS (não é obrigatório):
+        modalBeneficios.addEventListener("click", e => {
+          if(e.target === modalBeneficios) fecharModalBeneficios();
+        });
+    ========================================================= -->
+
+
 
   <!-- Modal: Batimentos do Dia -->
   <div class="modal" id="modalBatimentosDia" role="dialog" aria-modal="true" aria-labelledby="batimentosDiaTitulo">
@@ -1676,10 +1817,14 @@
           <button
             class="btn btn-warn emp-tab-btn"
             id="btnTabDocsImportantes"
+            type="button"
             data-target="#paneDocsImportantes"
-            type="button">
-            <i class="fa-regular fa-bell" aria-hidden="true"></i> Documentos importantes
+            data-impdocs-open="1"
+            data-emp-id="123">
+            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+            Documentos importantes
           </button>
+
 
           <!-- NOVA ABA: CURSOS -->
           <button
@@ -1748,46 +1893,77 @@
           </div>
         </div>
 
-        <!-- Pane: Documentos importantes -->
-        <div class="emp-pane" id="paneDocsImportantes">
-          <div class="imp-docs-form">
-            <div>
+          <!-- Pane: Documentos importantes -->
+        <div class="emp-pane" id="paneDocsImportantes" data-funcionario-id="">
+
+          <!-- Card do formulário -->
+          <div class="imp-docs-form imp-left">
+
+            <!-- Arquivo -->
+            <div class="imp-field imp-file">
               <label for="impDocFile">Arquivo</label>
               <input type="file" id="impDocFile" accept=".pdf,.png,.jpg,.jpeg">
             </div>
-            <div>
+
+            <!-- Nome -->
+            <div class="imp-field imp-name">
               <label for="impDocName">Nome do documento</label>
               <input type="text" id="impDocName" placeholder="Ex.: CNH, ASO, Certidão">
             </div>
-            <div>
+
+            <!-- Tipo + lápis -->
+            <div class="imp-field imp-type">
               <label for="impDocType">Tipo</label>
-              <select id="impDocType">
-                <option value="CNH">CNH</option>
-                <option value="ASO">ASO</option>
-                <option value="Certidão">Certidão</option>
-                <option value="Outros">Outros</option>
-              </select>
+
+              <div class="imp-type-grid">
+                <select id="impDocType">
+                  <option value="">Selecione...</option>
+                  <!-- ✅ depois você vai popular pelo back (tipos ativos) -->
+                  <option value="CNH">CNH</option>
+                  <option value="ASO">ASO</option>
+                  <option value="Certidão">Certidão</option>
+                  <option value="Outros">Outros</option>
+                </select>
+
+                <!-- Ícone lápis (abre modal CRUD de tipos) -->
+                <button
+                  type="button"
+                  class="imp-type-edit"
+                  id="btnOpenTipoDocModal"
+                  aria-label="Cadastrar/editar tipos de documento"
+                  title="Cadastrar/editar tipos">
+                  <i class="fa-regular fa-pen-to-square" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <small class="imp-help"></small>
             </div>
-            <div>
+
+            <!-- Emissão -->
+            <div class="imp-field imp-issue">
               <label for="impDocIssue">Data de emissão</label>
               <input type="date" id="impDocIssue">
             </div>
-            <div>
+
+            <!-- Validade -->
+            <div class="imp-field imp-due">
               <label for="impDocDue">Data de validade</label>
               <input type="date" id="impDocDue">
-              </div>
-            <div>
+            </div>
+
+            <!-- Ações -->
+            <div class="imp-field imp-actions">
               <button class="btn btn-ok" id="btnAddImpDoc" type="button">
                 <i class="fa-solid fa-plus" aria-hidden="true"></i> Adicionar
               </button>
             </div>
-          </div>
 
-          <div class="filehint imp-bell" style="margin-bottom:6px">
-            <i class="fa-regular fa-bell" aria-hidden="true"></i>
-            Ative o sino por documento para ser avisado no vencimento.
-          </div>
+          </div><!-- /.imp-docs-form -->
 
+          <!-- Alert/feedback -->
+          <div class="imp-alert" id="impDocsAlert" style="display:none"></div>
+
+          <!-- Tabela -->
           <table class="table" style="margin-top:8px">
             <thead>
               <tr>
@@ -1802,33 +1978,343 @@
               <tr><td colspan="5">—</td></tr>
             </tbody>
           </table>
+
+        </div><!-- /#paneDocsImportantes -->
+
+        <!-- =========================================================
+              MODAL: Tipos de Documento Importante (CRUD UI)
+              Abre ao clicar no lápis
+        ========================================================= -->
+        <div class="modal" id="modalTipoDocumento" role="dialog" aria-modal="true" aria-labelledby="tipoDocModalTitle" style="display:none;">
+            <div class="modal-content">
+
+              <div class="modal-header">
+                <span id="tipoDocModalTitle">Tipos de documento</span>
+
+                <!-- botão X (se você quiser) -->
+                <button type="button" class="btn btn-light" id="btnFecharTipoDoc" aria-label="Fechar">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <div class="modal-body">
+                <!-- Form: criar/editar -->
+                <div class="tipo-doc-form">
+
+                  <!-- Nome (novo nome ou renomear) -->
+                  <div class="tipo-doc-field">
+                    <label for="tipoDocNome">Nome do tipo</label>
+                    <input type="text" id="tipoDocNome" placeholder="Ex.: Atestado, NR-10, Crachá, etc.">
+                    <small class="tipo-doc-help">
+                      Para criar novo tipo de documento, basta inserir o nome e salvar.
+                    </small>
+                  </div>
+
+                  <!-- Alert interno do modal -->
+                  <div class="imp-alert" id="tipoDocAlert" style="display:none"></div>
+
+                </div>
+
+                <!-- Lista visual (opcional, mas ajuda o usuário) -->
+                <div style="margin-top:12px;">
+                  <div class="filehint" style="margin-bottom:6px;">
+                    <i class="fa-regular fa-rectangle-list" aria-hidden="true"></i>
+                    Tipos cadastrados (ativos)
+                  </div>
+
+                  <table class="table" id="tipoDocTable">
+                    <thead>
+                      <tr>
+                        <th>Nome</th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tipoDocTableBody">
+                      <tr><td colspan="4">—</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button class="btn btn-light" type="button" id="btnCancelarTipoDoc">
+                  Cancelar
+                </button>
+
+                <button class="btn btn-ok" type="button" id="btnSalvarTipoDoc">
+                  <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i> Salvar
+                </button>
+              </div>
+
+            </div>
         </div>
 
-        <!-- NOVO PANE: CURSOS -->
-        <div class="emp-pane" id="paneCursos">
-          <div class="imp-docs-form">
-            <div style="flex:1 1 100%">
-              <label for="funcCursosInput">Cursos do funcionário</label>
-              <textarea
-                id="funcCursosInput"
-                rows="4"
-                placeholder="Ex.:
-  NR 10 Básico 40h
-  NR 12 Máquinas e Equipamentos (Básico)
-  NR 12 Motosserra ou similares 8h"></textarea>
+        <!-- =========================================================
+            PANE: CURSOS (CATÁLOGO + VÍNCULO AO FUNCIONÁRIO)
+            Layout inspirado no exemplo (catálogo à esquerda, vínculo + lista à direita)
+            ✅ Mantém TODOS os IDs para seu JS continuar funcionando
+        ========================================================= -->
+        <div class="emp-pane" id="paneCursos" aria-labelledby="tabCursosTitle">
+
+          <input type="hidden" id="cursosEmpId" value="" />
+
+          <header class="cursos-pane-head">
+            <div class="cursos-pane-head__titles">
+              <h3 id="tabCursosTitle" class="cursos-pane-title">Cursos & Certificações</h3>
+              <p class="cursos-pane-subtitle">
+                Cadastre cursos no catálogo e vincule ao funcionário com validade (ou deixe em branco para Permanente).
+              </p>
             </div>
-            <div>
-              <label style="visibility:hidden;">.</label>
-              <button class="btn btn-ok" id="btnSalvarCursos" type="button">
-                <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i> Salvar cursos
-              </button>
+          </header>
+
+          <main class="cursos-layout">
+
+            <!-- COLUNA ESQUERDA: CATÁLOGO -->
+            <section class="cursos-col cursos-col--left" aria-label="Catálogo de Cursos">
+              <div class="cursos-section-head">
+                <h4 class="cursos-section-title">
+                  <i class="fa-solid fa-book-bookmark" aria-hidden="true"></i>
+                  Catálogo de Cursos
+                </h4>
+
+                <button class="btn btn-ok" id="btnNovoCurso" type="button">
+                  <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                  <span>Novo curso</span>
+                </button>
+              </div>
+
+              <div class="glass-card cursos-card">
+                <div class="cursos-card-toolbar">
+                  <div class="cursos-search">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <input
+                      id="cursoSearch"
+                      type="text"
+                      placeholder="Buscar no catálogo (nome, NR, carga, categoria...)"
+                      autocomplete="off"
+                    />
+                  </div>
+
+                  <button class="btn" id="btnRefreshCursos" type="button" title="Recarregar catálogo" aria-label="Recarregar catálogo">
+                    <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+                  </button>
+                </div>
+
+                <div class="cursos-table-wrap cursos-scroll">
+                  <table class="tech-table cursos-table" id="tblCursosCatalogo" aria-label="Tabela do catálogo de cursos">
+                    <thead>
+                      <tr>
+                        <th class="col-curso">Curso</th>
+                        <th class="col-carga" style="text-align:center;">Carga</th>
+                        <th class="col-acoes" style="text-align:right;">Ações</th>
+                      </tr>
+                    </thead>
+
+                    <!--
+                      JS deve renderizar assim na col "Curso":
+                      <div class="curso-title">NR-10 Básico</div>
+                      <div class="curso-sub">Segurança</div>
+                      (opcional) <div class="curso-sub2">Observação...</div>
+                    -->
+                    <tbody id="cursosCatalogoBody"></tbody>
+                  </table>
+
+                  <div class="cursos-empty filehint" id="cursosCatalogoEmpty" style="display:none;">
+                    Nenhum curso no catálogo. Clique em <b>Novo curso</b>.
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- COLUNA DIREITA: VINCULAR + CERTIFICAÇÕES -->
+            <section class="cursos-col cursos-col--right" aria-label="Cursos do Funcionário">
+
+              <!-- Card: Vincular -->
+              <div class="glass-card cursos-card">
+                <div class="cursos-section-head cursos-section-head--inside">
+                  <h4 class="cursos-section-title">
+                    <i class="fa-solid fa-link" aria-hidden="true"></i>
+                    Vincular Curso ao Funcionário
+                  </h4>
+
+                  <button class="btn" id="btnReloadCursosFuncionario" type="button" title="Recarregar vínculo do funcionário" aria-label="Recarregar vínculo do funcionário">
+                    <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+                  </button>
+                </div>
+
+                <div class="cursos-form-grid">
+                  <div class="cursos-field cursos-field--full">
+                    <label for="cursoSelect">Selecionar do catálogo</label>
+                    <select id="cursoSelect">
+                      <option value="">— Selecione um curso —</option>
+                    </select>
+                  </div>
+
+                  <div class="cursos-field">
+                    <label for="cursoConclusao">Data de conclusão</label>
+                    <input id="cursoConclusao" type="date" />
+                  </div>
+
+                  <div class="cursos-field">
+                    <label for="cursoValidade">Validade (opcional)</label>
+                    <input id="cursoValidade" type="date" />
+                    <div class="filehint cursos-hint">* Deixe em branco para <b>Permanente</b></div>
+                  </div>
+
+                  <div class="cursos-field cursos-field--full">
+                    <button class="btn btn-ok cursos-btn-primary" id="btnVincularCurso" type="button">
+                      <i class="fa-regular fa-circle-check" aria-hidden="true"></i>
+                      <span>Confirmar vínculo</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card: Certificações -->
+              <div class="glass-card cursos-card">
+                <div class="cursos-section-head cursos-section-head--inside">
+                  <h4 class="cursos-section-title">
+                    <i class="fa-solid fa-award" aria-hidden="true"></i>
+                    Certificações Concluídas
+                  </h4>
+                </div>
+
+                <div class="cursos-table-wrap">
+                  <table class="tech-table cursos-table" id="tblCursosFuncionario" aria-label="Tabela de cursos do funcionário">
+                    <thead>
+                      <tr>
+                        <th class="col-curso">Curso</th>
+                        <th class="col-conc">Conclusão</th>
+                        <th class="col-status">Status / Validade</th>
+                        <th class="col-acoes" style="text-align:right;">Ações</th>
+                      </tr>
+                    </thead>
+
+                    <!--
+                      JS deve renderizar ações por linha (exemplo):
+                      - Alterar validade/conclusão -> data-action="edit-vinculo"
+                      - Alterar nome do curso -> data-action="edit-curso"
+                      - Remover do funcionário -> data-action="delete-vinculo"
+                    -->
+                    <tbody id="cursosFuncionarioBody"></tbody>
+                  </table>
+
+                  <div class="cursos-empty filehint" id="cursosFuncionarioEmpty" style="display:none;">
+                    Nenhum curso vinculado a este funcionário ainda.
+                  </div>
+                </div>
+              </div>
+
+            </section>
+          </main>
+
+          <!-- MODAL: CADASTRAR/EDITAR CURSO -->
+          <div class="modal-overlay" id="modalCurso" style="display:none;" aria-hidden="true">
+            <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalCursoTitle">
+              <div class="modal-header">
+                <div id="modalCursoTitle" class="modal-title">Curso</div>
+                <button id="btnCloseModalCurso" class="btn" type="button" aria-label="Fechar">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <div class="modal-body">
+                <input type="hidden" id="cursoId" value="" />
+
+                <div class="cursos-modal-grid">
+                  <div class="cursos-field cursos-field--full">
+                    <label for="cursoNome">Nome do curso *</label>
+                    <input id="cursoNome" type="text" placeholder="Ex.: NR-35 Trabalho em Altura" />
+                  </div>
+
+                  <div class="cursos-field">
+                    <label for="cursoCarga">Carga horária (h)</label>
+                    <input id="cursoCarga" type="number" min="0" step="1" placeholder="Ex.: 8" />
+                  </div>
+
+                  <!-- ✅ NOVO: Categoria fixa -->
+                  <div class="cursos-field">
+                    <label for="cursoCategoria">Categoria *</label>
+                    <select id="cursoCategoria">
+                      <option value="">— Selecione —</option>
+                      <option value="SOFT_SKILL">Soft Skill</option>
+                      <option value="SEGURANCA">Segurança</option>
+                      <option value="TECNICO">Técnico</option>
+                      <option value="GESTAO">Gestão</option>
+                    </select>
+                  </div>
+
+                  <!-- Opcional (mantive seu id, se quiser usar) -->
+                  <div class="cursos-field cursos-field--full">
+                    <label for="cursoObs">Observação (opcional)</label>
+                    <input id="cursoObs" type="text" placeholder="Ex.: NR / Obrigatório / Reciclagem..." />
+                  </div>
+
+                  <div class="cursos-field cursos-field--full">
+                    <label for="cursoDescricao">Descrição (opcional)</label>
+                    <textarea id="cursoDescricao" rows="3" placeholder="Detalhes do curso..."></textarea>
+                  </div>
+                </div>
+
+                <div class="filehint" style="margin-top:10px;">
+                  Dica: a <b>validade</b> é definida no vínculo com o funcionário (pode ser permanente).
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button class="btn" id="btnCancelarCurso" type="button">Cancelar</button>
+                <button class="btn btn-ok" id="btnSalvarCurso" type="button">
+                  <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i>
+                  <span>Salvar curso</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          <div class="filehint" style="margin-top:6px">
-          </div>
-        </div>
+          <!-- MODAL: EDITAR VÍNCULO (VALIDADE/CONCLUSÃO) -->
+          <div class="modal-overlay" id="modalEmpCurso" style="display:none;" aria-hidden="true">
+            <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalEmpCursoTitle">
+              <div class="modal-header">
+                <div id="modalEmpCursoTitle" class="modal-title">Editar curso do funcionário</div>
+                <button id="btnCloseModalEmpCurso" class="btn" type="button" aria-label="Fechar">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </div>
 
+              <div class="modal-body">
+                <input type="hidden" id="empCursoId" value="" />
+
+                <div class="cursos-modal-grid">
+                  <div class="cursos-field cursos-field--full">
+                    <label>Curso</label>
+                    <div id="empCursoNomePreview" class="glass-card cursos-preview">—</div>
+                  </div>
+
+                  <div class="cursos-field">
+                    <label for="empCursoConclusao">Data de conclusão</label>
+                    <input id="empCursoConclusao" type="date" />
+                  </div>
+
+                  <div class="cursos-field">
+                    <label for="empCursoValidade">Validade (opcional)</label>
+                    <input id="empCursoValidade" type="date" />
+                    <div class="filehint cursos-hint">* Deixe em branco para <b>Permanente</b></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button class="btn" id="btnCancelarEmpCurso" type="button">Cancelar</button>
+                <button class="btn btn-ok" id="btnSalvarEmpCurso" type="button">
+                  <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i>
+                  <span>Salvar alterações</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        
       </div>
 
       <div class="modal-footer">
@@ -1879,23 +2365,138 @@
     </div>
   </div>
 
-  <!-- Modal Lembretes -->
-  <div class="modal" id="modalAlerts" role="dialog" aria-modal="true" aria-labelledby="alertsTitulo">
-    <div class="modal-content">
-      <div class="modal-header" id="alertsTitulo">Lembretes</div>
-      <div class="modal-body">
-        <table class="table">
-          <thead>
-            <tr><th>Funcionário</th><th>Documento</th><th>Vencimento</th><th>Status</th><th>Ações</th></tr>
-          </thead>
-          <tbody id="alertsTable"><tr><td colspan="5">Sem lembretes.</td></tr></tbody>
-        </table>
+  <!-- =========================
+      HEADER: SINO + BOLINHA (ALERTA)
+      - alerts.js usa: #btnAlerts e #notifDot
+      ========================= -->
+  <button class="icon-btn" id="btnAlerts" type="button" title="Lembretes" aria-label="Abrir Central de Lembretes">
+    <i class="fa-regular fa-bell" aria-hidden="true"></i>
+
+    <!-- JS controla display -->
+    <span class="notif-dot" id="notifDot" aria-hidden="true" style="display:none;"></span>
+  </button>
+
+
+<!-- =========================
+      MODAL LEMBRETES (CENTRAL)
+      - alerts.js usa:
+        #modalLembretes, #btnCloseLembretes, #btnFecharLembretesBottom,
+        #btnNovoLembrete (opcional), #listaLembretesBody
+      ========================= -->
+  <div id="modalLembretes" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content-premium" role="dialog" aria-modal="true" aria-labelledby="tituloLembretes">
+
+      <div class="modal-header-premium">
+        <h2 id="tituloLembretes">
+          <i class="fa-regular fa-bell" aria-hidden="true"></i>
+          Central de Lembretes
+        </h2>
+
+        <button class="btn-close-modal" id="btnCloseLembretes" type="button" aria-label="Fechar">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-light" id="btnCloseAlerts">Fechar</button>
+
+      <div class="modal-body-premium">
+        <div class="rem-table-wrapper">
+          <table class="rem-table">
+            <thead>
+              <tr>
+                <th>Funcionário</th>
+                <th>Emissão</th>
+                <th>Validade</th>
+                <th class="text-center">Ativo</th>
+                <th class="text-center">Corrigido</th>
+              </tr>
+            </thead>
+
+            <tbody id="listaLembretesBody">
+              <!-- O alerts.js vai substituir esse conteúdo ao carregar do GET -->
+              <tr>
+                <td colspan="5" style="opacity:.7; padding:12px;">
+                  Carregando lembretes...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-actions-premium">
+        <button class="btn-snooze" id="btnFecharLembretesBottom" type="button">
+          Fechar
+        </button>
+
+        <!-- Opcional: se você usa o modal de cadastro -->
+        <button class="btn-resolve" id="btnNovoLembrete" type="button">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i>
+          Novo Lembrete
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- =========================
+      POPUP ALARME (vence HOJE)
+      - alerts.js usa:
+        #popupAlarme, #alarmList, #btnSnooze, #btnResolve
+      ========================= -->
+  <div id="popupAlarme" class="alarm-overlay" aria-hidden="true">
+    <div class="alarm-card" role="dialog" aria-modal="true" aria-labelledby="alarmTitle">
+      <div class="alarm-icon-wrapper" aria-hidden="true">
+        <i class="fa-solid fa-bell alarm-bell" aria-hidden="true"></i>
+      </div>
+
+      <h3 id="alarmTitle">Atenção Necessária!</h3>
+      <p>Identificamos documentos vencendo hoje que requerem sua ação imediata.</p>
+
+      <div class="alarm-list" id="alarmList">
+        <!-- Itens gerados via JS -->
+      </div>
+
+      <div class="alarm-actions">
+        <button class="btn-snooze" id="btnSnooze" type="button">Lembrar em 1h</button>
+        <button class="btn-resolve" id="btnResolve" type="button">Resolver agora</button>
       </div>
     </div>
   </div>
+
+
+  <!-- ============================================
+      (OPCIONAL) MODAL CADASTRO
+      - alerts.js procura por:
+        #modalCadastroUsuario, #btnFecharCadastro, #btnCancelarCadastro, #btnSalvarCadastro
+      - Se você NÃO usa, pode apagar esse bloco inteiro.
+      ============================================ -->
+  <div id="modalCadastroUsuario" class="modal-overlay" aria-hidden="true" style="display:none;">
+    <div class="modal-content-premium" role="dialog" aria-modal="true" aria-labelledby="tituloCadastro">
+
+      <div class="modal-header-premium">
+        <h2 id="tituloCadastro">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i>
+          Novo Lembrete
+        </h2>
+
+        <button class="btn-close-modal" id="btnFecharCadastro" type="button" aria-label="Fechar">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="modal-body-premium">
+        <p style="opacity:.7;">(Opcional) Conteúdo do cadastro.</p>
+        <!-- Seu formulário aqui -->
+      </div>
+
+      <div class="modal-actions-premium">
+        <button class="btn-snooze" id="btnCancelarCadastro" type="button">Cancelar</button>
+        <button class="btn-resolve" id="btnSalvarCadastro" type="button">Salvar</button>
+      </div>
+
+    </div>
+  </div>
+
 
   <!-- Tela pública de assinatura -->
   <div id="publicSign" class="public-sign" aria-live="polite">
@@ -2001,30 +2602,235 @@
     </div>
   </div>
 
+  
+  <!-- =========================================================
+       Fallback UI (tabs + modais) — não depende do home.js
+       Ajuda quando algum JS não carrega / dá erro.
+  ========================================================= -->
+  <script>
+  (function(){
+    function on(el, ev, fn){
+      if(!el || el.dataset.bound === "1") return;
+      el.addEventListener(ev, fn);
+      el.dataset.bound = "1";
+    }
+    function show(el){
+      if(!el) return;
+      el.style.display = "flex";
+      el.removeAttribute("hidden");
+      el.setAttribute("aria-hidden","false");
+      document.documentElement.classList.add("modal-open");
+      document.body.classList.add("modal-open");
+    }
+    function hide(el){
+      if(!el) return;
+      el.style.display = "none";
+      el.setAttribute("aria-hidden","true");
+      document.documentElement.classList.remove("modal-open");
+      document.body.classList.remove("modal-open");
+    }
+    function activateTab(tabId){
+      if(!tabId) return;
+      document.querySelectorAll("main .tab").forEach(sec => {
+        sec.classList.toggle("active", sec.id === tabId);
+      });
+      document.querySelectorAll("#menu [data-tab]").forEach(li => {
+        li.classList.toggle("active", li.getAttribute("data-tab") === tabId);
+      });
+    }
 
-  <!-- Javascript completo (ordem corrigida) -->
-  <script src="assets/js/core.js"></script>
-  <script src="assets/js/ponto.js"></script>
+    document.addEventListener("DOMContentLoaded", function(){
+      // Splash: garante que some mesmo se o home.js não rodar
+      var splash = document.getElementById("splash");
+      if(splash){
+        setTimeout(function(){ splash.style.display="none"; }, 450);
+      }
 
-  <!-- Funcionários -->
-  <script src="assets/js/funcionarios.js"></script>
+      // Menu lateral (tabs principais)
+      document.querySelectorAll("#menu [data-tab]").forEach(function(li){
+        on(li, "click", function(){
+          var id = li.getAttribute("data-tab");
+          activateTab(id);
+          // fecha sidebar no mobile (se existir classe/open)
+          var sidebar = document.getElementById("sidebar");
+          if(sidebar) sidebar.classList.remove("open");
+          document.body.classList.remove("sidebar-open");
+        });
+      });
+
+      // Submenus
+      document.querySelectorAll(".has-submenu > .row-head").forEach(function(head){
+        on(head, "click", function(){
+          var li = head.closest(".has-submenu");
+          if(!li) return;
+          var expanded = li.getAttribute("aria-expanded") === "true";
+          li.setAttribute("aria-expanded", expanded ? "false" : "true");
+          li.classList.toggle("open", !expanded);
+        });
+      });
+
+      // Botão hamburguer / fechar sidebar
+      on(document.getElementById("btnHamb"), "click", function(){
+        var sidebar = document.getElementById("sidebar");
+        if(sidebar) sidebar.classList.toggle("open");
+        document.body.classList.toggle("sidebar-open");
+      });
+      on(document.getElementById("btnCloseSidebar"), "click", function(){
+        var sidebar = document.getElementById("sidebar");
+        if(sidebar) sidebar.classList.remove("open");
+        document.body.classList.remove("sidebar-open");
+      });
+
+      // Sub-tabs de Documentos (Gerar / Clicksign)
+      document.querySelectorAll(".docs-tab-btn[data-target]").forEach(function(btn){
+        on(btn, "click", function(){
+          var target = btn.getAttribute("data-target");
+          document.querySelectorAll(".docs-tab-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          document.querySelectorAll("#tabDocs .docs-pane").forEach(p => p.classList.remove("active"));
+          var pane = document.querySelector(target);
+          if(pane) pane.classList.add("active");
+        });
+      });
+
+      // Tabs dentro do modal do funcionário (Documentos / Importantes / Cursos)
+      document.querySelectorAll(".emp-tab-btn[data-target], button[data-impdocs-open][data-target]").forEach(function(btn){
+        on(btn, "click", function(){
+          var target = btn.getAttribute("data-target");
+          var tabsWrap = btn.closest(".emp-tabs");
+          if(tabsWrap){
+            tabsWrap.querySelectorAll(".emp-tab-btn, .btn-warn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+          }
+          var modalBody = btn.closest(".modal-body");
+          if(modalBody){
+            modalBody.querySelectorAll(".emp-pane").forEach(p => p.classList.remove("active"));
+          }
+          var pane = document.querySelector(target);
+          if(pane) pane.classList.add("active");
+        });
+      });
+
+      // Modais principais: abrir/fechar (fallback)
+      var wizard = document.getElementById("wizard");
+      on(document.getElementById("btn-open"), "click", function(){ show(wizard); });
+      on(document.getElementById("btn-close"), "click", function(){ hide(wizard); });
+      if(wizard){
+        on(wizard, "click", function(e){
+          if(e.target === wizard) hide(wizard);
+        });
+      }
+
+      var tplModal = document.getElementById("tplModal");
+      on(document.getElementById("btn-templates"), "click", function(){ show(tplModal); });
+      on(document.getElementById("btn-close-tpl"), "click", function(){ hide(tplModal); });
+      if(tplModal){
+        on(tplModal, "click", function(e){
+          if(e.target === tplModal) hide(tplModal);
+        });
+      }
+
+      // Modal tipos de documento
+      var tipoModal = document.getElementById("modalTipoDocumento");
+      on(document.getElementById("btnOpenTipoDocModal"), "click", function(){ show(tipoModal); });
+      on(document.getElementById("btnFecharTipoDoc"), "click", function(){ hide(tipoModal); });
+      on(document.getElementById("btnCancelarTipoDoc"), "click", function(){ hide(tipoModal); });
+
+      // Lembretes
+      //var lembretes = document.getElementById("modalLembretes");
+      //on(document.getElementById("btnAlerts"), "click", function(){ show(lembretes); });
+      //on(document.getElementById("btnCloseLembretes"), "click", function(){ hide(lembretes); });
+      //on(document.getElementById("btnFecharLembretesBottom"), "click", function(){ hide(lembretes); });
+
+      // Crachá
+      var cracha = document.getElementById("modalCracha");
+      on(document.getElementById("btnFecharCracha"), "click", function(){ hide(cracha); });
+
+      // Ajustar/Justificar ponto (botões no tabIncluir)
+      var mAjuste = document.getElementById("modalAjustarPonto");
+      on(document.getElementById("btnAjustarPonto"), "click", function(){ show(mAjuste); });
+      on(document.getElementById("btnFecharAjustarPonto"), "click", function(){ hide(mAjuste); });
+      on(document.getElementById("btnCancelarAjustePonto"), "click", function(){ hide(mAjuste); });
+
+      var mJus = document.getElementById("modalJustificarAusencia");
+      on(document.getElementById("btnJustificarAusencia"), "click", function(){ show(mJus); });
+      on(document.getElementById("btnFecharJustificarAusencia"), "click", function(){ hide(mJus); });
+      on(document.getElementById("btnCancelarJustificativa"), "click", function(){ hide(mJus); });
+    });
+  })();
+  </script>
 
 
-  <script src="assets/js/beneficios-vt.js"></script>
-  <script src="assets/js/beneficios-vr.js"></script>
-  <script src="assets/js/doc.assinatura.js"></script>
-  <script src="assets/js/assinatura-publica.js"></script>
-  <script src="assets/js/config-theme.js"></script>
-  <script src="assets/js/ponto-justificativa.js"></script>
-  <script src="assets/js/assinatura-clicksign.js"></script>
-  <script src="assets/js/usuarios.js"></script>
-  <script src="assets/js/perfil-user.js"></script>
-  <script src="assets/js/cracha-acesso.js"></script>
-  <script src="assets/js/user-menu.js"></script>
-  <script src="assets/js/home.js"></script>
+  <!-- =========================================================
+       Loader de scripts com fallback de caminhos (evita "tela morta")
+  ========================================================= -->
+  <script>
+  (function(){
+    function loadScript(src){
+      return new Promise(function(resolve,reject){
+        var s = document.createElement("script");
+        s.src = src;
+        s.defer = true;
+        s.onload = function(){ resolve(src); };
+        s.onerror = function(){ reject(new Error("Falha ao carregar: " + src)); };
+        document.body.appendChild(s);
+      });
+    }
 
-  <!-- Pré-carregar logo para o PDF -->
-  <img id="pdfLogoPreload" src="assets/img/logo_rcr_transparente.png" alt="" style="display:none"/>
+    // Grupos: tenta o primeiro; se 404, tenta o próximo (mantém ordem)
+    var groups = [
+      ["assets/js/core.js"],
+      ["assets/js/ponto.js"],
+
+      // Funcionários (estrutura antiga / nova)
+      ["assets/js/funcionarios/cracha-acesso.js"],
+      ["assets/js/funcionarios/funcionarios-assinatura.js"],
+      ["assets/js/funcionarios/funcionarios-explorer.js"],
+      ["assets/js/funcionarios/funcionarios.js"],
+      ["assets/js/funcionarios/funcionarios-cursos.js"],
+
+      // Benefícios
+      ["assets/js/beneficios.js"],
+
+      // Docs / assinatura
+      ["assets/js/doc.assinatura.js"],
+      ["assets/js/assinatura-publica.js"],
+      ["assets/js/assinatura-clicksign.js"],
+
+      // Outros
+      ["assets/js/ponto-justificativa.js"],
+      ["assets/js/usuarios.js"],
+      ["assets/js/perfil-user.js"],
+      ["assets/js/user-menu.js"],
+      ["assets/js/alerts.js", "assets/js/alert.js"],
+      ["assets/js/config-theme.js"],
+
+      // Home por último
+      ["assets/js/home.js"]
+    ];
+
+    (async function(){
+      for (var i=0;i<groups.length;i++){
+        var opts = groups[i];
+        var ok = false;
+        for (var j=0;j<opts.length;j++){
+          try{
+            await loadScript(opts[j]);
+            ok = true;
+            break;
+          }catch(e){ /* tenta próximo */ }
+        }
+        if(!ok){
+          console.warn("[Atrium] Não consegui carregar nenhum destes scripts:", opts);
+        }
+      }
+    })();
+  })();
+  </script>
+
+<!-- Pré-carregar logo para o PDF -->
+<img id="pdfLogoPreload" src="assets/img/logo_rcr_transparente.png" alt="" style="display:none"/>
 
 </body>
 </html>

@@ -206,8 +206,6 @@ button:active{transform:scale(.98)}
 </div>
 
 <script>
-
-
 /* Mostrar/ocultar senha */
 document.getElementById('togglePwd').addEventListener('click', ()=>{
   const input = document.getElementById('password');
@@ -241,10 +239,9 @@ function abrirEsqueciSenha(){ window.location.href='forgot_password.html'; }
 
 /* Helpers */
 const API_BASE = "http://localhost:5253";
-
 function onlyDigits(v){ return String(v||'').replace(/\D/g,''); }
 
-/* Login (banco) com fallback para credencial fixa */
+/* Login: SOMENTE via backend (cookie auth) */
 document.getElementById('loginForm').addEventListener('submit', async function(e){
   e.preventDefault();
 
@@ -257,79 +254,48 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     return;
   }
 
-  const isFixed =
-    loginType === 'usuario' &&
-    loginRaw.toLowerCase() === 'gustavo' &&
-    senha === '123';
-
   // Monta body esperado pelo backend
   const body = loginType === 'cpf'
     ? { cpf: onlyDigits(loginRaw), login: null, senha }
     : { cpf: null, login: loginRaw, senha };
 
   try {
-    // 1) tenta banco
     const response = await fetch(`${API_BASE}/api/usuario/login`, {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
+      credentials: "include" // ESSENCIAL: grava/enviará cookie HttpOnly
     });
 
     if (response.ok) {
-      const data = await response.json();
+      // Se você quiser guardar algo no front, pode, mas não é obrigatório.
+      // O que autentica de verdade é o cookie.
+      let data = null;
+      try { data = await response.json(); } catch {}
 
-      // garante campos mínimos (ajuda no seu front)
-      // (o ideal é o backend sempre devolver)
-      if (!data || !data.id) {
-        alert("Login OK, mas resposta inválida do servidor.");
-        return;
-      }
+      // (Opcional) guardar só para exibir nome na UI
+      if (data) localStorage.setItem("usuario", JSON.stringify(data));
 
-      localStorage.setItem("usuario", JSON.stringify(data));
       window.location.href = "home.html";
       return;
     }
 
+    // Login inválido
     if (response.status === 401) {
-      // 2) fallback: credencial fixa (só para seu usuário)
-      if (isFixed) {
-        const usuarioFake = {
-          id: 1,
-          nome: "Gustavo",
-          login: "gustavo",
-          typeUser: 1, // admin
-          role: "Admin"
-        };
-        localStorage.setItem("usuario", JSON.stringify(usuarioFake));
-        window.location.href = "home.html";
-        return;
-      }
-
       alert("Credenciais inválidas. Verifique CPF/Usuário e senha.");
       return;
     }
 
-    // outros erros
-    alert("Erro no servidor. Tente novamente.");
-  } catch (err) {
-    // 3) sem conexão: fallback fixo (opcional)
-    if (isFixed) {
-      const usuarioFake = {
-        id: 1,
-        nome: "Gustavo",
-        login: "gustavo",
-        typeUser: 1,
-        role: "Admin"
-      };
-      localStorage.setItem("usuario", JSON.stringify(usuarioFake));
-      window.location.href = "home.html";
-      return;
-    }
+    // Outros erros (500 etc.)
+    const msg = await response.text().catch(()=> "");
+    alert("Erro no servidor. " + (msg || `Status ${response.status}`));
 
-    alert("Falha de conexão com o servidor: " + err.message);
+  } catch (err) {
+    alert("Falha de conexão com o servidor: " + (err?.message || err));
   }
 });
 </script>
+
 
 </body>
 </html>

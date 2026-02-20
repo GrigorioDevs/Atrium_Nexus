@@ -447,10 +447,11 @@
 
     for (const url of candidates) {
       try {
-        const resp = await fetch(url, {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' }
-        });
+      const resp = await fetch(url, {
+        method: 'GET',
+        credentials: 'include',   // <<<<<< ESSENCIAL pra cookie em cross-origin
+        headers: { 'Accept': 'application/json' }
+      });
 
         if (resp.status === 404) {
           // rota não existe — tenta a próxima

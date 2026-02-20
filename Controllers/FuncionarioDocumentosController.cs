@@ -1,149 +1,61 @@
-using Atrium.RH.Data;
-using Atrium.RH.Domain.Entities;   // ✅ aqui
-using Atrium.RH.Services.Storage;
+using Atrium.RH.Dtos.FuncionarioDocumentos;
+using Atrium.RH.Services.FuncionarioDocumentos;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace Atrium.RH.Controllers;
 
 [ApiController]
-[Route("api/funcionarios/{funcionarioId:int}/documentos")]
+[Route("api/funcionarios/{funcionarioId:int}/explorer")]
 public class FuncionarioDocumentosController : ControllerBase
 {
-    private readonly AtriumRhDbContext _db;
-    private readonly IFileStorage _storage;
+    private readonly IFuncionarioExplorerService _svc;
 
-    public FuncionarioDocumentosController(AtriumRhDbContext db, IFileStorage storage)
+    public FuncionarioDocumentosController(IFuncionarioExplorerService svc)
     {
-        _db = db;
-        _storage = storage;
-    }
-
-    private int UsuarioLogadoId()
-    {
-        var raw = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
-        return int.Parse(raw!);
-    }
-
-    private static readonly HashSet<string> ExtPermitidas = new(StringComparer.OrdinalIgnoreCase)
-    { ".jpg", ".jpeg", ".png", ".pdf", ".doc", ".docx" };
-
-    [HttpPost]
-    [RequestSizeLimit(20_000_000)]
-    public async Task<IActionResult> Upload(
-        int funcionarioId,
-        [FromQuery] int? pastaId,
-        [FromForm] IFormFile file,          // ✅ importante
-        CancellationToken ct)
-    {
-        if (file is null || file.Length == 0)
-            return BadRequest("Arquivo inválido.");
-
-        var ext = Path.GetExtension(file.FileName);
-        if (string.IsNullOrWhiteSpace(ext) || !ExtPermitidas.Contains(ext))
-            return BadRequest("Extensão não permitida. Use JPG/PNG/PDF/DOC/DOCX.");
-
-        var funcionarioExiste = await _db.Funcionarios.AnyAsync(x => x.Id == funcionarioId && x.Ativo, ct);
-        if (!funcionarioExiste) return NotFound("Funcionário não encontrado.");
-
-        if (pastaId.HasValue)
-        {
-            var pastaOk = await _db.FuncionarioPastas.AnyAsync(p =>
-                p.Id == pastaId.Value && p.FuncionarioId == funcionarioId && p.Ativo, ct);
-
-            if (!pastaOk) return BadRequest("Pasta inválida para este funcionário.");
-        }
-
-        var userId = UsuarioLogadoId();
-
-        await using var stream = file.OpenReadStream();
-        var storageKey = await _storage.SaveAsync(stream, file.FileName, file.ContentType, funcionarioId, ct);
-
-        var doc = new FuncionarioDocumento
-        {
-            FuncionarioId = funcionarioId,
-            PastaId = pastaId,
-
-            NomeOriginal = file.FileName,
-            Extensao = ext.ToLowerInvariant(),
-            ContentType = file.ContentType,
-            TamanhoBytes = file.Length,
-            StorageKey = storageKey,
-
-            Ativo = true,
-            Criacao = DateTime.Now,
-            UsuarioCriacaoId = userId,   // ✅
-            UsuarioId = null,            // ✅
-            DataSincronizacao = null,    // ✅
-            DataInterface = null         // ✅
-        };
-
-        _db.FuncionarioDocumentos.Add(doc);
-        await _db.SaveChangesAsync(ct);
-
-        return Ok(new
-        {
-            doc.Id,
-            doc.NomeOriginal,
-            doc.Extensao,
-            doc.TamanhoBytes,
-            doc.Criacao,
-            doc.PastaId
-        });
+        _svc = svc;
     }
 
     [HttpGet]
-    public async Task<IActionResult> List(int funcionarioId, [FromQuery] int? pastaId, CancellationToken ct)
+    public async Task<IActionResult> ListAll(int funcionarioId, CancellationToken ct)
+        => Ok(await _svc.ListAll(funcionarioId, ct));
+
+    [HttpPost("folders")]
+    public async Task<IActionResult> CreateFolder(int funcionarioId, [FromBody] FuncionarioDocumentosCreate dto, CancellationToken ct)
+        => Ok(await _svc.CreateFolder(funcionarioId, dto, ct));
+
+    [HttpPut("items/{itemId}")]
+    public async Task<IActionResult> Rename(int funcionarioId, string itemId, [FromBody] FuncionarioDocumentosRename dto, CancellationToken ct)
     {
-        var query = _db.FuncionarioDocumentos.AsNoTracking()
-            .Where(d => d.FuncionarioId == funcionarioId && d.Ativo);
-
-        if (pastaId.HasValue)
-            query = query.Where(d => d.PastaId == pastaId.Value);
-
-        var data = await query
-            .OrderByDescending(d => d.Criacao)
-            .Select(d => new
-            {
-                d.Id,
-                d.NomeOriginal,
-                d.Extensao,
-                d.ContentType,
-                d.TamanhoBytes,
-                d.Criacao,
-                d.PastaId
-            })
-            .ToListAsync(ct);
-
-        return Ok(data);
+        await _svc.Rename(funcionarioId, itemId, dto.Name ?? "", ct);
+        return Ok(new { ok = true });
     }
 
-    [HttpGet("{docId:int}/download")]
-    public async Task<IActionResult> Download(int funcionarioId, int docId, CancellationToken ct)
+    [HttpDelete("items/{itemId}")]
+    public async Task<IActionResult> DeleteItem(int funcionarioId, string itemId, CancellationToken ct)
     {
-        var doc = await _db.FuncionarioDocumentos.AsNoTracking()
-            .FirstOrDefaultAsync(d => d.Id == docId && d.FuncionarioId == funcionarioId && d.Ativo, ct);
+        await _svc.DeleteItem(funcionarioId, itemId, ct);
+        return Ok(new { ok = true });
+    }
 
-        if (doc is null) return NotFound();
+    [HttpPost("files")]
+    [RequestSizeLimit(50_000_000)]
+    public async Task<IActionResult> UploadFiles(int funcionarioId, [FromForm] FuncionarioDocumentosUploadForm form, CancellationToken ct)
+    {
+        var items = await _svc.UploadFiles(funcionarioId, form.ParentId, form.OwnerRole, form.Files, ct);
+        return Ok(new { items });
+    }
 
-        var (stream, contentType, fileName) = await _storage.OpenAsync(doc.StorageKey, doc.ContentType, doc.NomeOriginal, ct);
+    [HttpGet("files/{itemId}/download")]
+    public async Task<IActionResult> Download(int funcionarioId, string itemId, CancellationToken ct)
+    {
+        var (stream, contentType, fileName) = await _svc.OpenDownload(funcionarioId, itemId, ct);
         return File(stream, contentType, fileName);
     }
 
-    [HttpDelete("{docId:int}")]
-    public async Task<IActionResult> SoftDelete(int funcionarioId, int docId, CancellationToken ct)
+    [HttpPost("copy")]
+    public async Task<IActionResult> Move(int funcionarioId, [FromBody] FuncionarioDocumentosCopy dto, CancellationToken ct)
     {
-        var doc = await _db.FuncionarioDocumentos
-            .FirstOrDefaultAsync(d => d.Id == docId && d.FuncionarioId == funcionarioId, ct);
-
-        if (doc is null) return NotFound();
-
-        doc.Ativo = false;
-        doc.Alteracao = DateTime.Now;
-        doc.UsuarioId  = UsuarioLogadoId();
-
-        await _db.SaveChangesAsync(ct);
-        return NoContent();
+        await _svc.Move(funcionarioId, dto, ct);
+        return Ok(new { ok = true });
     }
 }

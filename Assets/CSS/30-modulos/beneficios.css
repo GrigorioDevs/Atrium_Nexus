@@ -1,185 +1,522 @@
-/* Switches VR/VT */
-.benefit-toggles {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  align-items: center;
-  margin: 6px 0 10px;
-}
+/* =========================================================
+   BENEFÍCIOS PRO — SEM TAILWIND (layout + visual do template)
+   Escopo: #modalBeneficios .beneficios-pro
+   ========================================================= */
 
-.benefit-toggles label {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 800;
-}
+:root{
+  /* usa seus tokens se existirem */
+  --benef-bg: var(--bg, #020617);
+  --benef-panel: var(--panel, rgba(15, 23, 42, 0.86));
+  --benef-card: rgba(15, 23, 42, 0.70);
+  --benef-border: rgba(255,255,255,.08);
 
-#cadOptVR,
-#cadOptVT {
-  appearance: none;
-  width: 46px;
-  height: 26px;
-  border-radius: 999px;
-  background: #132433;
-  border: 1px solid rgba(0, 224, 255, 0.22);
-  position: relative;
-  cursor: pointer;
-  transition: 0.18s ease;
-}
+  --benef-cyan: var(--c1, #00E0FF);
+  --benef-magenta: var(--c2, #FF2FB9);
+  --benef-text: var(--text, #f8fafc);
+  --benef-muted: var(--muted, #94a3b8);
 
-#cadOptVR::after,
-#cadOptVT::after {
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--c1), var(--c2));
-  transform: translateX(0);
-  transition: transform 0.18s ease;
-}
-
-#cadOptVR:checked,
-#cadOptVT:checked {
-  background: rgba(0, 224, 255, 0.25);
-  border-color: rgba(0, 224, 255, 0.45);
-}
-
-#cadOptVR:checked::after,
-#cadOptVT:checked::after {
-  transform: translateX(20px);
-}
-
-/* Helpers VR/VT */
-.vt-help,
-.vr-help {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.vt-on { filter: none; opacity: 1; }
-.vt-off { filter: grayscale(0.85); opacity: 0.55; }
-
-.vt-cell-left { text-align: left; }
-.t-right { text-align: right; }
-.t-center { text-align: center; }
-.vr-cell-left { text-align: left; }
-
-.vr-meta {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.vr-money {
-  font-weight: 800;
-}
-
-.export-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 14px;
+  --benef-radius: var(--radius, 16px);
+  --benef-control-h: var(--control-h, 44px);
+  --benef-shadow: 0 18px 60px rgba(0,0,0,.55);
 }
 
 /* =========================================================
-   RESPONSIVIDADE BENEFÍCIOS (VT / VR)
+   1) MODAL: garante que abrir/fechar funcione
+   (seu modal tem style="display:none" no HTML)
    ========================================================= */
 
-/* Tablets e telas médias (até ~1024px) */
-@media (max-width: 1024px) {
-  .benefit-toggles {
-    gap: 12px;
-  }
+#modalBeneficios{
+  /* não destrói seu modal base, só garante backdrop bonito */
+  background: rgba(0,0,0,.60);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
 
-  .vt-help,
-  .vr-help {
-    max-width: 100%;
-  }
+#modalBeneficios.show{
+  display: flex !important;
+}
 
-  .export-actions {
-    justify-content: flex-start;
+/* content do modal maior e mais “pro” */
+#modalBeneficios .modal-content{
+  width: min(1320px, calc(100% - 24px));
+  max-height: calc(100vh - 24px);
+  background: rgba(10, 15, 25, 0.92);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 18px;
+  box-shadow: var(--benef-shadow);
+  overflow: hidden;
+}
+
+/* remove padding padrão pra deixar o módulo mandar */
+#modalBeneficios .modal-body{
+  padding: 0 !important;
+}
+
+/* =========================================================
+   2) FUNDO DO MÓDULO (igual ao template)
+   ========================================================= */
+#modalBeneficios .beneficios-pro{
+  background-color: var(--benef-bg);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(0, 224, 255, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(255, 47, 185, 0.06) 0%, transparent 40%);
+  color: var(--benef-text);
+  font-family: var(--ui, Inter, system-ui, -apple-system, sans-serif);
+  min-height: 100%;
+  padding: 22px;
+}
+
+/* container */
+#modalBeneficios .beneficios-pro .max-w-7xl{
+  max-width: 1280px;
+}
+#modalBeneficios .beneficios-pro .mx-auto{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* =========================================================
+   3) “Tailwind mínimo” (SÓ DENTRO DO MÓDULO)
+   ========================================================= */
+#modalBeneficios .beneficios-pro .flex{ display:flex; }
+#modalBeneficios .beneficios-pro .flex-col{ flex-direction: column; }
+#modalBeneficios .beneficios-pro .justify-between{ justify-content: space-between; }
+#modalBeneficios .beneficios-pro .items-center{ align-items: center; }
+#modalBeneficios .beneficios-pro .items-end{ align-items: end; }
+#modalBeneficios .beneficios-pro .flex-wrap{ flex-wrap: wrap; }
+
+#modalBeneficios .beneficios-pro .grid{ display:grid; }
+#modalBeneficios .beneficios-pro .grid-cols-1{ grid-template-columns: repeat(1, minmax(0,1fr)); }
+#modalBeneficios .beneficios-pro .gap-2{ gap: 8px; }
+#modalBeneficios .beneficios-pro .gap-3{ gap: 12px; }
+#modalBeneficios .beneficios-pro .gap-4{ gap: 16px; }
+#modalBeneficios .beneficios-pro .gap-6{ gap: 24px; }
+
+#modalBeneficios .beneficios-pro .p-1{ padding: 6px; }
+#modalBeneficios .beneficios-pro .p-3{ padding: 12px; }
+#modalBeneficios .beneficios-pro .p-4{ padding: 16px; }
+#modalBeneficios .beneficios-pro .p-6{ padding: 24px; }
+
+#modalBeneficios .beneficios-pro .px-3{ padding-left:12px; padding-right:12px; }
+#modalBeneficios .beneficios-pro .px-6{ padding-left:24px; padding-right:24px; }
+#modalBeneficios .beneficios-pro .px-8{ padding-left:32px; padding-right:32px; }
+#modalBeneficios .beneficios-pro .py-1{ padding-top:6px; padding-bottom:6px; }
+#modalBeneficios .beneficios-pro .py-2{ padding-top:10px; padding-bottom:10px; }
+#modalBeneficios .beneficios-pro .py-3{ padding-top:12px; padding-bottom:12px; }
+
+#modalBeneficios .beneficios-pro .mb-8{ margin-bottom: 32px; }
+#modalBeneficios .beneficios-pro .mb-10{ margin-bottom: 40px; }
+#modalBeneficios .beneficios-pro .mt-4{ margin-top: 16px; }
+
+#modalBeneficios .beneficios-pro .w-full{ width: 100%; }
+#modalBeneficios .beneficios-pro .overflow-hidden{ overflow:hidden; }
+#modalBeneficios .beneficios-pro .overflow-x-auto{ overflow-x:auto; }
+
+#modalBeneficios .beneficios-pro .rounded-xl{ border-radius: 14px; }
+#modalBeneficios .beneficios-pro .rounded-full{ border-radius: 999px; }
+
+#modalBeneficios .beneficios-pro .font-bold{ font-weight: 700; }
+#modalBeneficios .beneficios-pro .font-black{ font-weight: 900; }
+
+#modalBeneficios .beneficios-pro .text-left{ text-align:left; }
+#modalBeneficios .beneficios-pro .uppercase{ text-transform: uppercase; }
+
+#modalBeneficios .beneficios-pro .text-sm{ font-size: 14px; }
+#modalBeneficios .beneficios-pro .text-xs{ font-size: 12px; }
+#modalBeneficios .beneficios-pro .text-2xl{ font-size: 26px; line-height: 1.1; }
+#modalBeneficios .beneficios-pro .text-3xl{ font-size: 34px; line-height: 1.1; }
+
+#modalBeneficios .beneficios-pro .tracking-tighter{ letter-spacing: -0.03em; }
+#modalBeneficios .beneficios-pro .tracking-wider{ letter-spacing: 0.08em; }
+#modalBeneficios .beneficios-pro .tracking-widest{ letter-spacing: 0.16em; }
+
+#modalBeneficios .beneficios-pro .transition{ transition: all .2s ease; }
+#modalBeneficios .beneficios-pro .transition-all{ transition: all .25s ease; }
+
+#modalBeneficios .beneficios-pro .hover\:text-white:hover{ color:#fff; }
+#modalBeneficios .beneficios-pro .hover\:scale-105:hover{ transform: scale(1.02); }
+
+#modalBeneficios .beneficios-pro .ml-2{ margin-left: 8px; }
+#modalBeneficios .beneficios-pro .mr-1{ margin-right: 6px; }
+
+/* md: */
+@media (min-width: 768px){
+  #modalBeneficios .beneficios-pro .md\:flex-row{ flex-direction: row; }
+  #modalBeneficios .beneficios-pro .md\:grid-cols-4{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+
+/* =========================================================
+   4) GLASS + HEADER + TÍTULO GRADIENTE
+   ========================================================= */
+#modalBeneficios .beneficios-pro .glass-card{
+  background: var(--benef-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--benef-border);
+  border-radius: var(--benef-radius);
+  box-shadow: 0 10px 35px rgba(0,0,0,.35);
+}
+
+/* header interno do módulo (topo) */
+#modalBeneficios .beneficios-pro header{
+  display:flex;
+  flex-direction: column;
+  gap: 22px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 26px;
+}
+@media (min-width: 768px){
+  #modalBeneficios .beneficios-pro header{
+    flex-direction: row;
+    align-items: center;
   }
 }
 
-/* Celulares (até ~768px) */
-@media (max-width: 768px) {
-  .benefit-toggles {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
+#modalBeneficios .beneficios-pro h1{
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  background: linear-gradient(90deg, var(--benef-cyan), var(--benef-magenta));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 
-  .benefit-toggles label {
-    font-size: 14px;
-  }
+#modalBeneficios .beneficios-pro p{
+  margin: 6px 0 0 0;
+  color: rgba(148,163,184,.95);
+}
 
-  /* switches um pouco menores em telas pequenas */
-  #cadOptVR,
-  #cadOptVT {
-    width: 40px;
-    height: 22px;
-  }
+/* =========================================================
+   5) TABS (igual ao template: underline neon)
+   ========================================================= */
+#modalBeneficios .beneficios-pro nav.glass-card{
+  display: inline-flex;
+  gap: 8px;
+  padding: 6px;
+}
 
-  #cadOptVR::after,
-  #cadOptVT::after {
-    width: 18px;
-    height: 18px;
-    top: 2px;
-    left: 2px;
-  }
+#modalBeneficios .beneficios-pro .tab-btn{
+  appearance:none;
+  border: 0;
+  background: transparent;
+  color: rgba(148,163,184,.95);
+  cursor: pointer;
+  font-weight: 800;
+  border-radius: 12px;
+  position: relative;
+}
 
-  #cadOptVR:checked::after,
-  #cadOptVT:checked::after {
-    transform: translateX(18px);
-  }
+#modalBeneficios .beneficios-pro .tab-btn:hover{
+  color: #fff;
+}
 
-  .vt-help,
-  .vr-help {
-    font-size: 11px;
-  }
+#modalBeneficios .beneficios-pro .tab-btn.active{
+  color: var(--benef-cyan);
+  text-shadow: 0 0 10px rgba(0,224,255,.45);
+}
 
-  .export-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
+#modalBeneficios .beneficios-pro .tab-btn.active::after{
+  content:"";
+  position:absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 6px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--benef-cyan), var(--benef-magenta));
+  box-shadow: 0 0 14px rgba(0,224,255,.55);
+  border-radius: 2px;
+}
 
-  .export-actions .btn {
-    width: 100%;
-    justify-content: center;
+/* =========================================================
+   6) KPI GRID (4 cards bonitos)
+   ========================================================= */
+#modalBeneficios .beneficios-pro #kpiContainer{
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0,1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+@media (min-width: 768px){
+  #modalBeneficios .beneficios-pro #kpiContainer{
+    grid-template-columns: repeat(4, minmax(0,1fr));
   }
 }
 
-/* Celulares pequenos (ex.: iPhone 6s retrato ~375px) */
-@media (max-width: 480px) {
-  .benefit-toggles {
-    width: 100%;
-  }
-
-  .benefit-toggles label {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .vt-help,
-  .vr-help {
-    font-size: 10.5px;
-  }
-
-  .export-actions {
-    gap: 6px;
-  }
+#modalBeneficios .beneficios-pro .kpi-card{
+  padding: 16px;
+  border-left: 4px solid rgba(255,255,255,.25);
+  transition: transform .25s ease, border-color .25s ease;
+}
+#modalBeneficios .beneficios-pro .kpi-card:hover{
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,.45);
 }
 
-/* Telas muito grandes (monitores / TVs) */
-@media (min-width: 1440px) {
-  .export-actions {
-    max-width: 700px;
-  }
+#modalBeneficios .beneficios-pro .kpi-card.kpi-cyan{ border-left-color: var(--benef-cyan); }
+#modalBeneficios .beneficios-pro .kpi-card.kpi-magenta{ border-left-color: var(--benef-magenta); }
+#modalBeneficios .beneficios-pro .kpi-card.kpi-green{ border-left-color: var(--ok, #10b981); }
+#modalBeneficios .beneficios-pro .kpi-card.kpi-slate{ border-left-color: rgba(148,163,184,.65); }
 
-  .vt-help,
-  .vr-help {
-    max-width: 700px;
-  }
+#modalBeneficios .beneficios-pro .kpi-label{
+  font-size: 11px;
+  color: rgba(148,163,184,.95);
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+#modalBeneficios .beneficios-pro .kpi-value{
+  margin-top: 6px;
+  font-size: 26px;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* =========================================================
+   7) INPUTS / SELECTS
+   ========================================================= */
+#modalBeneficios .beneficios-pro label{
+  display:block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: rgba(148,163,184,.95);
+}
+
+#modalBeneficios .beneficios-pro input[type="number"],
+#modalBeneficios .beneficios-pro input[type="text"],
+#modalBeneficios .beneficios-pro select{
+  width: 100%;
+  height: var(--benef-control-h);
+  padding: 0 12px;
+  background: rgba(15,23,42,.85) !important;
+  border: 1px solid rgba(148,163,184,.20) !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+  outline: none;
+}
+
+#modalBeneficios .beneficios-pro input:focus,
+#modalBeneficios .beneficios-pro select:focus{
+  border-color: rgba(0,224,255,.55) !important;
+  box-shadow: 0 0 10px rgba(0,224,255,.18) !important;
+}
+
+/* checkbox “neon clean” */
+#modalBeneficios .beneficios-pro input[type="checkbox"]{
+  width: 18px;
+  height: 18px;
+  accent-color: var(--benef-cyan);
+}
+
+/* =========================================================
+   8) BOTÃO PRINCIPAL (gradiente animado)
+   ========================================================= */
+#modalBeneficios .beneficios-pro .btn-tech{
+  border: 0;
+  color: #081018;
+  font-weight: 900;
+  letter-spacing: .02em;
+
+  background: linear-gradient(135deg, var(--benef-cyan), var(--benef-magenta));
+  background-size: 200% 200%;
+  animation: benefGradientMove 3s ease infinite;
+
+  box-shadow: 0 0 22px rgba(0,224,255,.18);
+}
+
+#modalBeneficios .beneficios-pro .btn-tech:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 0 26px rgba(0,224,255,.28);
+}
+
+@keyframes benefGradientMove{
+  0%{ background-position: 0% 50%; }
+  50%{ background-position: 100% 50%; }
+  100%{ background-position: 0% 50%; }
+}
+
+/* =========================================================
+   9) TABELA TECH (igual template)
+   ========================================================= */
+#modalBeneficios .beneficios-pro .tech-table{
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+#modalBeneficios .beneficios-pro .tech-table thead th{
+  color: rgba(148,163,184,.95);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+}
+
+#modalBeneficios .beneficios-pro .tech-table tbody tr{
+  background: rgba(255,255,255,0.02);
+  transition: background .2s ease;
+}
+#modalBeneficios .beneficios-pro .tech-table tbody tr:hover{
+  background: rgba(255,255,255,0.06);
+}
+
+#modalBeneficios .beneficios-pro .tech-table td{
+  padding: 14px 12px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  color: #e5eef9;
+}
+
+#modalBeneficios .beneficios-pro .tech-table tr td:first-child{
+  border-radius: 10px 0 0 10px;
+  border-left: 1px solid rgba(255,255,255,0.05);
+}
+#modalBeneficios .beneficios-pro .tech-table tr td:last-child{
+  border-radius: 0 10px 10px 0;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+/* =========================================================
+   10) UTILITÁRIOS + SCROLLBAR
+   ========================================================= */
+#modalBeneficios .beneficios-pro .hidden{ display:none !important; }
+
+#modalBeneficios .modal-body::-webkit-scrollbar{ width: 8px; }
+#modalBeneficios .modal-body::-webkit-scrollbar-track{ background: rgba(255,255,255,0.03); }
+#modalBeneficios .modal-body::-webkit-scrollbar-thumb{
+  background: rgba(30,41,59,.9);
+  border-radius: 10px;
+}
+#modalBeneficios .modal-body::-webkit-scrollbar-thumb:hover{
+  background: rgba(0,224,255,.55);
+}
+
+/* =========================================================
+   11) AJUSTES DOS BLOQUINHOS DO VT (cabeçalho da tabela)
+   ========================================================= */
+/* como no HTML tem bg-slate-800/30 e border-white/5 (tailwind),
+   aqui a gente “simula” visualmente por seletor */
+#modalBeneficios .beneficios-pro .glass-card > .p-6{
+  /* mantém layout bonito sem Tailwind */
+}
+
+#modalBeneficios .beneficios-pro .glass-card .border-b{
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+/* =========================================================
+   BENEFÍCIOS — PATCH VISUAL (Excel/PDF, X à direita, modal maior)
+   Cole no FINAL do seu CSS do módulo
+   ========================================================= */
+
+/* 1) MODAL MAIS LARGO (aproveita o espaço da tela) */
+#modalBeneficios.show{
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 18px !important;
+}
+
+#modalBeneficios .modal-content{
+  width: min(1600px, 96vw) !important;  /* ✅ maior */
+  max-width: none !important;          /* ✅ não trava em max-width antigo */
+  max-height: 94vh !important;
+}
+
+/* 2) HEADER DO MODAL: título à esquerda, X à direita */
+#modalBeneficios .modal-header{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px;
+  padding: 14px 18px;
+  min-height: 56px;
+  position: relative;
+}
+
+#modalBeneficios #benefModalTitle{
+  flex: 1;                 /* ✅ empurra o X pra direita */
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+
+/* botão X “tech” e alinhado */
+#modalBeneficios #btnCloseBeneficios{
+  margin-left: auto;       /* ✅ garante que vai pro canto direito */
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 12px;
+
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: rgba(226,232,240,.88);
+
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+}
+
+#modalBeneficios #btnCloseBeneficios:hover{
+  transform: translateY(-1px);
+  border-color: rgba(0,224,255,.35);
+  box-shadow: 0 0 0 3px rgba(0,224,255,.12), 0 0 18px rgba(0,224,255,.18);
+  background: rgba(0,224,255,.06);
+  color: #fff;
+}
+
+/* 3) BOTÕES EXPORT (Excel / PDF) */
+#btnExportVTCSV, #btnExportVTPDF,
+#btnExportVRCSV, #btnExportVRPDF{
+  appearance: none;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: rgba(226,232,240,.88);
+
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  white-space: nowrap;
+
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+}
+
+/* Excel “verde” */
+#btnExportVTCSV:hover, #btnExportVRCSV:hover{
+  transform: translateY(-1px);
+  border-color: rgba(16,185,129,.40);
+  box-shadow: 0 0 0 3px rgba(16,185,129,.12);
+  background: rgba(16,185,129,.06);
+}
+#btnExportVTCSV i, #btnExportVRCSV i{
+  color: rgba(16,185,129,.95);
+}
+
+/* PDF “magenta” */
+#btnExportVTPDF:hover, #btnExportVRPDF:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,47,185,.45);
+  box-shadow: 0 0 0 3px rgba(255,47,185,.12);
+  background: rgba(255,47,185,.06);
+}
+#btnExportVTPDF i, #btnExportVRPDF i{
+  color: rgba(255,47,185,.95);
 }

@@ -47,3 +47,12 @@
   background: linear-gradient(90deg, var(--accent1), var(--accent2));
   color: #fff;
 }
+
+/* Fallback caso o tabs.css não esteja aplicando direito */
+section.tab { display: none; }
+section.tab.active { display: block; }
+
+/* Mesma lógica para “sub-abas” dos Documentos & Assinaturas */
+.docs-pane { display: none; }
+.docs-pane.active { display: block; }
+

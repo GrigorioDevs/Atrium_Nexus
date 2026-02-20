@@ -1,549 +1,1462 @@
-/* ===================== FUNCIONÁRIOS – GRID / LISTA ===================== */
+/* ==========================================================================
+   1. CADASTRO – AVATAR E UPLOAD (cad-*)
+   ========================================================================== */
 
-/* Ferramentas de busca/ações */
-.emp-tools {
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:12px;
-}
-.emp-tools input {
-  max-width:360px;
-}
-.emp-tools.centered {
-  justify-content:center;
-}
-.emp-tools.centered input {
-  min-width:240px;
-  max-width:480px;
-}
-.emp-tools .search-group {
-  display:flex;
-  gap:8px;
-  align-items:center;
+.avatar-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
 }
 
-/* Grid de cartões */
-.emp-grid {
-  display:grid;
-  grid-template-columns:repeat(3,minmax(220px,1fr));
-  gap:12px;
-}
-@media (max-width:1100px){
-  .emp-grid {
-    grid-template-columns:repeat(2,minmax(220px,1fr));
-  }
-}
-@media (max-width:640px){
-  .emp-grid {
-    grid-template-columns:1fr;
-  }
-}
-
-/* Card de funcionário */
-.emp-card {
-  position:relative;
-  background:var(--surface);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:14px;
-  display:flex;
-  gap:12px;
-  padding:12px;
-  align-items:center;
-  cursor:pointer;
-}
-.emp-card:hover {
-  outline:1px dashed rgba(255,255,255,.18);
-}
-.emp-card.inactive {
-  opacity:.55;
-  filter:grayscale(.8);
-}
-
-/* Nome / função no card */
-.emp-name {
-  font-weight:800;
-}
-.emp-role {
-  color:var(--muted);
-  font-size:13px;
-}
-
-/* Selo INATIVO */
-.emp-badge-off {
-  position:absolute;
-  top:8px;
-  left:8px;
-  background:linear-gradient(135deg, rgba(239,68,68,.18), transparent);
-  border:1px solid rgba(239,68,68,.5);
-  color:#fee2e2;
-  font-weight:800;
-  padding:4px 8px;
-  border-radius:8px;
-  font-size:11px;
-}
-
-/* Botão 3 pontinhos + dropdown */
-.emp-menu {
-  position:absolute;
-  top:6px;
-  right:6px;
-  width:32px;
-  height:32px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,.25);
-  background:var(--surface);
-  color:#d6e6f3;
-  cursor:pointer;
-}
-.emp-menu:hover {
-  filter:brightness(1.1);
-}
-.emp-menu .fa-ellipsis-vertical {
-  font-size:16px;
-}
-.emp-menu-dropdown {
-  position:absolute;
-  top:42px;
-  right:6px;
-  background:var(--surface);
-  border:1px solid rgba(255,255,255,.18);
-  border-radius:10px;
-  box-shadow:0 10px 26px rgba(0,0,0,.35);
-  display:none;
-  min-width:160px;
-  z-index:5;
-  overflow:hidden;
-}
-.emp-menu-dropdown.open {
-  display:block;
-}
-.emp-menu-dropdown button {
-  width:100%;
-  text-align:left;
-  padding:10px 12px;
-  background:transparent;
-  border:none;
-  color:#e7eef6;
-  cursor:pointer;
-}
-.emp-menu-dropdown button:hover {
-  background:rgba(255,255,255,.08);
-}
-.emp-menu-dropdown .danger {
-  color:#ffd3d3;
-}
-
-/* =========================================================
-   AVATAR DO FUNCIONÁRIO (ANEL DEGRADÊ + FOTO 100% REDONDA)
-   Estrutura esperada:
-   .emp-avatar > .emp-avatar-inner > img  OU  span.emp-initial
-========================================================= */
-
-/* ✅ CARD: tamanho padrão do avatar */
-.emp-avatar{
-  width:56px;
-  height:56px;
-  flex:0 0 56px;
-
-  box-sizing:border-box;
-  padding:2px;                 /* espessura do anel */
-  border-radius:999px;
-  overflow:hidden;
+.cad-avatar {
+  width: 120px;
+  height: 120px;
+  box-sizing: border-box;
+  padding: 3px; /* espessura do anel */
+  border-radius: 999px;
+  overflow: hidden;
 
   background:
-    linear-gradient(#0b1622,#0b1622) padding-box,
-    linear-gradient(135deg,var(--c1,#00E0FF),var(--c2,#FF2FB9)) border-box;
-  border:2px solid transparent;
+    linear-gradient(#0b1622, #0b1622) padding-box,
+    linear-gradient(135deg, var(--c1, #00E0FF), var(--c2, #FF2FB9)) border-box;
+  border: 2px solid transparent;
 }
 
-/* Miolo (recorte) */
-.emp-avatar-inner{
-  width:100%;
-  height:100%;
-  border-radius:999px;
-  overflow:hidden;
-  background:#0b1622;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.cad-avatar-large {
+  width: 150px;
+  height: 150px;
+  padding: 4px;
 }
 
-/* ✅ SEM “FAIXA”: imagem ocupa tudo e recorta certo */
-.emp-avatar-inner img{
-  width:100%;
-  height:100%;
-  display:block;
-  object-fit:cover;
-  object-position:center;
+.cad-avatar-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #0b1622;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Fallback iniciais */
-.emp-initial{
-  font-weight:800;
-  font-size:14px;
-  letter-spacing:.02em;
-  line-height:1;
-  color:#e8f0f7;
-}
-.emp-avatar.no-photo .emp-avatar-inner{
-  background:#0b1622;
+.cad-avatar-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
 }
 
-/* ===================== MODAL FUNCIONÁRIO ===================== */
+.avatar-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+/* ==========================================================================
+   2. FUNCIONÁRIOS – GRID E LISTA (Cards da Home)
+   ========================================================================== */
+
+.emp-tools {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.emp-tools input {
+  max-width: 360px;
+}
+.emp-tools.centered {
+  justify-content: center;
+}
+.emp-tools.centered input {
+  min-width: 240px;
+  max-width: 480px;
+}
+.emp-tools .search-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.emp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 12px;
+}
+@media (max-width: 1100px) {
+  .emp-grid {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .emp-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.emp-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  align-items: center;
+  cursor: pointer;
+}
+.emp-card:hover {
+  outline: 1px dashed rgba(255, 255, 255, 0.18);
+}
+.emp-card.inactive {
+  opacity: 0.55;
+  filter: grayscale(0.8);
+}
+
+.emp-name {
+  font-weight: 800;
+}
+.emp-role {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.emp-badge-off {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), transparent);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #fee2e2;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+}
+
+.emp-menu {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: var(--surface);
+  color: #d6e6f3;
+  cursor: pointer;
+}
+.emp-menu:hover {
+  filter: brightness(1.1);
+}
+.emp-menu .fa-ellipsis-vertical {
+  font-size: 16px;
+}
+
+.emp-menu-dropdown {
+  position: absolute;
+  top: 42px;
+  right: 6px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+  display: none;
+  min-width: 160px;
+  z-index: 5;
+  overflow: hidden;
+}
+.emp-menu-dropdown.open {
+  display: block;
+}
+.emp-menu-dropdown button {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  color: #e7eef6;
+  cursor: pointer;
+}
+.emp-menu-dropdown button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.emp-menu-dropdown .danger {
+  color: #ffd3d3;
+}
+
+
+/* ==========================================================================
+   3. AVATAR DO FUNCIONÁRIO
+   ========================================================================== */
+
+.emp-avatar {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  box-sizing: border-box;
+  padding: 2px;
+  border-radius: 999px;
+  overflow: hidden;
+
+  background:
+    linear-gradient(#0b1622, #0b1622) padding-box,
+    linear-gradient(135deg, var(--c1, #00E0FF), var(--c2, #FF2FB9)) border-box;
+  border: 2px solid transparent;
+}
+
+.emp-avatar-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #0b1622;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emp-avatar-inner img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+.emp-initial {
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: #e8f0f7;
+}
+.emp-avatar.no-photo .emp-avatar-inner {
+  background: #0b1622;
+}
+
+
+/* ==========================================================================
+   4. MODAL DE DETALHES DO FUNCIONÁRIO (#modalFuncionario)
+   ========================================================================== */
 
 #modalFuncionario .emp-modal-header {
-  display:flex;
-  align-items:center;
-  gap:14px;
-  margin-bottom:12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
 }
 
-/* ✅ MODAL: avatar maior, mantendo o mesmo “sistema” (wrapper/inner/img) */
-#modalFuncionario .emp-avatar{
-  width:86px;
-  height:86px;
-  flex:0 0 86px;
-  padding:3px;                 /* anel um pouco mais grosso no modal */
+#modalFuncionario .emp-avatar {
+  width: 86px;
+  height: 86px;
+  flex: 0 0 86px;
+  padding: 3px;
 }
 
-/* Tipografia do modal */
 #modalFuncionario .emp-name {
-  font-size:22px;
-  font-weight:900;
-  line-height:1.1;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.1;
 }
 #modalFuncionario .emp-role {
-  font-size:15px;
-  font-weight:700;
-  color:#d6e6f3;
-  opacity:0.95;
+  font-size: 15px;
+  font-weight: 700;
+  color: #d6e6f3;
+  opacity: 0.95;
 }
 
 #modalFuncionario .emp-tabs {
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin:10px 0 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0 14px;
 }
 #modalFuncionario .emp-tab-btn.active {
-  outline:2px solid rgba(0,224,255,.35);
+  outline: 2px solid rgba(0, 224, 255, 0.35);
 }
 
-/* Panes */
-.emp-pane {
-  display:none;
-}
-.emp-pane.active {
-  display:block;
-}
+.emp-pane { display: none; }
+.emp-pane.active { display: block; }
 
-/* ===================== CADASTRO MODAL REFINADO ===================== */
-
-#modalCadastroUsuario .modal-content {
-  max-width:860px;
-}
-#modalCadastroUsuario .modal-body {
-  max-height: calc(100vh - 160px);
-  overflow:auto;
-  overscroll-behavior:contain;
-  -webkit-overflow-scrolling:touch;
-}
-#modalCadastroUsuario .gestao-cadastro .card {
-  background:transparent;
-  border:none;
-  box-shadow:none;
-}
-#modalCadastroUsuario .gestao-cadastro .card-header {
-  display:none;
-}
-#modalCadastroUsuario .gestao-cadastro .card-body {
-  padding:0;
-}
-@media (max-width:960px){
-  #modalCadastroUsuario .modal-content {
-    width:100%;
-    height:100%;
-    max-width:none;
-    border-radius:0;
-  }
-  #modalCadastroUsuario .modal-body {
-    max-height: calc(100vh - 110px);
-  }
-  #modalCadastroUsuario .gestao-cadastro .col {
-    min-width:100%!important;
-  }
-}
-
-/* Esconder cargo no form (mantido no HTML) */
-#wrapCargoField {
-  display:none !important;
-}
-
-/* Esconder “Alterar foto” legado (se existir) */
 #modalFuncionario #btnTabFoto,
 #modalFuncionario #paneFoto {
-  display:none !important;
+  display: none !important;
 }
 
-/* Ações alinhadas à esquerda em gestão */
-.gestao-actions-left {
-  display:flex;
-  justify-content:flex-start;
-  align-items:center;
-  margin:8px 0 12px;
+
+/* ==========================================================================
+   5. MODAL DE CADASTRO (Visual Interno) — #modalCadastroUsuario
+   ========================================================================== */
+
+#modalCadastroUsuario .gestao-cadastro .card {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+#modalCadastroUsuario .gestao-cadastro .card-header {
+  display: none;
+}
+#modalCadastroUsuario .gestao-cadastro .card-body {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-/* Wrapper de cadastro antigo (abre em modal) */
-.gestao-cadastro-wrap {
-  display:none !important;
-}
-
-/* ===================== EXPLORADOR DE ARQUIVOS ===================== */
-
-.emp-file-explorer {
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  min-height:260px;
-  max-height:60vh;
-}
-
-.emp-file-explorer .fe-toolbar {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.fe-path {
-  font-size:13px;
-  color:var(--muted);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.fe-path .fe-bc {
-  cursor:pointer;
-  color:var(--c1);
-}
-.fe-path .fe-bc.current {
-  font-weight:600;
-  color:#fff;
-}
-.fe-path .fe-bc + .fe-bc::before {
-  content:" / ";
-  color:var(--muted);
-}
-
-.fe-actions {
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
-
-/* caixa principal (esquerda árvore, direita lista) */
-.fe-body {
-  display:flex;
-  min-height:220px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.06);
-  background:rgba(15,23,42,.7);
-  overflow:hidden;
-}
-
-/* árvore de pastas (lado esquerdo) */
-.fe-tree {
-  width:220px;
-  max-width:260px;
-  padding:8px;
-  border-right:1px solid rgba(255,255,255,.06);
-  font-size:13px;
-  overflow:auto;
-}
-.fe-tree ul {
-  list-style:none;
-  margin:0;
-  padding-left:14px;
-}
-.fe-tree-root {
-  display:block;
-}
-.fe-tree-folder {
-  display:flex;
-  align-items:center;
-  gap:6px;
-  padding:4px 6px;
-  border-radius:6px;
-  cursor:pointer;
-  color:#e5f0ff;
-}
-.fe-tree-folder:hover {
-  background:rgba(255,255,255,.06);
-}
-.fe-tree-folder.active {
-  background:rgba(255,255,255,.12);
-}
-.fe-icon {
-  width:18px;
-  text-align:center;
-}
-
-/* lista (lado direito) */
-.fe-list-wrap {
-  flex:1;
-  overflow:auto;
-}
-.fe-list tbody tr {
-  cursor:pointer;
-}
-.fe-list tbody tr.selected {
-  background:rgba(255,255,255,.08);
-}
-.fe-list td:first-child {
-  text-align:left;
-}
-.fe-list .fe-empty td {
-  text-align:center;
-  color:#9fb1c3;
-}
-
-/* botão de upload “label” */
-.fe-upload-label {
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-}
-
-/* ===================== CADASTRO DE FUNCIONÁRIOS – FORM  ===================== */
-
-.gestao-cadastro .card-body {
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
 .gestao-cadastro .row {
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-bottom:8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
 }
 .gestao-cadastro .col {
-  flex:1 1 0;
-  min-width:190px;
+  flex: 1 1 0;
+  min-width: 190px;
+}
+@media (max-width: 960px) {
+  .gestao-cadastro .col {
+    min-width: 100% !important;
+  }
 }
 
-/* Campo de IDADE mais estreito */
-.gestao-cadastro #cadIdade { max-width:120px; }
+.gestao-cadastro #cadIdade {
+  max-width: 120px;
+}
 
-/* Labels dos campos */
 .gestao-cadastro .card-body label {
-  display:block;
-  font-size:13px;
-  font-weight:600;
-  margin-bottom:4px;
-  color:#cbd5f5;
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #cbd5f5;
 }
 
-/* Inputs */
 .gestao-cadastro .card-body input[type="text"],
 .gestao-cadastro .card-body input[type="email"],
 .gestao-cadastro .card-body input[type="number"],
 .gestao-cadastro .card-body input[type="date"],
-.gestao-cadastro .card-body input[type="file"] {
-  width:100%;
-  padding:8px 10px;
-  border-radius:10px;
-  border:1px solid rgba(148,163,184,.55);
-  background:rgba(15,23,42,.96);
-  color:#e5f0ff;
-  font-size:14px;
-  outline:none;
-  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
-}
-.gestao-cadastro .card-body input[type="text"]:focus,
-.gestao-cadastro .card-body input[type="email"]:focus,
-.gestao-cadastro .card-body input[type="number"]:focus,
-.gestao-cadastro .card-body input[type="date"]:focus,
-.gestao-cadastro .card-body input[type="file"]:focus {
-  border-color:var(--c1,#0ea5e9);
-  box-shadow:0 0 0 1px rgba(56,189,248,.35);
-  background:rgba(15,23,42,1);
+.gestao-cadastro .card-body input[type="file"],
+.gestao-cadastro .card-body select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  background: rgba(15, 23, 42, 0.96);
+  color: #e5f0ff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+
+  pointer-events: auto !important;
 }
 
-/* Placeholder */
+.gestao-cadastro .card-body input:focus,
+.gestao-cadastro .card-body select:focus {
+  border-color: var(--c1, #0ea5e9);
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35);
+  background: rgba(15, 23, 42, 1);
+}
+
 .gestao-cadastro .card-body input::placeholder {
-  color:rgba(148,163,184,.75);
+  color: rgba(148, 163, 184, 0.75);
 }
 
-/* ===================== TOGGLES VR / VT / CLT / PJ ===================== */
+#wrapCargoField { display: none !important; }
+
+.gestao-actions-left {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 8px 0 12px;
+}
+
+
+/* ==========================================================================
+   6. EXPLORADOR DE ARQUIVOS
+   ========================================================================== */
+
+.emp-file-explorer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 260px;
+  max-height: 60vh;
+}
+
+.emp-file-explorer .fe-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fe-path {
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fe-path .fe-bc {
+  cursor: pointer;
+  color: var(--c1);
+}
+.fe-path .fe-bc.current {
+  font-weight: 600;
+  color: #fff;
+}
+.fe-path .fe-bc + .fe-bc::before {
+  content: " / ";
+  color: var(--muted);
+}
+
+.fe-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.fe-body {
+  display: flex;
+  min-height: 220px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(15, 23, 42, 0.7);
+  overflow: hidden;
+}
+
+.fe-tree {
+  width: 220px;
+  max-width: 260px;
+  padding: 8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 13px;
+  overflow: auto;
+}
+.fe-tree ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 14px;
+}
+.fe-tree-root { display: block; }
+
+.fe-tree-folder {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #e5f0ff;
+}
+.fe-tree-folder:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.fe-tree-folder.active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.fe-icon {
+  width: 18px;
+  text-align: center;
+}
+
+.fe-list-wrap {
+  flex: 1;
+  overflow: auto;
+}
+.fe-list tbody tr { cursor: pointer; }
+.fe-list tbody tr.selected { background: rgba(255, 255, 255, 0.08); }
+.fe-list td:first-child { text-align: left; }
+.fe-list .fe-empty td {
+  text-align: center;
+  color: #9fb1c3;
+}
+
+.fe-upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+/* ==========================================================================
+   7. ELEMENTOS DE UI: TOGGLES E BOTÕES
+   ========================================================================== */
 
 .benefit-toggles {
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  align-items:center;
-  margin-top:4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 4px;
 }
 
-/* Chip */
 .benefit-toggles label {
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:4px 10px;
-  border-radius:999px;
-  border:1px solid rgba(148,163,184,.6);
-  background:transparent;
-  font-size:13px;
-  cursor:pointer;
-  user-select:none;
-  color:#e2e8f0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: transparent;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+  color: #e2e8f0;
 }
 
-/* bolinha do check/radio */
 .benefit-toggles input[type="checkbox"],
 .benefit-toggles input[type="radio"] {
-  appearance:none;
-  -webkit-appearance:none;
-  width:14px;
-  height:14px;
-  border-radius:50%;
-  border:2px solid var(--c1);
-  background:transparent;
-  position:relative;
-  margin:0;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--c1);
+  background: transparent;
+  position: relative;
+  margin: 0;
 }
 
-/* miolinho menor quando marcado */
-.benefit-toggles input[type="checkbox"]:checked::after,
-.benefit-toggles input[type="radio"]:checked::after {
-  content:"";
-  position:absolute;
-  inset:3px;
-  border-radius:50%;
-  background:var(--c1);
+.benefit-toggles input:checked::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--c1);
 }
 
-/* texto ao lado da bolinha */
-.benefit-toggles span {
-  font-size:13px;
-}
-
-/* destaque leve quando selecionado */
 .benefit-toggles input:checked + span {
-  color:var(--c1);
+  color: var(--c1);
 }
-
-/* ===================== BOTÕES FINAIS ===================== */
 
 .inline-row {
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
+
+/* ==========================================================================
+   8. DOCUMENTOS IMPORTANTES - OTIMIZADO & RESPONSIVO
+   ========================================================================== */
+
+#paneDocsImportantes { padding: 12px; }
+
+/* Grid Principal: 2 colunas iguais para garantir simetria total */
+#paneDocsImportantes .imp-docs-form {
+  max-width: none;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 20px; 
+  margin-bottom: 32px;
+}
+
+/* Força box-sizing para evitar que o padding quebre a largura de 100% */
+#paneDocsImportantes .imp-docs-form *,
+#paneDocsImportantes .imp-docs-form *::before {
+  box-sizing: border-box;
+}
+
+/* Mapeamento das Colunas */
+#paneDocsImportantes .imp-file  { grid-column: 1 / -1; }
+#paneDocsImportantes .imp-name  { grid-column: 1 / 2; }
+#paneDocsImportantes .imp-type  { grid-column: 2 / 3; }
+#paneDocsImportantes .imp-issue { grid-column: 1 / 2; }
+#paneDocsImportantes .imp-due   { grid-column: 2 / 3; }
+
+/* Estilo unificado para Inputs e Selects (Mesmo Tamanho e Alinhamento) */
+#paneDocsImportantes .imp-name input,
+#paneDocsImportantes .imp-issue input,
+#paneDocsImportantes .imp-due input,
+#paneDocsImportantes .imp-type-grid select {
+  width: 100% !important;
+  height: 44px; /* Altura padrão confortável */
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  color: #fff;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+/* Focus state */
+#paneDocsImportantes input:focus,
+#paneDocsImportantes select:focus {
+  border-color: var(--c1, #00E0FF);
+  box-shadow: 0 0 0 2px rgba(0, 224, 255, 0.15);
+}
+
+/* Grid do Tipo de Documento + Botão Lápis */
+#paneDocsImportantes .imp-type-grid {
+  display: grid;
+  grid-template-columns: 1fr 44px;
+  gap: 8px;
+  width: 100%;
+}
+
+#paneDocsImportantes .imp-type-edit {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ✅ BOTÃO ADICIONAR - GRADIENTE ORIGINAL PRESERVADO */
+#paneDocsImportantes #btnAddImpDoc {
+  width: 220px;
+  height: 46px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--c1, #00E0FF), var(--c2, #FF2FB9)) !important;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+#paneDocsImportantes #btnAddImpDoc:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE (MOBILE)
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  #paneDocsImportantes .imp-docs-form {
+    grid-template-columns: 1fr; /* Vira uma única coluna */
+    gap: 16px;
+  }
+
+  /* Faz todos os elementos ocuparem a largura total no mobile */
+  #paneDocsImportantes .imp-file,
+  #paneDocsImportantes .imp-name,
+  #paneDocsImportantes .imp-type,
+  #paneDocsImportantes .imp-issue,
+  #paneDocsImportantes .imp-due {
+    grid-column: 1 / -1;
+  }
+
+  #paneDocsImportantes #btnAddImpDoc {
+    width: 100%; /* Botão expande no celular */
+  }
+}
+
+
+/* ==========================================================================
+   9. MODAL: GERENCIAR TIPOS DE DOCUMENTO (#modalTipoDocumento)
+   - Centralização perfeita
+   - X com área clicável e sem grudar no label/título
+   ========================================================================== */
+
+#modalTipoDocumento{
+  position: fixed;
+  inset: 0;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 99998;
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  /* evita “camadas mortas” */
+  pointer-events: auto;
+}
+
+#modalTipoDocumento.open{
+  display: flex !important;
+}
+
+#modalTipoDocumento .modal-content{
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+
+  width: min(520px, 100%);
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+
+  border-radius: 14px;
+  background: rgba(15, 30, 44, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  /* ✅ mais espaço no topo pro X não grudar */
+  padding: 14px;
+  padding-top: 56px;
+}
+
+/* Botão Fechar (X): canto direito, com área clicável */
+#modalTipoDocumento .modal-content .close,
+#modalTipoDocumento .modal-content .btn-close,
+#modalTipoDocumento .modal-content [aria-label="Close"]{
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Títulos/primeiro texto: reserva espaço do lado direito pro X */
+#modalTipoDocumento .modal-content :is(h1,h2,h3){
+  margin-top: 0;
+  padding-right: 56px;
+}
+
+/* Se o seu label principal for o primeiro label do modal, isso resolve o “grudado no X” */
+#modalTipoDocumento .modal-content label:first-of-type{
+  padding-right: 56px;
+}
+
+@media (max-width: 560px){
+  #modalTipoDocumento{ padding: 12px; }
+  #modalTipoDocumento .modal-content{
+    width: 100%;
+    max-height: calc(100vh - 24px);
+    border-radius: 14px;
+    padding: 12px;
+    padding-top: 56px;
+  }
+}
+
+
+/* ==========================================================================
+   10. CORREÇÃO CRÍTICA: MODAL DE CADASTRO DE FUNCIONÁRIO (#modalCadastroUsuario)
+   ========================================================================== */
+
+#modalCadastroUsuario {
+  position: fixed;
+  inset: 0;
+  z-index: 99999 !important;
+  background: rgba(0, 0, 0, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Quando JS ativa */
+#modalCadastroUsuario[style*="display: block"],
+#modalCadastroUsuario[style*="display: flex"],
+#modalCadastroUsuario.open {
+  display: flex !important;
+}
+
+/* Wrapper invisível: mantém sua ideia, mas evita capturar cliques */
+.gestao-cadastro-wrap {
+  display: block !important;
+  visibility: hidden;
+
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+
+  pointer-events: none; /* ✅ evita camada invisível atrapalhar */
+}
+
+#modalCadastroUsuario .modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  margin: 0 auto;
+  background: var(--surface, #0f172a);
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+#modalCadastroUsuario .modal-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  flex: 1;
+  padding: 20px;
+}
+
+@media (max-width: 960px) {
+  #modalCadastroUsuario .modal-content {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    border-radius: 0;
+    max-height: 100vh;
+  }
+  #modalCadastroUsuario .modal-body {
+    padding: 15px;
+    max-height: calc(100vh - 80px);
+  }
+}
+
+/* =========================================================
+   FIX DEFINITIVO: X não grudar no título (modalTipoDocumento)
+   baseado no seu HTML (#btnFecharTipoDoc e #tipoDocModalTitle)
+   ========================================================= */
+
+/* Overlay centralizado (mantém) */
+#modalTipoDocumento.open{
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Caixa do modal */
+#modalTipoDocumento .modal-content{
+  width: min(520px, 100%);
+  border-radius: 14px;
+  overflow: hidden; /* deixa header/footer bem bonitos */
+}
+
+/* HEADER: título + botão X alinhados e com espaço */
+#modalTipoDocumento .modal-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 14px 14px;        /* espaço interno */
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+/* Título (seu span) com tipografia e sem encostar */
+#modalTipoDocumento #tipoDocModalTitle{
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.1;
+
+  /* evita empurrar o botão e evita ficar por baixo */
+  min-width: 0;
+  padding-right: 10px;
+}
+
+/* Botão X: tamanho fixo + área clicável + não “gruda” */
+#modalTipoDocumento #btnFecharTipoDoc{
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.08);
+}
+
+/* Hover opcional */
+#modalTipoDocumento #btnFecharTipoDoc:hover{
+  background: rgba(255,255,255,.12);
+}
+
+/* Corpo e footer com respiro */
+#modalTipoDocumento .modal-body{
+  padding: 14px;
+}
+
+#modalTipoDocumento .modal-footer{
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Mobile: modal ocupa largura total */
+@media (max-width: 560px){
+  #modalTipoDocumento{
+    padding: 12px;
+  }
+  #modalTipoDocumento .modal-content{
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   CURSOS & CERTIFICAÇÕES — FIX DEFINITIVO (IGUAL AO PRINT)
+   Cole no FINAL do 99-overrides.css
+   ========================================================= */
+
+/* 0) ✅ MAIS LARGO SÓ NA ABA "CURSOS" (evita scrollbar horizontal no modal)
+      Requer Chrome/Edge moderno (suporte a :has). Seu Opera/Chrome já suporta. */
+@supports selector(:has(*)){
+  /* Quando o pane de cursos estiver ativo, amplia o modal do funcionário */
+  #modalFuncionario:has(#paneCursos.emp-pane.active) .modal-content{
+    width: min(1280px, calc(100vw - 32px)) !important;
+    max-width: none !important;
+  }
+  /* Garante que não apareça barra horizontal no body do modal */
+  #modalFuncionario:has(#paneCursos.emp-pane.active) .modal-body{
+    overflow-x: hidden !important;
+  }
+}
+
+/* Fallback (sem :has): pelo menos evita overflow horizontal no pane */
+#paneCursos{ overflow-x: hidden; }
+
+/* 1) FIX CRÍTICO: <main> no modal não pode herdar o layout da página (sidebar) */
+#paneCursos main.cursos-layout{
+  margin-left: 0 !important;   /* mata o margin-left do 10-layout.css */
+  padding: 0 !important;       /* mata o padding do 10-layout.css */
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* 2) Pane ocupa tudo e fica alinhado à esquerda */
+#paneCursos{
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: clamp(12px, 1.2vw, 18px) !important;
+  text-align: left;
+  color: var(--text);
+  background: transparent;
+}
+
+/* box-sizing pra evitar overflow fantasma */
+#paneCursos,
+#paneCursos *,
+#paneCursos *::before,
+#paneCursos *::after{
+  box-sizing: border-box;
+}
+
+/* ✅ Se algo estourar em telas menores, permite rolagem lateral do pane (sem quebrar layout) */
+#paneCursos{
+  overflow-x: auto;
+  overscroll-behavior: contain;
+}
+
+/* 3) Header */
+#paneCursos .cursos-pane-head{ margin: 0 0 16px; }
+#paneCursos .cursos-pane-title{
+  margin: 0;
+  font-size: clamp(18px, 1.4vw, 22px);
+  font-weight: 900;
+  letter-spacing: .2px;
+}
+#paneCursos .cursos-pane-subtitle{
+  margin: 6px 0 0;
+  color: var(--muted);
+  max-width: 980px;
+  line-height: 1.35;
+}
+
+/* 4) Grid principal (2 colunas) */
+#paneCursos .cursos-layout{
+  display: grid !important;
+  grid-template-columns: minmax(0,1fr) minmax(360px, 520px);
+  gap: clamp(12px, 1.2vw, 18px);
+  align-items: start;
+  width: 100% !important;
+}
+
+/* impede item do grid “forçar” largura */
+#paneCursos .cursos-col{ min-width: 0; }
+
+/* 5) Cabeçalhos das seções */
+#paneCursos .cursos-section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin: 0 0 10px;
+}
+#paneCursos .cursos-section-title{
+  margin: 0;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  font-size: clamp(16px, 1.2vw, 18px);
+  font-weight: 900;
+  color: #fff;
+}
+
+/* 6) Cards (glass) */
+#paneCursos .glass-card.cursos-card{
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: clamp(12px, 1vw, 14px);
+  border-radius: clamp(14px, 1vw, 16px);
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  box-shadow: 0 18px 45px rgba(0,0,0,.35);
+  overflow: hidden; /* segura tudo dentro */
+}
+
+/* 7) Botões no pane */
+#paneCursos .btn{
+  height: clamp(36px, 2.4vw, 40px);
+  padding: 0 clamp(10px, 1vw, 14px);
+  border-radius: clamp(10px, 0.9vw, 12px);
+  border: 1px solid rgba(148,163,184,.22);
+  background: rgba(51,65,85,.25);
+  color: var(--text);
+  font-weight: 900;
+  font-size: clamp(12px, 0.9vw, 13px);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 8px;
+  cursor:pointer;
+  transition: .18s ease;
+}
+#paneCursos .btn:hover{ background: rgba(51,65,85,.42); transform: translateY(-1px); }
+#paneCursos .btn:active{ transform: translateY(0); }
+
+#paneCursos .btn.btn-ok{
+  border: 1px solid rgba(16,185,129,.35);
+  background: linear-gradient(135deg, rgba(16,185,129,1), rgba(34,211,238,1));
+  color: #04130b;
+}
+
+#paneCursos #btnRefreshCursos,
+#paneCursos #btnReloadCursosFuncionario{
+  width: 44px;
+  padding: 0;
+}
+
+#paneCursos #btnVincularCurso{
+  width: 100%;
+  height: clamp(42px, 3vw, 46px);
+  border-radius: 12px;
+  border: 1px solid rgba(34,211,238,.35);
+  background: linear-gradient(135deg, rgba(34,211,238,1), rgba(14,165,233,1));
+  color: #04111a;
+  font-weight: 900;
+}
+
+/* 8) Toolbar do catálogo (busca + refresh) */
+#paneCursos .cursos-card-toolbar{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+#paneCursos .cursos-search{
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+#paneCursos .cursos-search i{
+  position:absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: .75;
+  pointer-events:none;
+}
+#paneCursos .cursos-search input{
+  width: 100%;
+  height: clamp(36px, 2.4vw, 40px);
+  padding: 0 12px 0 38px;
+  border-radius: 12px;
+  border: 1px solid rgba(71,85,105,.75);
+  background: rgba(2,6,23,.55);
+  color: var(--text);
+  outline: none;
+}
+#paneCursos .cursos-search input:focus{
+  border-color: rgba(34,211,238,.55);
+  box-shadow: 0 0 0 3px rgba(34,211,238,.14);
+}
+
+/* 9) Form do vínculo (2 colunas) */
+#paneCursos .cursos-form-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+#paneCursos .cursos-field{ display:flex; flex-direction:column; min-width:0; }
+#paneCursos .cursos-field--full{ grid-column: 1 / -1; }
+
+#paneCursos label{
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 900;
+  color: rgba(148,163,184,.95);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+#paneCursos select,
+#paneCursos input[type="text"],
+#paneCursos input[type="number"],
+#paneCursos input[type="date"],
+#paneCursos textarea{
+  width: 100%;
+  height: clamp(36px, 2.4vw, 40px);
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(71,85,105,.75);
+  background: rgba(2,6,23,.55);
+  color: var(--text);
+  outline: none;
+}
+#paneCursos textarea{ height: auto; padding: 10px 12px; }
+
+#paneCursos select:focus,
+#paneCursos input:focus,
+#paneCursos textarea:focus{
+  border-color: rgba(34,211,238,.55);
+  box-shadow: 0 0 0 3px rgba(34,211,238,.14);
+}
+
+#paneCursos .filehint,
+#paneCursos .cursos-hint{
+  font-size: 11px;
+  color: rgba(148,163,184,.85);
+  margin-top: 6px;
+}
+
+/* 10) Tabelas */
+#paneCursos .cursos-table-wrap{
+  margin-top: 12px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(148,163,184,.14);
+  background: rgba(2,6,23,.22);
+}
+#paneCursos .cursos-scroll{
+  max-height: clamp(280px, 42vh, 420px);
+  overflow: auto;
+}
+
+#paneCursos table.tech-table{
+  width: 100%;
+  border-collapse: collapse;
+}
+#paneCursos table.tech-table thead th{
+  background: rgba(15,23,42,.65);
+  color: rgba(148,163,184,.95);
+  font-size: clamp(10px, 0.9vw, 11px);
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: clamp(10px, 1vw, 12px) clamp(10px, 1vw, 14px);
+  border-bottom: 1px solid rgba(51,65,85,.55);
+  white-space: nowrap;
+}
+#paneCursos table.tech-table tbody td{
+  padding: clamp(12px, 1vw, 14px) clamp(10px, 1vw, 14px);
+  color: rgba(226,232,240,.95);
+  font-size: clamp(12px, 1vw, 13px);
+  border-bottom: 1px solid rgba(51,65,85,.35);
+  vertical-align: middle;
+}
+#paneCursos table.tech-table tbody tr:hover{
+  background: rgba(51,65,85,.20);
+}
+
+
+/* 10.1) ✅ FIX: sem overflow horizontal + espaço pros 3 botões (inclui a lixeira) */
+#paneCursos table.tech-table{
+  table-layout: fixed;
+}
+
+/* Colunas do CATÁLOGO (Curso | Carga | Ações) */
+#paneCursos #tblCursosCatalogo thead th:nth-child(2),
+#paneCursos #tblCursosCatalogo tbody td:nth-child(2){
+  width: 90px;
+}
+#paneCursos #tblCursosCatalogo thead th:nth-child(3),
+#paneCursos #tblCursosCatalogo tbody td:nth-child(3){
+  width: 156px; /* 3 botões sem cortar */
+}
+
+/* Colunas das CERTIFICAÇÕES (Curso | Conclusão | Status/Validade | Ações) */
+#paneCursos #tblCursosFuncionario thead th:nth-child(2),
+#paneCursos #tblCursosFuncionario tbody td:nth-child(2){
+  width: 128px;
+}
+#paneCursos #tblCursosFuncionario thead th:nth-child(3),
+#paneCursos #tblCursosFuncionario tbody td:nth-child(3){
+  width: 210px;
+}
+#paneCursos #tblCursosFuncionario thead th:nth-child(4),
+#paneCursos #tblCursosFuncionario tbody td:nth-child(4){
+  width: 156px; /* 3 botões sem cortar */
+}
+
+/* Botões de ação dentro das tabelas (ícone-only) */
+#paneCursos table.tech-table td.col-acoes .btn,
+#paneCursos table.tech-table td:last-child .btn{
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 10px;
+}
+#paneCursos table.tech-table td.col-acoes .btn + .btn,
+#paneCursos table.tech-table td:last-child .btn + .btn{
+  margin-left: 8px;
+}
+
+/* Evita o texto do 1º campo “empurrar” a tabela */
+#paneCursos table.tech-table td.col-curso{
+  overflow: hidden;
+}
+#paneCursos table.tech-table td.col-curso .curso-title,
+#paneCursos table.tech-table td.col-curso > div{
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#paneCursos table.tech-table td.col-curso .curso-title{
+  white-space: nowrap;
+}
+
+#paneCursos #tblCursosCatalogo tbody td:nth-child(2){
+  text-align: center;
+  font-weight: 900;
+  color: #34d399;
+}
+
+/* 11) TRUQUE DO PRINT: certificações ocupa 100% embaixo */
+@supports (display: contents){
+  #paneCursos .cursos-col--right{ display: contents; }
+
+  #paneCursos .cursos-col--right > .glass-card.cursos-card:nth-of-type(1){
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+  }
+  #paneCursos .cursos-col--right > .glass-card.cursos-card:nth-of-type(2){
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-width: 0;
+  }
+}
+
+/* 12) Responsivo (auto-ajuste sem precisar mexer no zoom) */
+@media (max-width: 1320px){
+  /* stacka as colunas (cabe em 100% zoom) */
+  #paneCursos .cursos-layout{ grid-template-columns: 1fr !important; }
+
+  /* alivia efeitos pesados (menos lag em 100% zoom) */
+  #paneCursos .glass-card.cursos-card{
+    box-shadow: 0 12px 30px rgba(0,0,0,.28);
+  }
+
+  /* formulário do vínculo vira 1 coluna */
+  #paneCursos .cursos-form-grid{ grid-template-columns: 1fr; }
+
+  /* em 1 coluna, desliga o "truque do print" (display: contents) pra não bagunçar */
+  #paneCursos .cursos-col--right{ display: block !important; }
+  #paneCursos .cursos-col--right > .glass-card.cursos-card:nth-of-type(1),
+  #paneCursos .cursos-col--right > .glass-card.cursos-card:nth-of-type(2){
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+}
+
+/* =========================================================
+   MODAL "NOVO CURSO" — UPGRADE VISUAL (só o #modalCurso)
+   Cole NO FINAL do 99-overrides.css
+   ========================================================= */
+
+/* Overlay mais elegante */
+#modalCurso.modal-overlay{
+  background: rgba(2,6,23,.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Card do modal (mais largo, mais bonito) */
+#modalCurso .modal-content{
+  width: min(720px, calc(100vw - 24px));
+  border-radius: 18px;
+  border: 1px solid rgba(148,163,184,.18);
+  background: linear-gradient(180deg, rgba(15,23,42,.92), rgba(2,6,23,.92));
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.55),
+    0 0 0 1px rgba(255,255,255,.05) inset;
+  overflow: hidden;
+}
+
+/* Header */
+#modalCurso .modal-header{
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(148,163,184,.14);
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(15,23,42,.45);
+}
+
+#modalCurso .modal-title{
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: .2px;
+  color: #fff;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+/* Botão X mais “clean” */
+#modalCurso #btnCloseModalCurso.btn{
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 12px;
+  border: 1px solid rgba(148,163,184,.18);
+  background: rgba(51,65,85,.20);
+}
+#modalCurso #btnCloseModalCurso.btn:hover{
+  background: rgba(51,65,85,.40);
+}
+
+/* Body */
+#modalCurso .modal-body{
+  padding: 18px;
+}
+
+/* Grid do form: 2 colunas */
+#modalCurso .cursos-modal-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+/* Nome e Observação/Descrição ocupam tudo */
+#modalCurso .cursos-modal-grid .cursos-field--full{
+  grid-column: 1 / -1;
+}
+
+/* Labels mais bonitos */
+#modalCurso label{
+  margin: 0 0 7px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(148,163,184,.92);
+}
+
+/* Inputs e selects melhorados */
+#modalCurso input[type="text"],
+#modalCurso input[type="number"],
+#modalCurso select,
+#modalCurso textarea{
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(71,85,105,.70);
+  background: rgba(2,6,23,.55);
+  color: #e5e7eb;
+  outline: none;
+  transition: .18s ease;
+}
+
+/* alturas consistentes */
+#modalCurso input[type="text"],
+#modalCurso input[type="number"],
+#modalCurso select{
+  height: 44px;
+  padding: 0 14px;
+}
+
+/* textarea mais confortável */
+#modalCurso textarea{
+  min-height: 96px;
+  padding: 12px 14px;
+  resize: vertical;
+}
+
+/* Focus premium */
+#modalCurso input:focus,
+#modalCurso select:focus,
+#modalCurso textarea:focus{
+  border-color: rgba(34,211,238,.60);
+  box-shadow: 0 0 0 4px rgba(34,211,238,.14);
+}
+
+/* Dica (filehint) dentro do modal */
+#modalCurso .filehint{
+  font-size: 12px;
+  color: rgba(148,163,184,.88);
+  margin-top: 10px;
+  line-height: 1.35;
+}
+
+/* Footer */
+#modalCurso .modal-footer{
+  padding: 14px 18px;
+  border-top: 1px solid rgba(148,163,184,.14);
+  display:flex;
+  justify-content:flex-end;
+  gap: 10px;
+  background: rgba(15,23,42,.35);
+}
+
+/* Cancelar neutro */
+#modalCurso #btnCancelarCurso.btn{
+  background: rgba(51,65,85,.22);
+  border: 1px solid rgba(148,163,184,.20);
+  color: #e2e8f0;
+}
+#modalCurso #btnCancelarCurso.btn:hover{
+  background: rgba(51,65,85,.40);
+}
+
+/* Salvar destaque */
+#modalCurso #btnSalvarCurso.btn.btn-ok{
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(34,211,238,.35);
+  background: linear-gradient(135deg, rgba(34,211,238,1), rgba(14,165,233,1));
+  color: #04111a;
+  font-weight: 900;
+}
+#modalCurso #btnSalvarCurso.btn.btn-ok:hover{
+  filter: brightness(1.08);
+  box-shadow: 0 16px 40px rgba(14,165,233,.25);
+}
+
+/* Responsivo: 1 coluna */
+@media (max-width: 720px){
+  #modalCurso .cursos-modal-grid{
+    grid-template-columns: 1fr;
+  }
+}
+

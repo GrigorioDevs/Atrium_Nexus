@@ -728,9 +728,7 @@
   color:transparent;
 }
 
-@media (max-width:960px){
-  .imp-docs-form{ grid-template-columns:1fr; }
-}
+
 
 /* =========================
    15) TV / TELAS GRANDES
