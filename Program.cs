@@ -113,6 +113,13 @@ builder.Services.AddDbContext<AtriumRhDbContext>(opt =>
 // ======================================================
 // 5) Cookie Authentication (HttpOnly)
 // ======================================================
+// ✅ Importante:
+// - Para cookie funcionar em cross-site (front em outro domínio), precisa:
+//   SameSite=None + Secure + HTTPS.
+// - Se você estiver testando em HTTP puro, o cookie Secure NÃO será aceito pelo browser.
+// - Use ALLOW_INSECURE_HTTP=true apenas para testes/controlado (preferir HTTPS em produção).
+var allowInsecureHttp = Environment.GetEnvironmentVariable("ALLOW_INSECURE_HTTP") == "true";
+
 builder.Services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(opt =>
@@ -120,16 +127,18 @@ builder.Services
         opt.Cookie.Name = "atrium.auth";
         opt.Cookie.HttpOnly = true;
 
-        // ✅ ATENÇÃO:
-        // - SameSite=None + Secure=Always só funciona bem com HTTPS
-        // - Se você está acessando por HTTP direto (IP:8080), o cookie pode não ser salvo/enviado pelo browser
-        opt.Cookie.SameSite = builder.Environment.IsDevelopment()
-            ? SameSiteMode.Lax
-            : SameSiteMode.None;
-
-        opt.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
-            ? CookieSecurePolicy.None
-            : CookieSecurePolicy.Always;
+        if (allowInsecureHttp)
+        {
+            // ✅ TESTE EM HTTP (recomendado apenas se o front for same-site)
+            opt.Cookie.SameSite = SameSiteMode.Lax;
+            opt.Cookie.SecurePolicy = CookieSecurePolicy.None;
+        }
+        else
+        {
+            // ✅ PRODUÇÃO / HTTPS (recomendado)
+            opt.Cookie.SameSite = SameSiteMode.None;
+            opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        }
 
         // Evita redirect HTML (devolve 401/403 pro fetch)
         opt.Events = new CookieAuthenticationEvents
