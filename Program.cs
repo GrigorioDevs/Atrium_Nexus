@@ -10,6 +10,7 @@ using Atrium.RH.Services.Usuario;
 using Atrium.RH.Services.Usuarios;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -80,7 +81,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // ======================================================
-// 3) CORS — Corrigido para aceitar qualquer origem + Cookies
+// 3) CORS — LIBERADO PARA QUALQUER ORIGEM + COOKIES (⚠️ inseguro)
 // ======================================================
 const string CorsPolicy = "DefaultCors";
 
@@ -88,10 +89,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(CorsPolicy, policy =>
         policy
-            .SetIsOriginAllowed(origin => true) // ✅ Resolve o bloqueio aceitando qualquer IP/Localhost
+            .SetIsOriginAllowed(_ => true) // ⚠️ Qualquer Origin
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials() // ✅ Mantém a compatibilidade com a sua autenticação via Cookie
+            .AllowCredentials()            // ✅ necessário para cookie auth
     );
 });
 
@@ -119,6 +120,9 @@ builder.Services
         opt.Cookie.Name = "atrium.auth";
         opt.Cookie.HttpOnly = true;
 
+        // ✅ ATENÇÃO:
+        // - SameSite=None + Secure=Always só funciona bem com HTTPS
+        // - Se você está acessando por HTTP direto (IP:8080), o cookie pode não ser salvo/enviado pelo browser
         opt.Cookie.SameSite = builder.Environment.IsDevelopment()
             ? SameSiteMode.Lax
             : SameSiteMode.None;
@@ -165,7 +169,7 @@ builder.Services.AddScoped<IFuncionarioCursoService, FuncionarioCursoService>();
 // ✅ Crachá de acesso
 builder.Services.AddScoped<Atrium_Nexus.Services.Cracha.ICrachaService, Atrium_Nexus.Services.Cracha.CrachaService>();
 
-// ✅ ✅ AQUI ESTÁ A CORREÇÃO QUE FALTAVA (resolve o crash do DI)
+// ✅ resolve o DI do usuário atual
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 // ✅ Usuário Perfil (me, upload avatar)
@@ -197,12 +201,22 @@ builder.WebHost.ConfigureKestrel(o =>
 // ======================================================
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
 
-    // importante em VPS/proxy pra não bloquear
     options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
 });
+
+// ======================================================
+// 9.1) DataProtection (para evitar perder login ao recriar container)
+// ✅ Funciona muito bem junto com volume montado em /root/.aspnet/DataProtection-Keys
+// ======================================================
+builder.Services
+    .AddDataProtection()
+    .SetApplicationName("AtriumNexus")
+    .PersistKeysToFileSystem(new DirectoryInfo("/root/.aspnet/DataProtection-Keys"));
 
 var app = builder.Build();
 
@@ -231,9 +245,13 @@ if (enableSwagger)
     });
 }
 
-// ✅ Em produção, normalmente você quer HTTPS redirection (se tiver TLS no proxy/IIS)
-// OBS: Se você está acessando direto por http://IP:8080 sem TLS, isso pode não ser necessário.
-if (!app.Environment.IsDevelopment())
+// ======================================================
+// ✅ Correção do warning do HTTPS Redirect (Opção A)
+// - Só ativa HTTPS redirection se você quiser (variável de ambiente)
+// - Assim, rodando HTTP direto (IP:8080) não dá warning
+// ======================================================
+var enableHttpsRedirect = Environment.GetEnvironmentVariable("ENABLE_HTTPS_REDIRECT") == "true";
+if (enableHttpsRedirect)
 {
     app.UseHttpsRedirection();
 }
@@ -243,30 +261,25 @@ app.UseRouting();
 app.UseCors(CorsPolicy);
 
 // ======================================================
-// ✅ 10) EXPOR A PASTA STORAGE COMO /storage
+// ✅ EXPOR A PASTA STORAGE COMO /storage
 // ======================================================
 var storageRootCfg = builder.Configuration["Storage:RootPath"];
 var storagePublicBasePath = builder.Configuration["Storage:PublicBasePath"] ?? "/storage";
 
-// se não tiver configurado, usa "storage" na raiz do projeto
 if (string.IsNullOrWhiteSpace(storageRootCfg))
-{
     storageRootCfg = "storage";
-}
 
-// ✅ converte em absoluto (PhysicalFileProvider exige!)
+// converte em absoluto (PhysicalFileProvider exige)
 var storageRoot = storageRootCfg.Trim();
-
 if (!Path.IsPathRooted(storageRoot))
 {
-    // ContentRootPath = pasta do seu projeto/executável
     storageRoot = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, storageRoot));
 }
 
 // garante a pasta
 Directory.CreateDirectory(storageRoot);
 
-// ✅ /storage -> storageRoot
+// /storage -> storageRoot
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(storageRoot),
@@ -282,12 +295,8 @@ app.MapControllers();
 
 // Raiz: se Swagger estiver habilitado, manda pro Swagger. Senão, responde OK.
 if (enableSwagger)
-{
     app.MapGet("/", () => Results.Redirect("/swagger"));
-}
 else
-{
     app.MapGet("/", () => Results.Ok("Atrium.Nexus API"));
-}
 
 app.Run();
