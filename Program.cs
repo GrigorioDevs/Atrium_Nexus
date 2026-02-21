@@ -80,32 +80,18 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // ======================================================
-// 3) CORS — Cookie precisa de credentials
+// 3) CORS — Corrigido para aceitar qualquer origem + Cookies
 // ======================================================
 const string CorsPolicy = "DefaultCors";
-
-var allowedOrigins =
-    builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
-
-if (allowedOrigins is null || allowedOrigins.Length == 0)
-{
-    allowedOrigins = new[]
-    {
-        "http://localhost:5500",
-        "http://127.0.0.1:5501",
-        "http://localhost:5173",
-        "http://localhost:3000",
-    };
-}
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(CorsPolicy, policy =>
         policy
-            .WithOrigins(allowedOrigins)
+            .SetIsOriginAllowed(origin => true) // ✅ Resolve o bloqueio aceitando qualquer IP/Localhost
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials()
+            .AllowCredentials() // ✅ Mantém a compatibilidade com a sua autenticação via Cookie
     );
 });
 
