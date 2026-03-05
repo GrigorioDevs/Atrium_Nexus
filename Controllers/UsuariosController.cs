@@ -1,5 +1,3 @@
-using Atrium.RH.Dtos.Usuarios;
-using Atrium.RH.Services.Usuarios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,8 +43,8 @@ namespace Atrium.RH.Controllers
             catch (UnauthorizedAccessException) { return Forbid(); }
         }
 
-        // ✅ POST /api/Usuarios
-        [Authorize]
+        // ✅ POST /api/Usuarios  (CADASTRO PÚBLICO)
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Cadastrar([FromBody] UsuarioCadastroDto dto, CancellationToken ct)
         {
@@ -55,7 +53,6 @@ namespace Atrium.RH.Controllers
                 var id = await _admin.CreateAsync(dto, ct);
                 return Ok(new { message = "Usuário cadastrado com sucesso.", id });
             }
-            catch (UnauthorizedAccessException) { return Forbid(); }
             catch (ArgumentException ex) { return BadRequest(new { message = ex.Message }); }
             catch (InvalidOperationException ex) { return Conflict(new { message = ex.Message }); }
         }
