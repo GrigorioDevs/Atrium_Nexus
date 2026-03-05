@@ -1,0 +1,60 @@
+CREATE OR ALTER VIEW vw_cartao_ponto AS
+WITH BatidasOrdenadas AS (
+    SELECT
+        u.Id        AS UsuarioId,
+        u.nome      AS Nome,
+        u.login     AS Login,
+        u.email     AS Email,
+        u.telefone  AS Telefone,
+        u.type_user AS TypeUser,
+        u.cpf       AS Cpf,
+        u.user_img  AS UserImg,
+
+        pr.data_local AS DataLocal,
+        pr.criacao    AS Criacao,
+        pr.tipo       AS Tipo,
+        pr.origem     AS Origem,
+        pr.latitude   AS Latitude,
+        pr.longitude  AS Longitude,
+        pr.observacao AS Observacao,
+
+        ROW_NUMBER() OVER (
+            PARTITION BY pr.usuario_id, pr.data_local
+            ORDER BY pr.criacao
+        ) AS Rn
+    FROM ponto_registro pr
+    INNER JOIN usuario u
+        ON u.Id = pr.usuario_id
+)
+SELECT
+    -- dados do usuário
+    UsuarioId,
+    Nome,
+    Login,
+    Email,
+    Telefone,
+    Cpf,
+    TypeUser,
+    UserImg,
+
+    -- dia do cartão
+    DataLocal,
+
+    -- horários (até 3 intervalos)
+    MAX(CASE WHEN Rn = 1 THEN Criacao END) AS Entrada1,
+    MAX(CASE WHEN Rn = 2 THEN Criacao END) AS Saida1,
+    MAX(CASE WHEN Rn = 3 THEN Criacao END) AS Entrada2,
+    MAX(CASE WHEN Rn = 4 THEN Criacao END) AS Saida2,
+    MAX(CASE WHEN Rn = 5 THEN Criacao END) AS Entrada3,
+    MAX(CASE WHEN Rn = 6 THEN Criacao END) AS Saida3
+FROM BatidasOrdenadas
+GROUP BY
+    UsuarioId,
+    Nome,
+    Login,
+    Email,
+    Telefone,
+    Cpf,
+    TypeUser,
+    UserImg,
+    DataLocal;

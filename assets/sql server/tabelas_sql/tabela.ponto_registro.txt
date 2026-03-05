@@ -1,0 +1,26 @@
+CREATE TABLE ponto_registro (
+    id                INT IDENTITY(1,1)   NOT NULL PRIMARY KEY,
+    usuario_id        INT                 NOT NULL,  -- FK usuario.Id
+
+    criacao           DATETIME2(0)        NOT NULL,  -- momento da batida
+    datasincronizacao DATETIME2(0)        NULL,      -- quando sincronizou com outro sistema/app
+    datainterface     DATETIME2(0)        NULL,      -- quando foi enviado pra folha/integração
+
+    data_local        DATE                NOT NULL,  -- dia “do trabalho” (pro cartão)
+    tipo              TINYINT             NOT NULL,  -- 1 = entrada, 2 = saída
+
+    origem            TINYINT             NOT NULL,  -- 1=normal, 2=ajuste gestor, 3=ajuste próprio, 4=importado
+    latitude          DECIMAL(9,6)        NULL,
+    longitude         DECIMAL(9,6)        NULL,
+
+    ip                VARCHAR(45)         NULL,
+    device_info       VARCHAR(120)        NULL,
+
+    observacao        VARCHAR(500)        NULL,
+
+    criado_por_id     INT                 NULL       -- se foi gestor que incluiu/ajustou
+);
+
+ALTER TABLE ponto_registro
+ADD CONSTRAINT FK_ponto_registro_usuario
+    FOREIGN KEY (usuario_id) REFERENCES usuario(Id);

@@ -1,0 +1,437 @@
+/* =========================================================
+   GERENCIAMENTO DE USUÁRIOS — CSS UNIFICADO (CORRIGIDO)
+   - Visual neon/glass
+   - Abas internas (Cadastrar / Alterar)
+   - Grid com col-full
+   - Toggle Ativo/Inativo
+   - Centraliza a tela na área de conteúdo
+   - Só exibe para Admin via body.is-admin
+   ========================================================= */
+
+/* (Opcional) Variáveis gerais — remova se já existir no seu projeto */
+:root{
+  --bg-color: #040811;
+  --text-main: #e7eef6;
+}
+
+/* =========================
+   REGRA ADMIN (corrigida)
+   - some por padrão
+   - aparece quando o BODY tiver .is-admin
+========================= */
+.only-admin{ display: none !important; }
+body.is-admin .only-admin{ display: block !important; }
+
+/* =========================
+   CENTRALIZAÇÃO DA ABA (somente quando admin)
+   * Importante: se seu sistema de abas usa .tab/.active,
+     este bloco mantém centralizado quando a aba está visível.
+========================= */
+body.is-admin #tabCadastroUsuario.tab.only-admin{
+  width: 100%;
+  max-width: none;              /* ocupa toda a área */
+  display: flex !important;     /* flex para centralizar */
+  justify-content: center;      /* centro horizontal */
+  align-items: flex-start;      /* topo (troque p/ center se quiser meio vertical) */
+  padding: 22px 18px;
+  box-sizing: border-box;
+}
+
+body.is-admin #tabCadastroUsuario.tab.only-admin > .card{
+  width: 100%;
+  max-width: 900px;             /* ajuste aqui: 800/900/1000 */
+}
+
+/* =========================
+   Card principal
+========================= */
+#tabCadastroUsuario .card{
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  background:
+    radial-gradient(900px 420px at 10% -10%, rgba(0,224,255,.22), transparent 60%),
+    radial-gradient(700px 380px at 100% 0%, rgba(255,47,185,.20), transparent 55%),
+    rgba(8, 12, 22, .85);
+  box-shadow: 0 18px 60px rgba(0,0,0,.55);
+}
+
+#tabCadastroUsuario .card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background: linear-gradient(135deg, rgba(0,224,255,.9), rgba(124,124,255,.55), rgba(255,47,185,.9));
+  opacity:.28;
+  filter: blur(18px);
+  pointer-events:none;
+}
+
+#tabCadastroUsuario .card-header{
+  position: relative;
+  z-index: 1;
+  font-weight: 900;
+  letter-spacing: .2px;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(90deg, rgba(0,224,255,.10), rgba(255,47,185,.08));
+}
+
+/* =========================
+   Abas internas (Cadastro/Alteração)
+========================= */
+#tabCadastroUsuario .card-tabs{
+  position: relative;
+  z-index: 1;
+  display: flex;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+#tabCadastroUsuario .tab-btn{
+  flex: 1;
+  padding: 14px 0;
+  background: transparent;
+  border: none;
+  color: rgba(162, 175, 191, .8);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+#tabCadastroUsuario .tab-btn:hover{
+  color: #e7eef6;
+  background: rgba(255,255,255,0.03);
+}
+
+#tabCadastroUsuario .tab-btn.active{
+  color: #00e0ff;
+  border-bottom: 2px solid #00e0ff;
+  background: linear-gradient(0deg, rgba(0,224,255,0.1) 0%, transparent 100%);
+  text-shadow: 0 0 8px rgba(0,224,255,0.4);
+}
+
+/* Conteúdo das abas */
+#tabCadastroUsuario .tab-content-area{
+  display: none;
+  animation: tabFadeIn 0.4s ease forwards;
+}
+#tabCadastroUsuario .tab-content-area.active{ display: block; }
+
+@keyframes tabFadeIn{
+  from{ opacity: 0; transform: translateY(5px); }
+  to  { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================
+   Corpo do card
+========================= */
+#tabCadastroUsuario .card-body{
+  position: relative;
+  z-index: 1;
+  padding: 16px 18px 18px;
+}
+
+/* Divisória pontilhada (busca na aba Alterar) */
+#tabCadastroUsuario .search-divider{
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed rgba(255,255,255,0.15);
+}
+
+/* =========================
+   Grid do formulário
+========================= */
+#tabCadastroUsuario .user-form-grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+/* Linha dupla (Perfil + Status) */
+#tabCadastroUsuario .user-form-grid .col-full{
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* Labels */
+#tabCadastroUsuario .user-form-grid .col label{
+  display:block;
+  margin: 0 0 7px;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(231,238,246,.92);
+  letter-spacing: .25px;
+  text-transform: uppercase;
+}
+
+#tabCadastroUsuario .tiny.muted{
+  display:block;
+  margin-top: 7px;
+  font-size: 12px;
+  color: rgba(162, 175, 191, .92);
+}
+
+/* ✅ corrigido: pega com e sem espaços no inline style */
+#tabCadastroUsuario .user-form-grid .col[style*="grid-column:1/-1"],
+#tabCadastroUsuario .user-form-grid .col[style*="grid-column: 1 / -1"]{
+  max-width: 420px;
+}
+
+/* =========================
+   Inputs e Select (glass + neon)
+========================= */
+#tabCadastroUsuario .input-dark,
+#tabCadastroUsuario .select-dark{
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  color: #e7eef6;
+  background: rgba(12, 18, 30, .55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 14px;
+  outline: none;
+  transition: transform .10s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+  box-sizing: border-box;
+}
+
+#tabCadastroUsuario .input-dark::placeholder{ color: rgba(162, 175, 191, .5); }
+
+#tabCadastroUsuario .input-dark:hover:not(:disabled),
+#tabCadastroUsuario .select-dark:hover:not(:disabled){
+  border-color: rgba(0,224,255,.22);
+}
+
+#tabCadastroUsuario .input-dark:focus,
+#tabCadastroUsuario .select-dark:focus{
+  border-color: transparent;
+  box-shadow:
+    0 0 0 2px rgba(0,224,255,.22),
+    0 0 0 6px rgba(0,224,255,.10),
+    0 18px 50px rgba(0,0,0,.45);
+  background: rgba(10, 20, 35, .72);
+  transform: translateY(-1px);
+}
+
+#tabCadastroUsuario .input-dark:disabled,
+#tabCadastroUsuario .select-dark:disabled{
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Select premium */
+#tabCadastroUsuario .select-dark{
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  padding-right: 46px;
+  cursor: pointer;
+  background-image:
+    linear-gradient(90deg, rgba(0,224,255,.22), rgba(255,47,185,.18)),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='none' stroke='%23e7eef6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M7 9l5 5 5-5'/></svg>");
+  background-repeat: no-repeat, no-repeat;
+  background-position: 0 0, right 14px center;
+  background-size: 100% 100%, 16px;
+}
+
+#tabCadastroUsuario .select-dark option{
+  background: #0f202b;
+  color: #e7eef6;
+  padding: 10px 12px;
+  font-weight: 700;
+}
+#tabCadastroUsuario .select-dark option:checked{
+  background: #111a2a;
+  color: #00e0ff;
+}
+
+/* Select menor (perfil) */
+#tabCadastroUsuario .select-perfil.select-dark{
+  height: 40px;
+  padding: 0 42px 0 12px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+/* =========================
+   Ações (botões)
+========================= */
+#tabCadastroUsuario .user-form-actions{
+  display:flex;
+  gap: 10px;
+  justify-content:flex-start;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+#tabCadastroUsuario .user-form-actions .btn{
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  transition: transform .10s ease, filter .18s ease, box-shadow .18s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+}
+
+#tabCadastroUsuario .user-form-actions .btn:active:not(:disabled){ transform: scale(.98); }
+#tabCadastroUsuario .user-form-actions .btn:disabled{ opacity: 0.5; cursor: not-allowed; }
+
+#tabCadastroUsuario .btn.btn-light{
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  color: rgba(231,238,246,.95);
+  box-shadow: 0 10px 26px rgba(0,0,0,.28);
+}
+
+#tabCadastroUsuario .btn.btn-primary{
+  color: #061018;
+  background: linear-gradient(135deg, #00e0ff, #7c7cff, #ff2fb9);
+  box-shadow: 0 14px 34px rgba(0,0,0,.38);
+}
+#tabCadastroUsuario .btn.btn-primary:hover:not(:disabled){ filter: brightness(1.1); }
+
+/* =========================
+   Status / Mensagens
+========================= */
+#tabCadastroUsuario .filehint{
+  margin-top: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    linear-gradient(90deg, rgba(0,224,255,.10), rgba(255,47,185,.08)),
+    rgba(255,255,255,.04);
+  padding: 12px 14px;
+  color: rgba(231,238,246,.95);
+  font-size: 13px;
+}
+
+#tabCadastroUsuario .filehint.success{
+  border-color: rgba(46, 204, 113, .40);
+  box-shadow: 0 0 10px rgba(46, 204, 113, .20);
+  color: #2ecc71;
+}
+#tabCadastroUsuario .filehint.error{
+  border-color: rgba(231, 76, 60, .40);
+  box-shadow: 0 0 10px rgba(231, 76, 60, .20);
+  color: #e74c3c;
+}
+
+/* =========================
+   Toggle Status (Ativo/Inativo)
+========================= */
+#tabCadastroUsuario .status-wrapper{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 40px;
+  background: rgba(12, 18, 30, .55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  padding: 0 14px;
+}
+
+#tabCadastroUsuario .switch{
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+#tabCadastroUsuario .switch input{
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+#tabCadastroUsuario .slider{
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 47, 185, 0.4);
+  transition: .4s;
+  border-radius: 34px;
+  border: 1px solid rgba(255,255,255, 0.2);
+}
+
+#tabCadastroUsuario .slider:before{
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #e7eef6;
+  transition: .4s;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+#tabCadastroUsuario .switch input:checked + .slider{
+  background-color: rgba(0, 224, 255, 0.6);
+  border-color: rgba(0, 224, 255, 0.8);
+}
+#tabCadastroUsuario .switch input:checked + .slider:before{ transform: translateX(18px); }
+#tabCadastroUsuario .switch input:disabled + .slider{ opacity: 0.5; cursor: not-allowed; }
+
+#tabCadastroUsuario .status-text{
+  font-weight: 800;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: .3s;
+}
+#tabCadastroUsuario .status-text.active{
+  color: #00e0ff;
+  text-shadow: 0 0 8px rgba(0,224,255,0.4);
+}
+#tabCadastroUsuario .status-text.inactive{
+  color: #ff2fb9;
+  text-shadow: 0 0 8px rgba(255,47,185,0.4);
+}
+
+/* =========================
+   Responsivo
+========================= */
+@media (max-width: 920px){
+  #tabCadastroUsuario .user-form-grid,
+  #tabCadastroUsuario .user-form-grid .col-full{
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 820px){
+  #tabCadastroUsuario .user-form-actions{
+    justify-content: stretch;
+  }
+  #tabCadastroUsuario .user-form-actions .btn{
+    width: 100%;
+    justify-content: center;
+  }
+
+  #tabCadastroUsuario .user-form-grid .col[style*="grid-column:1/-1"],
+  #tabCadastroUsuario .user-form-grid .col[style*="grid-column: 1 / -1"]{
+    max-width: 100%;
+  }
+}
+
+.only-admin { display: none; }
+.only-admin.active { display: flex; } /* quando a aba estiver ativa */

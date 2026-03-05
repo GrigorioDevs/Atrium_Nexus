@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Atrium — Documentos & Assinaturas (Front-only)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Libs front-only -->
+  <script src="https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#0e141b; --card:#151c24; --text:#e8f0f7; --muted:#a2afbf;
+      --accent1:#00e0ff; --accent2:#ff2fb9; --radius:14px;
+      --control-h:44px;
+      --field-bg:#0f151d;           /* base inputs */
+      --field-border:#2a3642;
+      --field-border-focus:#00e0ff;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;min-height:100vh;display:flex;flex-direction:column}
+    header,footer{background:#0a1016;border-bottom:1px solid rgba(255,255,255,.08);padding:14px 22px}
+    header h1{margin:0;font-size:18px;color:var(--accent1)}
+    footer{border-top:1px solid rgba(255,255,255,.08);border-bottom:0;color:var(--muted);font-size:12px}
+    .container{width:min(1100px,92vw);margin:28px auto}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+    .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer;transition:opacity .2s}
+    .btn:hover{opacity:.9}
+    .btn.secondary{background:rgba(255,255,255,.08)}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:34px}
+    .center{display:flex;justify-content:center;align-items:center;min-height:240px}
+    .grad{background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .muted{color:var(--muted)}
+    .tiny{font-size:12px;color:var(--muted)}
+
+    /* Labels */
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+
+    /* === Input dark no mesmo estilo do select === */
+    .input-dark{
+    width: 100%;
+    height: var(--control-h);
+    line-height: var(--control-h);
+    padding: 0 12px;
+    background: #0b1a1f;          /* igual ao select */
+    color: #e8f0f7;
+    border: 1px solid #133043;     /* igual ao select */
+    border-radius: 12px;
+    outline: none;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+    transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+    .input-dark:focus{
+    border-color: #00e0ff;
+    box-shadow: 0 0 0 3px rgba(0,224,255,.15);
+    background: #0d1f2b;
+    }
+    /* placeholders visíveis no tema */
+    .input-dark::placeholder{ color:#9fb0bd; opacity:1; }
+    .input-dark::-webkit-input-placeholder{ color:#9fb0bd; }
+    .input-dark:-ms-input-placeholder{ color:#9fb0bd; }
+    .input-dark::-ms-input-placeholder{ color:#9fb0bd; }
+
+    /* === Select no estilo do print === */
+    .select-dark{
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: var(--control-h);
+      line-height: var(--control-h);
+      padding: 0 40px 0 12px;
+      background: #0b1a1f;                 /* fundo do controle */
+      color: #e8f0f7;
+      border: 1px solid #133043;            /* borda dark */
+      border-radius: 12px;
+      outline: none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+      transition: border-color .2s, box-shadow .2s, background .2s;
+      background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+<path fill='none' stroke='%23a2afbf' stroke-width='2' d='M7 9l5 5 5-5'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+    }
+    .select-dark:focus{
+      border-color: #00e0ff;
+      box-shadow: 0 0 0 3px rgba(0,224,255,.15);
+      background: #0d1f2b;                 /* leve realce no foco */
+    }
+    .select-dark option{
+      background-color: #0f202b;
+      color: #e8f0f7;
+    }
+    .select-dark option:checked{
+      background-color: #7a7f87; /* selecionado cinza */
+      color: #ffffff;
+    }
+    .select-dark option:hover{
+      background-color: #243643;
+      color: #ffffff;
+    }
+    .select-dark optgroup{
+      color: #a2afbf;
+      font-style: italic;
+    }
+
+    /* Backdrop + modal (redimensionável) */
+    .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+    .modal{
+      position:relative;
+      background:#0f151d;border:1px solid rgba(255,255,255,.08);
+      border-radius:var(--radius);
+      width:min(1000px,95vw); max-width:98vw;
+      height:auto; max-height:92vh; overflow:hidden; display:flex; flex-direction:column;
+    }
+    .modal-h{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);font-weight:700}
+    .modal-b{padding:20px;overflow:auto}
+    .modal-f{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+    /* Resizers */
+    .resizer-e, .resizer-se{position:absolute;background:transparent}
+    .resizer-e{right:0; top:0; width:10px; height:100%; cursor:ew-resize}
+    .resizer-se{right:0; bottom:0; width:16px; height:16px; cursor:nwse-resize}
+    .resizer-e::before{
+      content:""; position:absolute; left:3px; top:50%; transform:translateY(-50%);
+      width:2px; height:40px; background:linear-gradient(var(--accent1), var(--accent2)); opacity:.5; border-radius:2px;
+    }
+    .resizer-se::before{
+      content:""; position:absolute; right:3px; bottom:3px; width:10px; height:10px;
+      border-right:2px solid var(--accent1); border-bottom:2px solid var(--accent2); opacity:.7; border-radius:2px;
+    }
+
+    .grid{display:grid;gap:14px}
+    .grid-2{grid-template-columns:1fr 1fr}
+    @media(max-width:860px){.grid-2{grid-template-columns:1fr}}
+    .panel{background:#0f151d;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px}
+    .panel h4{margin:6px 0 8px;font-size:14px;color:var(--muted)}
+    .pill{display:inline-flex;align-items:center;gap:6px;cursor:pointer;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:6px 10px;font-size:12px;margin:4px 6px 0 0}
+
+    .cols{display:grid;gap:14px;grid-template-columns:320px 1fr}
+    @media(max-width:1000px){.cols{grid-template-columns:1fr}}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+    .tb-btn{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px 10px;cursor:pointer}
+    .editor{background:#fff;color:#000;border-radius:8px;min-height:420px;padding:14px;outline:none}
+    .preview{background:#fff;color:#000;border-radius:8px;min-height:420px;padding:16px;border:1px dashed #d0d7de;overflow:auto;margin-top:12px}
+
+    #print-area{position:fixed;left:-99999px;top:-99999px;width:794px;background:#fff;color:#000;padding:20px}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .list{display:flex;flex-direction:column;gap:10px}
+    .item{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px}
+    .item .name{font-weight:600}
+
+    /* arquivo (input "like") */
+    .input-like{
+      display:flex;align-items:center;justify-content:space-between;cursor:pointer;
+      width:100%;height:var(--control-h);padding:0 12px;border-radius:10px;
+      background:var(--field-bg);border:1px solid var(--field-border);color:var(--text);
+    }
+    .input-like:focus{border-color:var(--field-border-focus); box-shadow:0 0 0 3px rgba(0,224,255,.15)}
+    .file-name{margin-top:6px}
+
+    /* radios inline sem fundo/borda */
+    .radio-inline{display:flex;gap:16px;align-items:center}
+    .radio-inline label{margin:0;color:var(--text)}
+
+    /* ======= ESTILOS DO DOCUMENTO (preview/print) ======= */
+    .doc-root{font-size:var(--doc-font-size, 11px); line-height:var(--doc-line-height,1.4); font-family:var(--doc-font-family, Arial, Helvetica, sans-serif); color:#000;}
+    .doc-root p{margin:0 0 var(--doc-paragraph-spacing,8px)}
+    .doc-root h1,.doc-root h2,.doc-root h3{margin:0 0 var(--doc-paragraph-spacing,8px)}
+    .doc-root h1{font-size:calc(var(--doc-font-size,11px) * var(--doc-h1-scale,1.6))}
+    .doc-root h2{font-size:calc(var(--doc-font-size,11px) * var(--doc-h2-scale,1.3))}
+    .doc-root h3{font-size:calc(var(--doc-font-size,11px) * var(--doc-h3-scale,1.15))}
+    .doc-root ul,.doc-root ol{margin:0 0 var(--doc-paragraph-spacing,8px) 0; padding-left:22px}
+    .doc-root table{border-collapse:collapse; width:100%; margin:0 0 var(--doc-paragraph-spacing,8px)}
+    .doc-root th,.doc-root td{border:1px solid #ddd; padding:6px; text-align:left}
+    .doc-logo{margin-bottom:var(--doc-logo-space,12px); text-align:center}
+    .doc-logo img{display:inline-block; width:var(--doc-logo-size,120px); height:auto}
+
+    /* Preview da página simulando margens */
+    .preview-page{background:#fff; color:#000; margin:0 auto; box-shadow:0 0 0 0 rgba(0,0,0,0.1)}
+  </style>
+</head>
+
+<body>
+  <header><h1>Documentos & Assinaturas <span class="grad">Atrium</span></h1></header>
+
+  <main class="container">
+    <div class="actions">
+      <!-- Só 1 botão: Templates -->
+      <button id="btn-templates" class="btn secondary">Templates</button>
+    </div>
+
+    <div class="card center">
+      <button id="btn-open" class="btn" style="font-size:18px;padding:16px 28px;">Gerar documento</button>
+    </div>
+  </main>
+
+  <footer class="container">© Atrium • Somente front. <span class="grad">ciano→magenta</span></footer>
+
+  <!-- MODAL WIZARD GERAR DOCUMENTO (resizável) -->
+  <div id="wizard" class="backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" id="wizardModal">
+      <div class="modal-h">Geração de documentos</div>
+      <div class="modal-b">
+        <!-- STEP 1 -->
+        <div id="step1" class="grid grid-2">
+          <div>
+            <label for="template">Selecione o template</label>
+            <select id="template" class="select-dark"></select>
+            <small class="tiny">Crie/edite templates no botão “Templates”.</small>
+          </div>
+
+          <div>
+            <label>Vincular funcionário?</label>
+            <!-- radios sem fundo/borda -->
+            <div class="radio-inline">
+              <label><input type="radio" name="vinc" value="sim" checked> Sim</label>
+              <label><input type="radio" name="vinc" value="nao"> Não</label>
+            </div>
+          </div>
+
+          <div id="func-wrap">
+            <label for="func">Escolha o funcionário</label>
+            <select id="func" class="select-dark"></select>
+          </div>
+
+          <div class="panel" style="grid-column:1/-1">
+            <small class="muted">Variáveis: <code>{nome}</code>, <code>{cpf}</code>, <code>{endereco.cidade}</code>, <code>{salario|money}</code>, <code>{admissao|date}</code>, <code>{nome|upper}</code>, <code>{hoje}</code>.</small>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div id="step2" style="display:none;">
+          <div class="cols">
+            <div class="panel">
+              <h4>Variáveis detectadas</h4>
+              <div id="vars"></div>
+              <hr style="border-color:rgba(255,255,255,.08);margin:10px 0">
+              <label class="radio-inline" style="gap:8px;">
+                <input type="checkbox" id="chk-preview" checked> Pré-visualizar com dados do funcionário
+              </label>
+              <div class="panel" style="margin-top:10px;">
+                <small class="muted">Clique em uma variável para inserir no cursor do editor.</small>
+              </div>
+
+              <!-- ======= Configurações de Layout ======= -->
+              <div class="panel" style="margin-top:12px;">
+                <h4>Configurações de layout</h4>
+                <div class="grid">
+                  <div>
+                    <label for="ly-font-family">Fonte</label>
+                    <select id="ly-font-family" class="select-dark">
+                      <option value="Arial, Helvetica, sans-serif">Arial / Helvetica</option>
+                      <option value="Times New Roman, Times, serif">Times New Roman</option>
+                      <option value="Calibri, Arial, Helvetica, sans-serif">Calibri</option>
+                      <option value="Cambria, Georgia, 'Times New Roman', Times, serif">Cambria</option>
+                      <option value="Roboto, Arial, Helvetica, sans-serif">Roboto</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="ly-font-size">Tamanho base da fonte (px)</label>
+                    <input id="ly-font-size" type="number" class="input-dark" min="8" max="20" step="1" />
+                  </div>
+                  <div>
+                    <label for="ly-line-height">Altura de linha</label>
+                    <input id="ly-line-height" type="number" class="input-dark" min="1" max="2" step="0.05" />
+                  </div>
+                  <div>
+                    <label for="ly-p-spacing">Espaço entre parágrafos (px)</label>
+                    <input id="ly-p-spacing" type="number" class="input-dark" min="0" max="40" step="1" />
+                  </div>
+
+                  <div>
+                    <label for="ly-h1">Tamanho H1 (x da base)</label>
+                    <input id="ly-h1" type="number" class="input-dark" min="1.0" max="3" step="0.05" />
+                  </div>
+                  <div>
+                    <label for="ly-h2">Tamanho H2 (x da base)</label>
+                    <input id="ly-h2" type="number" class="input-dark" min="1.0" max="3" step="0.05" />
+                  </div>
+                  <div>
+                    <label for="ly-h3">Tamanho H3 (x da base)</label>
+                    <input id="ly-h3" type="number" class="input-dark" min="1.0" max="3" step="0.05" />
+                  </div>
+
+                  <div>
+                    <label for="ly-page-format">Formato da página</label>
+                    <select id="ly-page-format" class="select-dark">
+                      <option value="a4">A4</option>
+                      <option value="letter">Carta (Letter)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="ly-orientation">Orientação</label>
+                    <select id="ly-orientation" class="select-dark">
+                      <option value="p">Retrato</option>
+                      <option value="l">Paisagem</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label for="ly-mt">Margem superior (mm)</label>
+                    <input id="ly-mt" type="number" class="input-dark" min="0" max="50" step="1" />
+                  </div>
+                  <div>
+                    <label for="ly-mr">Margem direita (mm)</label>
+                    <input id="ly-mr" type="number" class="input-dark" min="0" max="50" step="1" />
+                  </div>
+                  <div>
+                    <label for="ly-mb">Margem inferior (mm)</label>
+                    <input id="ly-mb" type="number" class="input-dark" min="0" max="50" step="1" />
+                  </div>
+                  <div>
+                    <label for="ly-ml">Margem esquerda (mm)</label>
+                    <input id="ly-ml" type="number" class="input-dark" min="0" max="50" step="1" />
+                  </div>
+                </div>
+
+                <div class="panel" style="margin-top:12px;">
+                  <div class="row">
+                    <label class="radio-inline" style="gap:8px;">
+                      <input type="checkbox" id="ly-logo-enabled"> Inserir logo no topo
+                    </label>
+                  </div>
+                  <div class="grid" style="margin-top:8px;">
+                    <div>
+                      <label for="ly-logo-size">Tamanho do logo (px)</label>
+                      <input id="ly-logo-size" type="number" class="input-dark" min="24" max="600" step="1" />
+                    </div>
+                    <div>
+                      <label for="ly-logo-align">Alinhamento do logo</label>
+                      <select id="ly-logo-align" class="select-dark">
+                        <option value="left">Esquerda</option>
+                        <option value="center">Centro</option>
+                        <option value="right">Direita</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label for="ly-logo-space">Espaço abaixo do logo (px)</label>
+                      <input id="ly-logo-space" type="number" class="input-dark" min="0" max="80" step="1" />
+                    </div>
+                    <div>
+                      <label for="ly-logo-file">Logo (imagem)</label>
+                      <div class="file-input">
+                        <input id="ly-logo-file" type="file" accept="image/*" hidden />
+                        <button id="ly-logo-file-btn" type="button" class="input-like">
+                          <span>Selecionar imagem</span>
+                          <span class="tiny">🖼️</span>
+                        </button>
+                        <div id="ly-logo-file-info" class="tiny file-name">Nenhum arquivo selecionado</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row" style="margin-top:10px;">
+                    <label class="radio-inline" style="gap:8px;">
+                      <input type="checkbox" id="ly-logo-resize-first" checked>
+                      Redimensionar primeira imagem do conteúdo (usa o tamanho do logo)
+                    </label>
+                  </div>
+                </div>
+
+                <div class="row" style="margin-top:10px;">
+                  <button id="ly-reset" class="btn secondary">Resetar</button>
+                  <div style="display:flex;gap:8px;">
+                    <button id="ly-save" class="btn">Salvar como padrão</button>
+                  </div>
+                </div>
+              </div>
+              <!-- ======= /Configurações de Layout ======= -->
+            </div>
+
+            <div>
+              <div class="toolbar">
+                <button class="tb-btn" data-cmd="bold"><b>N</b></button>
+                <button class="tb-btn" data-cmd="italic"><i>I</i></button>
+                <button class="tb-btn" data-cmd="underline"><u>S</u></button>
+                <button class="tb-btn" data-cmd="insertUnorderedList">• Lista</button>
+                <button class="tb-btn" data-cmd="insertOrderedList">1. Lista</button>
+                <button class="tb-btn" id="btn-clear">Limpar formatação</button>
+              </div>
+              <div id="editor" class="editor" contenteditable="true"></div>
+              <div id="preview" class="preview"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-f">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="btn-back" class="btn secondary">Voltar</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="btn-close" class="btn secondary">Fechar</button>
+          <button id="btn-next" class="btn">Avançar</button>
+          <button id="btn-concluir" class="btn" style="display:none;">Concluir (PDF)</button>
+        </div>
+      </div>
+
+      <!-- handles de resize -->
+      <div class="resizer-e" id="wizardResizeE"></div>
+      <div class="resizer-se" id="wizardResizeSE"></div>
+    </div>
+  </div>
+
+  <!-- MODAL GERENCIAR TEMPLATES -->
+  <div id="tplModal" class="backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" style="width:min(1100px,96vw)">
+      <div class="modal-h row">
+        <span>Templates</span>
+        <button id="btn-close-tpl" class="btn secondary">Fechar</button>
+      </div>
+      <div class="modal-b">
+        <!-- Lista -->
+        <div id="tplListView">
+          <div class="row" style="margin-bottom:10px;">
+            <h3 style="margin:0">Meus templates</h3>
+            <button id="btn-new-tpl" class="btn">Criar template</button>
+          </div>
+          <div class="list" id="tplList"></div>
+          <div class="panel" style="margin-top:10px;">
+            <small class="muted">Templates “padrão” não podem ser apagados. Para editar, use “Duplicar” e edite a cópia.</small>
+          </div>
+        </div>
+
+        <!-- Criar/Editar -->
+        <div id="tplEditView" style="display:none;">
+          <div class="grid grid-2">
+            <div>
+              <label for="tplName">Nome do template</label>
+             <input id="tplName" type="text" class="input-dark" placeholder="Ex: Contrato CLT – Loja SP" />
+            </div>
+
+            <div>
+              <label for="docxTpl">Importar Word (.docx)</label>
+              <!-- controle estilizado (mesma altura do input) -->
+              <div class="file-input">
+                <input id="docxTpl" type="file" accept=".docx" hidden />
+                <button id="docxTplBtn" type="button" class="input-like">
+                  <span>Selecionar arquivo .docx</span>
+                  <span class="tiny">📄</span>
+                </button>
+                <div id="docxTplInfo" class="tiny file-name">Nenhum arquivo selecionado</div>
+              </div>
+              <small class="tiny">A importação mantém a formatação (títulos, listas, negrito etc.).</small>
+            </div>
+
+            <div class="panel" style="grid-column:1/-1">
+              <small class="muted">Variáveis: <code>{nome}</code>, <code>{cpf}</code>, <code>{endereco.cidade}</code>, <code>{salario|money}</code>, <code>{admissao|date}</code>, <code>{nome|upper}</code>, <code>{hoje}</code>.</small>
+            </div>
+          </div>
+
+          <div class="cols" style="margin-top:12px;">
+            <div class="panel">
+              <h4>Variáveis detectadas</h4>
+              <div id="tplVars"></div>
+            </div>
+            <div>
+              <div class="toolbar">
+                <button class="tb-btn" data-cmd="bold"><b>N</b></button>
+                <button class="tb-btn" data-cmd="italic"><i>I</i></button>
+                <button class="tb-btn" data-cmd="underline"><u>S</u></button>
+                <button class="tb-btn" data-cmd="insertUnorderedList">• Lista</button>
+                <button class="tb-btn" data-cmd="insertOrderedList">1. Lista</button>
+                <button class="tb-btn" id="btn-clear-tpl">Limpar formatação</button>
+              </div>
+              <div id="tplEditor" class="editor" contenteditable="true"></div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <button id="btn-back-list" class="btn secondary">Cancelar</button>
+            <div style="display:flex;gap:8px;">
+              <button id="btn-save-tpl" class="btn">Salvar template</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-f">
+        <small class="tiny">Armazenamento local: <code>localStorage</code></small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Área oculta para render do PDF -->
+  <div id="print-area"></div>
+
+  <script>
+    /* ========= CONSTANTES/UTILS ========= */
+    const VAR_REGEX = /\{\s*([a-zA-Z0-9_.|]+)\s*\}/g; // <-- corrigido
+    const LS_KEY = "ATRIUM_TEMPLATES_V1";
+    const LS_LAYOUT = "ATRIUM_LAYOUT_V1";
+    const uid = () => String(Date.now()) + "_" + Math.random().toString(36).slice(2,8);
+    const escapeHTML = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    function resolvePath(obj, path){ try{ return path.split('.').reduce((a,k)=> (a && a[k]!=null ? a[k] : undefined), obj); }catch{ return undefined; } }
+    function applyPipes(value, pipe){
+      if(value==null) return '';
+      const s = String(value);
+      switch(pipe){
+        case 'upper': return s.toUpperCase();
+        case 'lower': return s.toLowerCase();
+        case 'title': return s.replace(/\w\S*/g, w=> w[0].toUpperCase()+w.slice(1).toLowerCase());
+        case 'money': return Number(s).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+        case 'date':  return new Date(s).toLocaleDateString('pt-BR');
+        default: return s;
+      }
+    }
+    function replaceVariables(html, data){
+      const today = new Date().toLocaleDateString('pt-BR');
+      return html.replace(VAR_REGEX, (_, inner)=>{
+        const [path, pipe] = String(inner).split('|');
+        const val = path==='hoje' ? today : resolvePath(data, path);
+        return applyPipes(val, pipe);
+      });
+    }
+    function extractVariables(html){
+      const set = new Set(); let m;
+      while((m = VAR_REGEX.exec(html))){ set.add(String(m[1]).split('|')[0]); }
+      return Array.from(set).sort();
+    }
+
+    /* ========= MOCKS ========= */
+    const FUNCIONARIOS = [
+      { id:"1", nome:"Gustavo Henrique Grigorio Silva", cpf:"123.456.789-00", cargo:"Analista de RH", salario:5500.75, admissao:"2024-03-18", email:"gustavo.silva@imperio.com.br", telefone:"+55 (11) 99999-0000",
+        endereco:{logradouro:"Av. Paulista, 1000",cidade:"São Paulo",estado:"SP",cep:"01310-000"},
+        ferias:{periodo_aquisitivo:"2024-03-18 a 2025-03-17",inicio:"2025-12-01",fim:"2025-12-30"} },
+      { id:"2", nome:"Ana Ribeiro", cpf:"987.654.321-00", cargo:"Desenvolvedora Front-end", salario:7800, admissao:"2023-08-02", email:"ana.ribeiro@imperio.com.br", telefone:"+55 (11) 98888-7777",
+        endereco:{logradouro:"Rua das Flores, 200",cidade:"Campinas",estado:"SP",cep:"13000-000"} }
+    ];
+    const BUILTIN_TEMPLATES = [
+      { id:"builtin_contrato", nome:"Contrato de Trabalho – Padrão", html: `
+          <h2 style="text-align:center">CONTRATO DE TRABALHO</h2>
+          <p>Empregador: <strong>Atrium Tecnologia LTDA</strong></p>
+          <p>Empregado: <strong>{nome}</strong>, CPF {cpf}, residente em {endereco.logradouro}, {endereco.cidade}/{endereco.estado}.</p>
+          <p>O empregado exercerá a função de <strong>{cargo}</strong>, com salário mensal de {salario|money}, a partir de {admissao|date}.</p>
+          <p>E-mail: {email} — Telefone: {telefone}</p>
+          <p>Este contrato entra em vigor na data de {hoje}.</p>
+      `, builtin:true },
+      { id:"builtin_ferias", nome:"Aviso de Férias", html: `
+          <h2 style="text-align:center">AVISO DE FÉRIAS</h2>
+          <p>Colaborador(a): <strong>{nome}</strong> — CPF {cpf}</p>
+          <p>Período aquisitivo: {ferias.periodo_aquisitivo}</p>
+          <p>Período de gozo: {ferias.inicio|date} a {ferias.fim|date}</p>
+          <p>Local: {endereco.cidade} — Data: {hoje}</p>
+      `, builtin:true }
+    ];
+
+    /* ========= STORAGE ========= */
+    const loadUserTemplates = () => { try{ return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); }catch{ return []; } };
+    const saveUserTemplates = list => localStorage.setItem(LS_KEY, JSON.stringify(list));
+    const getAllTemplates = () => [...BUILTIN_TEMPLATES, ...loadUserTemplates()];
+
+    /* ========= ELEMENTOS ========= */
+    const btnTemplates = document.getElementById('btn-templates');
+    const btnOpen  = document.getElementById('btn-open');
+    const wizard   = document.getElementById('wizard');
+    const wizardModal = document.getElementById('wizardModal');
+    const step1    = document.getElementById('step1');
+    const step2    = document.getElementById('step2');
+    const btnClose = document.getElementById('btn-close');
+    const btnBack  = document.getElementById('btn-back');
+    const btnNext  = document.getElementById('btn-next');
+    const btnConcluir = document.getElementById('btn-concluir');
+
+    const templateSel = document.getElementById('template');
+    const funcSel  = document.getElementById('func');
+    const funcWrap = document.getElementById('func-wrap');
+
+    const editor  = document.getElementById('editor');
+       const preview = document.getElementById('preview');
+    const varsBox = document.getElementById('vars');
+    const chkPrev = document.getElementById('chk-preview');
+    const btnClear= document.getElementById('btn-clear');
+    const printArea = document.getElementById('print-area');
+
+    // Templates modal
+    const tplModal     = document.getElementById('tplModal');
+    const btnCloseTpl  = document.getElementById('btn-close-tpl');
+    const tplListView  = document.getElementById('tplListView');
+    const tplEditView  = document.getElementById('tplEditView');
+    const tplList      = document.getElementById('tplList');
+    const btnNewTpl    = document.getElementById('btn-new-tpl');
+    const btnBackList  = document.getElementById('btn-back-list');
+    const btnSaveTpl   = document.getElementById('btn-save-tpl');
+    const tplName      = document.getElementById('tplName');
+    const tplEditor    = document.getElementById('tplEditor');
+    const docxTpl      = document.getElementById('docxTpl');
+    const docxTplBtn   = document.getElementById('docxTplBtn');
+    const docxTplInfo  = document.getElementById('docxTplInfo');
+    const tplVars      = document.getElementById('tplVars');
+    const btnClearTpl  = document.getElementById('btn-clear-tpl');
+
+    /* ======= NOVOS ELEMENTOS (Layout) ======= */
+    const lyFontFamily  = document.getElementById('ly-font-family');
+    const lyFontSize    = document.getElementById('ly-font-size');
+    const lyLineHeight  = document.getElementById('ly-line-height');
+    const lyPSpacing    = document.getElementById('ly-p-spacing');
+    const lyH1 = document.getElementById('ly-h1');
+    const lyH2 = document.getElementById('ly-h2');
+    const lyH3 = document.getElementById('ly-h3');
+    const lyPageFormat  = document.getElementById('ly-page-format');
+    const lyOrientation = document.getElementById('ly-orientation');
+    const lyMT = document.getElementById('ly-mt');
+    const lyMR = document.getElementById('ly-mr');
+    const lyMB = document.getElementById('ly-mb');
+    const lyML = document.getElementById('ly-ml');
+    const lyLogoEnabled = document.getElementById('ly-logo-enabled');
+    const lyLogoSize    = document.getElementById('ly-logo-size');
+    const lyLogoAlign   = document.getElementById('ly-logo-align');
+    const lyLogoSpace   = document.getElementById('ly-logo-space');
+    const lyLogoFile    = document.getElementById('ly-logo-file');
+    const lyLogoFileBtn = document.getElementById('ly-logo-file-btn');
+    const lyLogoFileInfo= document.getElementById('ly-logo-file-info');
+    const lySave        = document.getElementById('ly-save');
+    const lyReset       = document.getElementById('ly-reset');
+    const lyLogoResizeFirst = document.getElementById('ly-logo-resize-first');
+
+    // Estado
+    let currentTemplate = getAllTemplates()[0];
+    let currentFuncionario = FUNCIONARIOS[0];
+    let editingTemplateId = null;
+
+    /* ========= LAYOUT ========= */
+    const DEFAULT_LAYOUT = {
+      fontFamily: 'Arial, Helvetica, sans-serif',
+      fontSize: 11,
+      lineHeight: 1.4,
+      paragraphSpacing: 8,
+      h1: 1.6, h2: 1.3, h3: 1.15,
+      pageFormat: 'a4',       // a4 | letter
+      orientation: 'p',       // p | l
+      marginTop: 20,          // mm
+      marginRight: 15,
+      marginBottom: 20,
+      marginLeft: 15,
+      logoEnabled: false,
+      logoData: '',           // dataURL
+      logoSize: 120,          // px
+      logoAlign: 'center',    // left|center|right
+      logoSpace: 12,          // px
+      logoResizeFirst: true   // aplicar tamanho do logo à primeira imagem do conteúdo
+    };
+    let LAYOUT = loadLayout() || { ...DEFAULT_LAYOUT };
+
+    function loadLayout(){
+      try{
+        const raw = localStorage.getItem(LS_LAYOUT);
+        if(!raw) return null;
+        const parsed = JSON.parse(raw);
+        return { ...DEFAULT_LAYOUT, ...parsed };
+      }catch{ return null; }
+    }
+    function saveLayout(){
+      localStorage.setItem(LS_LAYOUT, JSON.stringify(LAYOUT));
+      alert('Configurações de layout salvas como padrão!');
+    }
+    function mmToPt(mm){ return mm * (72/25.4); }
+    function ptToPx(pt){ return pt * (96/72); }
+
+    const PAGE_SIZES_PT = {
+      a4:     { w: 595.28, h: 841.89 },
+      letter: { w: 612.00, h: 792.00 }
+    };
+    function getPageSizePt(layout){
+      const base = PAGE_SIZES_PT[layout.pageFormat] || PAGE_SIZES_PT.a4;
+      return (layout.orientation==='l')
+        ? { w: base.h, h: base.w }
+        : { w: base.w, h: base.h };
+    }
+
+    function populateLayoutUI(){
+      lyFontFamily.value  = LAYOUT.fontFamily;
+      lyFontSize.value    = LAYOUT.fontSize;
+      lyLineHeight.value  = LAYOUT.lineHeight;
+      lyPSpacing.value    = LAYOUT.paragraphSpacing;
+      lyH1.value = LAYOUT.h1; lyH2.value = LAYOUT.h2; lyH3.value = LAYOUT.h3;
+      lyPageFormat.value  = LAYOUT.pageFormat;
+      lyOrientation.value = LAYOUT.orientation;
+      lyMT.value = LAYOUT.marginTop;
+      lyMR.value = LAYOUT.marginRight;
+      lyMB.value = LAYOUT.marginBottom;
+      lyML.value = LAYOUT.marginLeft;
+      lyLogoEnabled.checked = LAYOUT.logoEnabled;
+      lyLogoSize.value    = LAYOUT.logoSize;
+      lyLogoAlign.value   = LAYOUT.logoAlign;
+      lyLogoSpace.value   = LAYOUT.logoSpace;
+      lyLogoFileInfo.textContent = LAYOUT.logoData ? 'Imagem carregada' : 'Nenhum arquivo selecionado';
+      lyLogoResizeFirst.checked = LAYOUT.logoResizeFirst;
+    }
+    function readLayoutFromUI(){
+      LAYOUT.fontFamily = lyFontFamily.value || DEFAULT_LAYOUT.fontFamily;
+      LAYOUT.fontSize   = Math.max(8, Math.min(20, Number(lyFontSize.value)||DEFAULT_LAYOUT.fontSize));
+      LAYOUT.lineHeight = Math.max(1, Math.min(2, Number(lyLineHeight.value)||DEFAULT_LAYOUT.lineHeight));
+      LAYOUT.paragraphSpacing = Math.max(0, Math.min(40, Number(lyPSpacing.value)||DEFAULT_LAYOUT.paragraphSpacing));
+      LAYOUT.h1 = Number(lyH1.value)||DEFAULT_LAYOUT.h1;
+      LAYOUT.h2 = Number(lyH2.value)||DEFAULT_LAYOUT.h2;
+      LAYOUT.h3 = Number(lyH3.value)||DEFAULT_LAYOUT.h3;
+      LAYOUT.pageFormat = lyPageFormat.value;
+      LAYOUT.orientation= lyOrientation.value;
+      LAYOUT.marginTop = Number(lyMT.value)||DEFAULT_LAYOUT.marginTop;
+      LAYOUT.marginRight=Number(lyMR.value)||DEFAULT_LAYOUT.marginRight;
+      LAYOUT.marginBottom=Number(lyMB.value)||DEFAULT_LAYOUT.marginBottom;
+      LAYOUT.marginLeft= Number(lyML.value)||DEFAULT_LAYOUT.marginLeft;
+      LAYOUT.logoEnabled = !!lyLogoEnabled.checked;
+      LAYOUT.logoSize = Math.max(24, Math.min(600, Number(lyLogoSize.value)||DEFAULT_LAYOUT.logoSize));
+      LAYOUT.logoAlign = lyLogoAlign.value;
+      LAYOUT.logoSpace = Math.max(0, Math.min(80, Number(lyLogoSpace.value)||DEFAULT_LAYOUT.logoSpace));
+      LAYOUT.logoResizeFirst = !!lyLogoResizeFirst.checked;
+    }
+
+    function adjustContentImages(innerHTML){
+      if(!LAYOUT.logoResizeFirst) return innerHTML;
+      const temp = document.createElement('div');
+      temp.innerHTML = innerHTML;
+      const img = temp.querySelector('img');
+      if(img){
+        // remove larguras antigas do DOCX
+        img.removeAttribute('width');
+        img.removeAttribute('height');
+        // aplica novo tamanho e alinhamento a partir do layout
+        img.style.width = 'var(--doc-logo-size)';
+        img.style.height = 'auto';
+        img.style.display = 'block';
+        img.style.marginBottom = 'var(--doc-logo-space)';
+        // alinhamento
+        if(LAYOUT.logoAlign === 'center'){
+          img.style.marginLeft = 'auto'; img.style.marginRight = 'auto';
+        }else if(LAYOUT.logoAlign === 'right'){
+          img.style.marginLeft = 'auto'; img.style.marginRight = '0';
+        }else{
+          img.style.marginLeft = '0'; img.style.marginRight = 'auto';
+        }
+      }
+      return temp.innerHTML;
+    }
+
+    function buildDocHTML(innerHTML){
+      // opcionalmente ajusta a primeira imagem como "logo importado"
+      const processedHTML = adjustContentImages(innerHTML);
+
+      const styleVars = `
+        --doc-font-size:${LAYOUT.fontSize}px;
+        --doc-line-height:${LAYOUT.lineHeight};
+        --doc-paragraph-spacing:${LAYOUT.paragraphSpacing}px;
+        --doc-font-family:${LAYOUT.fontFamily};
+        --doc-h1-scale:${LAYOUT.h1};
+        --doc-h2-scale:${LAYOUT.h2};
+        --doc-h3-scale:${LAYOUT.h3};
+        --doc-logo-size:${LAYOUT.logoSize}px;
+        --doc-logo-space:${LAYOUT.logoSpace}px;
+      `;
+      const logoHTML = (LAYOUT.logoEnabled && LAYOUT.logoData)
+        ? `<div class="doc-logo" style="text-align:${LAYOUT.logoAlign}"><img src="${LAYOUT.logoData}" alt="Logo"></div>`
+        : '';
+      return `<div class="doc-root" style="${styleVars}">${logoHTML}${processedHTML}</div>`;
+    }
+
+    function dataURLFromFile(file){
+      return new Promise((resolve, reject)=>{
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+    }
+
+    /* ========= INIT SELECTS ========= */
+    function refreshTemplateSelect(){
+      const allBuiltins = [...BUILTIN_TEMPLATES];
+      const allUser     = loadUserTemplates();
+
+      templateSel.innerHTML = "";
+
+      // padrões
+      allBuiltins.forEach(t => {
+        const o = document.createElement('option');
+        o.value = t.id; o.textContent = t.nome;
+        templateSel.appendChild(o);
+      });
+
+      // personalizados
+      if (allUser.length){
+        const og = document.createElement('optgroup');
+        og.label = '— Personalizados —';
+        allUser.forEach(t => {
+          const o = document.createElement('option');
+          o.value = t.id; o.textContent = t.nome;
+          og.appendChild(o);
+        });
+        templateSel.appendChild(og);
+      }
+
+      // seleção atual
+      const all = [...allBuiltins, ...allUser];
+      const exists = all.find(t=>t.id===currentTemplate?.id);
+      templateSel.value = exists ? currentTemplate.id : (all[0] && all[0].id);
+      if(!exists) currentTemplate = all[0];
+    }
+    function populateFuncionarios(){
+      funcSel.innerHTML = "";
+      FUNCIONARIOS.forEach(f => {
+        const o = document.createElement('option'); o.value=f.id; o.textContent=f.nome; funcSel.appendChild(o);
+      });
+      funcSel.value = currentFuncionario.id;
+    }
+
+    /* ========= VARS / PREVIEW ========= */
+    const getHTML = () => editor.innerHTML;
+    function updateVarsList(){
+      const vars = extractVariables(getHTML());
+      varsBox.innerHTML = vars.length
+        ? vars.map(v => `<span class="pill" data-var="${v}">{${v}}</span>`).join('')
+        : `<small class="muted">Nenhuma variável encontrada. Use chaves, ex.: <code>{nome}</code>.</small>`;
+      varsBox.querySelectorAll('[data-var]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+          insertAtCaret(editor, `{${el.dataset.var}}`);
+          editor.focus(); updateVarsList(); updatePreview();
+        });
+      });
+    }
+
+    function updatePreview(){
+      const data = (getVinculo()==='sim') ? currentFuncionario : {};
+      const finalHTML = replaceVariables(getHTML(), data);
+      const docHTML = buildDocHTML(finalHTML);
+
+      const page = getPageSizePt(LAYOUT);
+      const pageWidthPx = ptToPx(page.w);
+      const padTopPx = ptToPx(mmToPt(LAYOUT.marginTop));
+      const padRightPx= ptToPx(mmToPt(LAYOUT.marginRight));
+      const padBottomPx=ptToPx(mmToPt(LAYOUT.marginBottom));
+      const padLeftPx = ptToPx(mmToPt(LAYOUT.marginLeft));
+
+      preview.innerHTML = `
+        <div class="preview-page"
+             style="width:${pageWidthPx}px; padding:${padTopPx}px ${padRightPx}px ${padBottomPx}px ${padLeftPx}px;">
+          ${chkPrev.checked ? docHTML : buildDocHTML(getHTML())}
+        </div>`;
+    }
+
+    function insertAtCaret(container, text){
+      const sel = window.getSelection();
+      if(!sel || sel.rangeCount===0){ container.appendChild(document.createTextNode(text)); return; }
+      const range = sel.getRangeAt(0);
+      if(!container.contains(range.commonAncestorContainer)){ container.appendChild(document.createTextNode(text)); return; }
+      range.deleteContents(); range.insertNode(document.createTextNode(text)); range.collapse(false);
+      sel.removeAllRanges(); sel.addRange(range);
+    }
+
+    /* ========= WIZARD OPEN / NAV ========= */
+    btnOpen.addEventListener('click', () => { wizard.style.display='flex'; goStep(1); });
+    btnClose.addEventListener('click', () => wizard.style.display='none');
+    wizard.addEventListener('click', (e)=>{ if(e.target===wizard) wizard.style.display='none'; });
+    btnBack.addEventListener('click', ()=> goStep(1));
+    btnNext.addEventListener('click', ()=>{ if(isStep(1)) goStep(2); });
+    btnConcluir.addEventListener('click', exportPDF);
+
+    templateSel.addEventListener('change', (e)=>{
+      const id = e.target.value;
+      const all = getAllTemplates();
+      currentTemplate = all.find(t=>t.id===id) || all[0];
+      editor.innerHTML = currentTemplate.html;
+      updateVarsList(); updatePreview();
+    });
+    funcSel.addEventListener('change', (e)=>{
+      currentFuncionario = FUNCIONARIOS.find(f=>f.id===e.target.value) || FUNCIONARIOS[0];
+      updatePreview();
+    });
+    function getVinculo(){ return (document.querySelector('input[name="vinc"]:checked')||{}).value || 'sim'; }
+
+    document.querySelectorAll('.tb-btn[data-cmd]').forEach(btn=>{
+      btn.addEventListener('click', ()=> document.execCommand(btn.dataset.cmd, false, null));
+    });
+    btnClear.addEventListener('click', ()=>{
+      const text = editor.innerText || '';
+      const cleaned = text.replace(/\s{2,}/g,' ').replace(/\n{3,}/g,'\n\n');
+      editor.innerHTML = '<p>' + cleaned.split('\n').map(p=>p.trim()).filter(Boolean).map(escapeHTML).join('</p><p>') + '</p>';
+      updatePreview();
+    });
+    chkPrev.addEventListener('change', updatePreview);
+
+    /* ========= PDF COM QUEBRA DE PÁGINA ========= */
+    async function exportPDF(){
+      try{
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          unit:'pt',
+          format: LAYOUT.pageFormat,
+          orientation: LAYOUT.orientation==='l' ? 'landscape' : 'portrait',
+          compress:true
+        });
+
+        const pageW = pdf.internal.pageSize.getWidth();
+        const pageH = pdf.internal.pageSize.getHeight();
+
+        // Margens em pontos a partir de mm
+        const marginTop = mmToPt(LAYOUT.marginTop);
+        const marginRight = mmToPt(LAYOUT.marginRight);
+        const marginBottom = mmToPt(LAYOUT.marginBottom);
+        const marginLeft = mmToPt(LAYOUT.marginLeft);
+
+        const usableW = pageW - marginLeft - marginRight;
+        const usableH = pageH - marginTop - marginBottom;
+
+        const data = (getVinculo()==='sim') ? currentFuncionario : {};
+        const finalHTML = replaceVariables(getHTML(), data);
+        const docHTML = buildDocHTML(finalHTML);
+
+        const wrapper = document.getElementById('print-area');
+        wrapper.innerHTML = `<div id="print-root" style="width:${usableW}px; font-family:Arial, Helvetica, sans-serif;">${docHTML}</div>`;
+
+        const scale = 2; // qualidade
+        const canvas = await html2canvas(document.getElementById('print-root'), {
+          backgroundColor:'#ffffff', scale, useCORS:true, logging:false
+        });
+
+        // px por ponto na largura usada
+        const pxPerPt = canvas.width / usableW;
+        const pageHeightPx = usableH * pxPerPt;
+
+        let sY = 0, pageIndex = 0;
+        while (sY < canvas.height) {
+          const sliceHeight = Math.min(pageHeightPx, canvas.height - sY);
+
+          const pageCanvas = document.createElement('canvas');
+          pageCanvas.width  = canvas.width;
+          pageCanvas.height = sliceHeight;
+          const ctx = pageCanvas.getContext('2d');
+          ctx.drawImage(canvas, 0, sY, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+
+          const imgData = pageCanvas.toDataURL('image/png');
+          const sliceHpt = sliceHeight / pxPerPt;
+
+          if (pageIndex > 0) pdf.addPage();
+          pdf.addImage(imgData, 'PNG', marginLeft, marginTop, usableW, sliceHpt);
+
+          sY += sliceHeight;
+          pageIndex++;
+        }
+
+        pdf.save('documento_atrium.pdf');
+        alert('PDF gerado e baixado!');
+      }catch(err){
+        console.error(err); alert('Falha ao gerar PDF. Veja o console.');
+      }
+    }
+
+    /* ========= MODAL TEMPLATES (CRUD localStorage) ========= */
+    const openTplList = () => { tplModal.style.display='flex'; tplListView.style.display=''; tplEditView.style.display='none'; renderTplList(); };
+    const closeTpl = () => tplModal.style.display='none';
+    btnTemplates.addEventListener('click', openTplList);
+    btnCloseTpl.addEventListener('click', closeTpl);
+    document.getElementById('tplModal').addEventListener('click', (e)=>{ if(e.target.id==='tplModal') closeTpl(); });
+
+    btnNewTpl.addEventListener('click', ()=> openTplEditor());
+    btnBackList.addEventListener('click', openTplList);
+
+    function renderTplList(){
+      const all = getAllTemplates();
+      tplList.innerHTML = all.map(t => {
+        const isBuiltin = !!t.builtin;
+        const actions = isBuiltin
+          ? `<button class="btn tiny-btn" data-act="use" data-id="${t.id}">Usar</button>
+             <button class="btn secondary tiny-btn" data-act="dup" data-id="${t.id}">Duplicar</button>`
+          : `<button class="btn tiny-btn" data-act="use" data-id="${t.id}">Usar</button>
+             <button class="btn secondary tiny-btn" data-act="edit" data-id="${t.id}">Editar</button>
+             <button class="btn secondary tiny-btn" data-act="dup" data-id="${t.id}">Duplicar</button>
+             <button class="btn secondary tiny-btn" data-act="del" data-id="${t.id}">Excluir</button>`;
+        return `<div class="item">
+                  <div>
+                    <div class="name">${t.nome}${isBuiltin ? ' <span class="tiny">(padrão)</span>' : ''}</div>
+                    <div class="tiny">${extractVariables(t.html).map(v=>`{${v}}`).join(' • ') || '— sem variáveis —'}</div>
+                  </div>
+                  <div style="display:flex;gap:6px">${actions}</div>
+                </div>`;
+      }).join('');
+
+      tplList.querySelectorAll('[data-act]').forEach(btn=>{
+        const id = btn.dataset.id; const act = btn.dataset.act;
+        btn.addEventListener('click', ()=>{
+          const all = getAllTemplates();
+          const tpl = all.find(x=>x.id===id);
+          if(!tpl) return;
+          if(act==='use'){
+            currentTemplate = tpl; refreshTemplateSelect(); templateSel.value = tpl.id;
+            editor.innerHTML = tpl.html; updateVarsList(); updatePreview();
+            tplModal.style.display='none'; wizard.style.display='flex'; goStep(1);
+          } else if(act==='edit'){
+            openTplEditor(tpl);
+          } else if(act==='dup'){
+            const user = loadUserTemplates();
+            const copy = { id: uid(), nome: tpl.nome + " (cópia)", html: tpl.html };
+            saveUserTemplates([...user, copy]); renderTplList(); refreshTemplateSelect(); alert('Template duplicado.');
+          } else if(act==='del'){
+            if(!confirm('Excluir este template?')) return;
+            const user = loadUserTemplates().filter(x=>x.id!==id);
+            saveUserTemplates(user); renderTplList(); refreshTemplateSelect();
+          }
+        });
+      });
+    }
+
+    function openTplEditor(template = null){
+      editingTemplateId = template?.id ?? null;
+      tplListView.style.display='none';
+      tplEditView.style.display='';
+      tplName.value = template?.nome ?? "";
+      tplEditor.innerHTML = template?.html ?? "<p>Digite/cole seu conteúdo aqui…</p>";
+      updateTplVars();
+      docxTpl.value = ""; docxTplInfo.textContent = "Nenhum arquivo selecionado";
+    }
+
+    // importar docx (estilizado)
+    docxTplBtn.addEventListener('click', ()=> docxTpl.click());
+    docxTpl.addEventListener('change', async (e)=>{
+      const file = e.target.files[0];
+      docxTplInfo.textContent = file ? file.name : "Nenhum arquivo selecionado";
+      if(!file) return;
+      if(!/\.docx$/i.test(file.name)){ alert('Selecione um arquivo .docx'); return; }
+      try{
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.convertToHtml({ arrayBuffer });
+        tplEditor.innerHTML = result.value || '<p>(Documento sem conteúdo)</p>';
+        updateTplVars();
+      }catch(err){ console.error(err); alert('Falha ao importar o .docx'); }
+    });
+
+    function updateTplVars(){
+      const vars = extractVariables(tplEditor.innerHTML);
+      tplVars.innerHTML = vars.length
+        ? vars.map(v => `<span class="pill" data-var="${v}">{${v}}</span>`).join('')
+        : `<small class="muted">Nenhuma variável detectada. Você pode digitar variáveis usando {chaves}.</small>`;
+      tplVars.querySelectorAll('[data-var]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+          insertAtCaret(tplEditor, `{${el.dataset.var}}`);
+          tplEditor.focus(); updateTplVars();
+        });
+      });
+    }
+    document.getElementById('btn-clear-tpl').addEventListener('click', ()=>{
+      const text = tplEditor.innerText || '';
+      const cleaned = text.replace(/\s{2,}/g,' ').replace(/\n{3,}/g,'\n\n');
+      tplEditor.innerHTML = '<p>' + cleaned.split('\n').map(p=>p.trim()).filter(Boolean).map(escapeHTML).join('</p><p>') + '</p>';
+      updateTplVars();
+    });
+
+    // salvar template
+    btnSaveTpl.addEventListener('click', ()=>{
+      const nome = (tplName.value || "").trim();
+      if(!nome){ alert('Dê um nome ao template.'); return; }
+      const html = tplEditor.innerHTML;
+      const user = loadUserTemplates();
+
+      if(editingTemplateId){
+        const idx = user.findIndex(t=>t.id===editingTemplateId);
+        if(idx>=0) user[idx] = { ...user[idx], nome, html };
+        else user.push({ id: editingTemplateId, nome, html });
+        saveUserTemplates(user); alert('Template atualizado!');
+      }else{
+        user.push({ id: uid(), nome, html }); saveUserTemplates(user); alert('Template criado!');
+      }
+      refreshTemplateSelect(); openTplList();
+    });
+
+    /* ========= RESIZE DO WIZARD ========= */
+    (function enableWizardResize(){
+      const modal = wizardModal;
+      const resE  = document.getElementById('wizardResizeE');
+      const resSE = document.getElementById('wizardResizeSE');
+
+      const limits = {
+        minW: 680, minH: 480,
+        maxW: Math.min(window.innerWidth*0.98, 1600),
+        maxH: Math.min(window.innerHeight*0.95, 1200)
+      };
+      const clamp = (n,min,max) => Math.max(min, Math.min(max, n));
+
+      let startX=0, startY=0, startW=0, startH=0, mode=null;
+
+      function onMove(e){
+        if(!mode) return;
+        if(mode==='e' || mode==='se'){
+          const nw = clamp(startW + (e.clientX - startX), limits.minW, limits.maxW);
+          modal.style.width = nw + "px";
+        }
+        if(mode==='se'){
+          const nh = clamp(startH + (e.clientY - startY), limits.minH, limits.maxH);
+          modal.style.height = nh + "px";
+          modal.style.maxHeight = "95vh";
+        }
+      }
+      function stop(){ mode=null; document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', stop); }
+      function start(e, m){
+        mode = m; startX = e.clientX; startY = e.clientY;
+        const r = modal.getBoundingClientRect();
+        startW = r.width; startH = r.height;
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', stop);
+      }
+      resE.addEventListener('mousedown', e=> start(e,'e'));
+      resSE.addEventListener('mousedown', e=> start(e,'se'));
+      window.addEventListener('resize', ()=>{
+        limits.maxW = Math.min(window.innerWidth*0.98, 1600);
+        limits.maxH = Math.min(window.innerHeight*0.95, 1200);
+      });
+    })();
+
+    /* ========= LISTENERS LAYOUT ========= */
+    [
+      lyFontFamily, lyFontSize, lyLineHeight, lyPSpacing, lyH1, lyH2, lyH3,
+      lyPageFormat, lyOrientation, lyMT, lyMR, lyMB, lyML,
+      lyLogoEnabled, lyLogoSize, lyLogoAlign, lyLogoSpace, lyLogoResizeFirst
+    ].forEach(el=>{
+      if(!el) return;
+      el.addEventListener('input', ()=>{ readLayoutFromUI(); updatePreview(); });
+      el.addEventListener('change', ()=>{ readLayoutFromUI(); updatePreview(); });
+    });
+
+    lyLogoFileBtn.addEventListener('click', ()=> lyLogoFile.click());
+    lyLogoFile.addEventListener('change', async (e)=>{
+      const file = e.target.files?.[0];
+      lyLogoFileInfo.textContent = file ? file.name : 'Nenhum arquivo selecionado';
+      if(!file) return;
+      try{
+        LAYOUT.logoData = await dataURLFromFile(file);
+        updatePreview();
+      }catch(err){ console.error(err); alert('Falha ao carregar a imagem do logo'); }
+    });
+
+    lySave.addEventListener('click', ()=> { readLayoutFromUI(); saveLayout(); });
+    lyReset.addEventListener('click', ()=>{
+      LAYOUT = { ...DEFAULT_LAYOUT };
+      populateLayoutUI();
+      updatePreview();
+    });
+
+    /* ========= INICIALIZAÇÃO ========= */
+    refreshTemplateSelect();
+    populateFuncionarios();
+    editor.innerHTML = currentTemplate.html;
+
+    populateLayoutUI();          // carrega UI com layout salvo/padrão
+    updateVarsList(); updatePreview();
+
+    // navegação do wizard
+    function isStep(n){ return (n===1 && step1.style.display!=='none') || (n===2 && step2.style.display!=='none'); }
+    function goStep(n){
+      if(n===1){
+        step1.style.display=''; step2.style.display='none';
+        btnNext.style.display=''; btnConcluir.style.display='none';
+        wizardModal.style.height = ''; // volta auto quando retorna ao passo 1
+      } else {
+        step1.style.display='none'; step2.style.display='';
+        btnNext.style.display='none'; btnConcluir.style.display='';
+      }
+    }
+  </script>
+</body>
+</html>

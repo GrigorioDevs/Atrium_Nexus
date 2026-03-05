@@ -1,0 +1,566 @@
+/* ==========================================================================
+   11. MODAL DE LEMBRETES, CADASTRO E ALARME (CSS COMPLETO - AJUSTADO)
+   - Compatível com:
+     ✅ seu HTML atual (.rem-status)
+     ✅ o demo (.toggle-check)
+     ✅ o HTML novo com botões (rem-status como <button> e rem-resolve-toggle)
+   - Inclui: hard override + scroll interno + responsivo + focus acessível
+   ========================================================================== */
+
+/* (Opcional) trava scroll quando modal aberto (seu JS pode aplicar no body) */
+body.modal-open { overflow: hidden; }
+
+/* ===============================
+   OVERLAY PADRÃO (MODAL)
+================================ */
+.modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.70);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 10000;
+
+  display: none;              /* JS controla via .open */
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  pointer-events: auto;
+}
+
+.modal-overlay.open{
+  display: flex;
+  animation: fadeIn .25s ease;
+}
+
+@keyframes fadeIn{
+  from{ opacity: 0; }
+  to{ opacity: 1; }
+}
+
+/* ===============================
+   CAIXA DO MODAL (PREMIUM)
+================================ */
+.modal-content-premium{
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 16px;
+
+  width: 100%;
+  max-width: 750px;
+  max-height: 90vh;
+
+  box-shadow: 0 25px 60px rgba(0,0,0,.65);
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  transform: translateZ(0);
+}
+
+/* Header */
+.modal-header-premium{
+  padding: 18px 24px;
+  background: rgba(255,255,255,.03);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+
+  flex-shrink: 0;
+}
+
+.modal-header-premium h2,
+.modal-header-premium .modal-title{
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #e5f0ff;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 0;
+}
+
+.modal-header-premium h2 i,
+.modal-header-premium .modal-title i{
+  color: var(--c1, #00E0FF);
+}
+
+/* Botão fechar */
+.btn-close-modal{
+  background: transparent;
+  border: 1px solid transparent;
+
+  color: #94a3b8;
+  font-size: 18px;
+  cursor: pointer;
+
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: color .15s ease, background .15s ease, border-color .15s ease;
+}
+
+.btn-close-modal:hover{
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.12);
+  color: #fff;
+}
+
+/* Body */
+.modal-body-premium{
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  overscroll-behavior: contain;
+}
+
+/* Footer / ações */
+.modal-actions-premium{
+  padding: 16px 24px;
+  background: rgba(0,0,0,.20);
+  border-top: 1px solid rgba(255,255,255,.08);
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  flex-shrink: 0;
+}
+
+/* ===============================
+   TABELA DE LEMBRETES
+================================ */
+.rem-table-wrapper{
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0,0,0,.20);
+}
+
+.rem-table{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.rem-table thead th{
+  background: rgba(255,255,255,.05);
+  color: #94a3b8;
+
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 700;
+
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.rem-table tbody td{
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  color: #e2e8f0;
+  vertical-align: middle;
+}
+
+.rem-table tbody tr:hover{
+  background: rgba(255,255,255,.02);
+}
+
+.rem-table tbody tr:last-child td{
+  border-bottom: none;
+}
+
+.rem-table .text-center{ text-align: center; }
+.rem-table .text-danger{ color: #ff4f4f; font-weight: 800; }
+
+/* Colunas de ações/status: evita quebrar feio */
+.rem-table td:last-child{ white-space: nowrap; }
+
+/* ===============================
+   USER + AVATAR NA TABELA
+================================ */
+.rem-user{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.rem-user span{
+  display: inline-block;
+  min-width: 0;
+  line-height: 1.15;
+}
+
+.rem-avatar-small{
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  overflow: hidden;
+
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,.14);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 32px;
+  font-weight: 900;
+  font-size: 11px;
+}
+
+.rem-avatar-small.no-photo{
+  background: var(--c1, #00E0FF);
+  color: #000;
+  border-color: rgba(255,255,255,.15);
+}
+
+.rem-avatar-small img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ===============================
+   STATUS (SEU HTML: .rem-status)
+   - funciona como div OU button
+================================ */
+.rem-status{
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* se for button */
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.rem-status.active{
+  color: #22c55e;
+  filter: drop-shadow(0 0 6px rgba(34,197,94,.35));
+}
+
+.rem-status.inactive{
+  color: #ef4444;
+  opacity: .75;
+}
+
+.rem-status:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+/* ===============================
+   STATUS (DEMO/NOVO: .toggle-check)
+   - usado no "Corrigido"
+================================ */
+.toggle-check{
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .2s ease;
+
+  /* se for button */
+  background: transparent;
+  border: 2px solid transparent;
+  padding: 0;
+  line-height: 1;
+}
+
+.toggle-check.active{
+  background: #22c55e;
+  color: #000;
+  border-color: rgba(34,197,94,.35);
+  box-shadow: 0 0 10px rgba(34,197,94,.35);
+}
+
+.toggle-check.inactive{
+  background: transparent;
+  border-color: #ef4444;
+  color: #ef4444;
+  opacity: .80;
+}
+
+.toggle-check.inactive:hover{
+  opacity: 1;
+  background: rgba(239,68,68,.10);
+}
+
+/* Deixa o "Corrigido" mais evidente quando ativo */
+.rem-resolve-toggle.active{
+  box-shadow: 0 0 0 3px rgba(34,197,94,.15), 0 0 14px rgba(34,197,94,.25);
+}
+
+/* ===============================
+   BOTÕES (RODAPÉ + ALARME)
+================================ */
+.btn-snooze,
+.btn-resolve{
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  font-size: 13px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+
+  transition: transform .15s ease, filter .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+/* Secundário */
+.btn-snooze{
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid rgba(255,255,255,.20);
+}
+
+.btn-snooze:hover{
+  background: rgba(255,255,255,.05);
+  color: #fff;
+  border-color: rgba(255,255,255,.35);
+}
+
+/* Primário */
+.btn-resolve{
+  background: linear-gradient(90deg, var(--c1, #00E0FF), var(--c2, #FF2FB9));
+  color: #fff;
+  box-shadow: 0 5px 16px rgba(0,224,255,.28);
+}
+
+.btn-resolve:hover{
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0,224,255,.36);
+}
+
+/* ===============================
+   SINO DO HEADER (bolinha)
+================================ */
+.notif-dot{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--c2, #FF2FB9);
+  box-shadow: 0 0 6px rgba(255,47,185,.6);
+}
+
+/* ===============================
+   ALARME (POPUP SINO)
+================================ */
+.alarm-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(11,22,34,.90);
+  z-index: 20000;
+
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  pointer-events: auto;
+}
+
+.alarm-overlay.open{
+  display: flex;
+  animation: fadeIn .25s ease;
+}
+
+.alarm-card{
+  background: linear-gradient(160deg, #1e293b, #0f172a);
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 0 0 1px var(--c1, #00E0FF), 0 20px 80px rgba(0,0,0,.80);
+  border-radius: 24px;
+  padding: 36px 28px;
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+}
+
+.alarm-card h3{
+  font-size: 22px;
+  color: #fff;
+  margin: 0 0 8px;
+  font-weight: 900;
+}
+
+.alarm-card p{
+  color: #94a3b8;
+  margin: 0 0 18px;
+  font-size: 14px;
+}
+
+.alarm-icon-wrapper{
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alarm-bell{
+  font-size: 52px;
+  background: linear-gradient(135deg, var(--c1, #00E0FF), var(--c2, #FF2FB9));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shake 1.4s infinite;
+  filter: drop-shadow(0 0 10px rgba(0,224,255,.35));
+}
+
+@keyframes shake{
+  0%   { transform: rotate(0deg); }
+  10%  { transform: rotate(15deg); }
+  20%  { transform: rotate(-15deg); }
+  30%  { transform: rotate(10deg); }
+  40%  { transform: rotate(-10deg); }
+  50%  { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.alarm-list{
+  background: rgba(0,0,0,.30);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin: 0 0 20px;
+  text-align: left;
+  border: 1px solid rgba(239,68,68,.25);
+
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.alarm-item{
+  font-size: 13px;
+  color: #ffcccc;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  padding: 8px 2px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alarm-item:last-child{ border-bottom: none; }
+
+.alarm-actions{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ===============================
+   HARD OVERRIDE (GARANTIR EXIBIÇÃO)
+================================ */
+#modalLembretes.modal-overlay{ z-index: 999999; }
+#modalLembretes.modal-overlay.open{ display: flex !important; }
+
+#popupAlarme.alarm-overlay{ z-index: 1000000; }
+#popupAlarme.alarm-overlay.open{ display: flex !important; }
+
+/* ===============================
+   RESPONSIVO
+================================ */
+@media (max-width: 820px){
+  .modal-content-premium{ max-width: 100%; }
+}
+
+@media (max-width: 560px){
+  .modal-overlay,
+  .alarm-overlay{ padding: 12px; }
+
+  .modal-content-premium{
+    border-radius: 14px;
+    max-height: calc(100vh - 24px);
+  }
+
+  .modal-header-premium{ padding: 14px 16px; }
+  .modal-body-premium{ padding: 16px; }
+
+  .modal-actions-premium{
+    padding: 12px 16px;
+    justify-content: stretch;
+  }
+
+  .btn-snooze,
+  .btn-resolve{ width: 100%; }
+
+  .rem-table-wrapper{
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rem-table{ min-width: 620px; }
+
+  .rem-table thead th,
+  .rem-table tbody td{
+    padding: 10px 12px;
+  }
+}
+
+/* ===============================
+   ACESSIBILIDADE (FOCUS)
+================================ */
+.btn-close-modal:focus-visible,
+.btn-snooze:focus-visible,
+.btn-resolve:focus-visible,
+.rem-status:focus-visible,
+.toggle-check:focus-visible{
+  outline: 2px solid rgba(0,224,255,.45);
+  outline-offset: 2px;
+}
+
+/* ===============================
+   (Opcional) sr-only (se usar no HTML)
+================================ */
+.sr-only{
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}

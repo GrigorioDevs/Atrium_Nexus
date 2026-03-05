@@ -1,0 +1,61 @@
+/* === (Opcional) Sub-abas dentro do Cartão de Ponto === */
+/* Use somente se você estiver usando botões tipo .ponto-tab-btn na tela do Cartão de Ponto.
+   Se não estiver usando sub-abas internas, pode remover esse bloco inteiro sem medo. */
+.ponto-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.ponto-tab-btn {
+  border-radius: 999px;
+  font-size: 13px;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.ponto-tab-btn.active {
+  background: var(--accent1, #00e0ff);
+  color: #ffffff;
+}
+
+/* Conteúdo de cada sub-aba (apenas se usar .ponto-pane no HTML) */
+.ponto-pane {
+  display: none;
+}
+
+.ponto-pane.active {
+  display: block;
+}
+
+/* === Pontos Justificados – tabela da aba própria === */
+
+/* Tabela de pontos justificados */
+.ponto-just-table td,
+.ponto-just-table th {
+  vertical-align: top;
+}
+
+/* Célula de status */
+.ponto-just-table .just-status {
+  font-weight: 600;
+}
+
+/* Linha quando a justificativa foi aprovada */
+.ponto-just-table tr.just-aprovado .just-status {
+  color: #4ade80; /* verde */
+}
+
+/* Linha quando a justificativa foi recusada */
+.ponto-just-table tr.just-recusado .just-status {
+  color: #f97373; /* vermelho */
+}
+
+/* Botões de ação na tabela (Aceitar / Recusar) */
+.ponto-just-table .just-actions {
+  white-space: nowrap;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}

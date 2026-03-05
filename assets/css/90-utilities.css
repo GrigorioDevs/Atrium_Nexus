@@ -1,0 +1,17 @@
+/* Utilitários e estados rápidos */
+.mt-8{ margin-top:8px }
+.kv-strong{ font-weight:800 }
+.scroll-styled{ overflow:auto; -webkit-overflow-scrolling: touch; overscroll-behavior:auto; }
+
+
+/* Status */
+.status-dot{ width:10px; height:10px; border-radius:50%; display:inline-block }
+.ok{ background:var(--ok) } .warn{ background:var(--warn) } .err{ background:var(--err) }
+
+
+/* Acessibilidade */
+.sr-only{ position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+
+/* Dicas/ficheiros gerais */
+.hint-row{ margin-top:8px }
