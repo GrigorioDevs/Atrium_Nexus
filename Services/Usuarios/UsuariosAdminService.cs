@@ -112,7 +112,6 @@ namespace Atrium.RH.Services.Usuarios
         // ======================================================
         public async Task<int> CreateAsync(UsuarioCadastroDto dto, CancellationToken ct)
         {
-            await EnsureAdminAsync(ct);
 
             var cpf = OnlyDigits(dto.Cpf);
             var tel = OnlyDigits(dto.Telefone);
@@ -145,6 +144,7 @@ namespace Atrium.RH.Services.Usuarios
                 Telefone = tel,
                 TypeUser = dto.TypeUser,
                 Ativo = dto.Ativo,
+                LociId = 1,
                 Criacao = DateTimeOffset.UtcNow,
                 Senha = Security.Sha256Hex(dto.Senha)
             };
